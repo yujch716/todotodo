@@ -18,3 +18,8 @@ shardcn
 ```
 https://ui.shadcn.com/
 ```
+
+icon
+```
+https://lucide.dev/icons/
+```

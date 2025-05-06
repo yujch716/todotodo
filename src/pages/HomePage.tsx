@@ -11,6 +11,7 @@ const sampleChecklists: Checklist[] = [
       { id: 1, title: "청소하기", isChecked: false },
       { id: 2, title: "장보기", isChecked: false },
     ],
+    memo: "메모 1",
   },
   {
     id: 2,
@@ -19,6 +20,7 @@ const sampleChecklists: Checklist[] = [
       { id: 3, title: "회의 준비", isChecked: true },
       { id: 4, title: "보고서 작성", isChecked: false },
     ],
+    memo: "메모 2",
   },
 ];
 
@@ -53,10 +55,22 @@ export default function HomePage() {
       id: nextId,
       title,
       items: [],
+      memo: "",
     };
 
     setChecklists([...checklists, newChecklist]);
     setSelectedChecklistId(newChecklist.id);
+  };
+
+  const handleMemoChange = (newMemo: string) => {
+    if (!selectedChecklist) return;
+
+    const updatedChecklist = { ...selectedChecklist, memo: newMemo };
+    const updatedChecklists = checklists.map((checklist) =>
+      checklist.id === selectedChecklist.id ? updatedChecklist : checklist,
+    );
+
+    setChecklists(updatedChecklists);
   };
 
   return (
@@ -72,6 +86,7 @@ export default function HomePage() {
           <ChecklistDetail
             checklist={selectedChecklist}
             onToggleItem={toggleItemChecked}
+            onUpdateMemo={handleMemoChange}
           />
         )}
       </div>

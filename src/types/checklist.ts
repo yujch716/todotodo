@@ -8,4 +8,5 @@ export interface Checklist {
   id: number;
   title: string;
   items: ChecklistItem[];
+  memo: string;
 }

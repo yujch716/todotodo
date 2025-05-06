@@ -1,13 +1,19 @@
 import type { Checklist } from "@/types/checklist.ts";
 import ChecklistItem from "./ChecklistItem.tsx";
 import { useEffect, useState } from "react";
+import MemoEditor from "@/components/MemoEditor.tsx";
 
 interface Props {
   checklist: Checklist;
   onToggleItem: (id: number) => void;
+  onUpdateMemo: (memo: string) => void;
 }
 
-export default function ChecklistDetail({ checklist, onToggleItem }: Props) {
+export default function ChecklistDetail({
+  checklist,
+  onToggleItem,
+  onUpdateMemo,
+}: Props) {
   const [title, setTitle] = useState(checklist.title);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
@@ -50,37 +56,44 @@ export default function ChecklistDetail({ checklist, onToggleItem }: Props) {
   };
 
   return (
-    <div className="p-10 flex-1 overflow-auto">
-      <div className="w-1/3 text-xl font-bold">
-        {isEditingTitle ? (
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onBlur={handleTitleSave}
-            onKeyDown={(e) => e.key === "Enter" && handleTitleSave()}
-            className="w-full border-b border-gray-300 focus:outline-none"
-            autoFocus
-          />
-        ) : (
-          <h2
-            className="w-full cursor-pointer"
-            onClick={() => setIsEditingTitle(true)}
-          >
-            {title}
-          </h2>
-        )}
+    <div className="p-10 flex gap-8 flex-1 overflow-auto">
+      <div className="w-1/2">
+        <div className="text-xl font-bold">
+          {isEditingTitle ? (
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onBlur={handleTitleSave}
+              onKeyDown={(e) => e.key === "Enter" && handleTitleSave()}
+              className="w-full border-b border-gray-300 focus:outline-none"
+              autoFocus
+            />
+          ) : (
+            <h2
+              className="w-full cursor-pointer"
+              onClick={() => setIsEditingTitle(true)}
+            >
+              {title}
+            </h2>
+          )}
+        </div>
+
+        <div className="mt-6 space-y-3">
+          {items.map((item) => (
+            <ChecklistItem
+              key={item.id}
+              item={item}
+              onToggle={onToggleItem}
+              onUpdateTitle={onUpdateItemTitle}
+              isEditing={editingItemId === item.id}
+              setEditingItemId={setEditingItemId}
+            />
+          ))}
+        </div>
       </div>
-      <div className="mt-6 space-y-3 w-1/3">
-        {items.map((item) => (
-          <ChecklistItem
-            key={item.id}
-            item={item}
-            onToggle={onToggleItem}
-            onUpdateTitle={onUpdateItemTitle}
-            isEditing={editingItemId === item.id}
-            setEditingItemId={setEditingItemId}
-          />
-        ))}
+
+      <div className="w-1/2">
+        <MemoEditor memo={checklist.memo} onChange={onUpdateMemo} />
       </div>
     </div>
   );
