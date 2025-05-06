@@ -6,7 +6,7 @@ interface Props {
   onSelect: (id: number) => void;
   onAddChecklist: (title: string) => void;
 }
-import { Plus } from 'lucide-react';
+import { Plus } from "lucide-react";
 
 export default function ChecklistSidebar({
   checklists,
@@ -34,7 +34,7 @@ export default function ChecklistSidebar({
         <Button
           onClick={handleAddChecklist}
           variant="ghost"
-          className="w-full justify-center bg-slate-600 hover:bg-slate-500 text-white hover:text-white font-semibold py-2 rounded-lg border border-transparent"
+          className="w-full justify-center bg-slate-600 hover:bg-slate-500 text-white hover:text-white font-semibold py-2 border border-slate-400 rounded-lg"
         >
           <Plus />
         </Button>

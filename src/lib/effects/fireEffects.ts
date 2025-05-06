@@ -25,18 +25,34 @@ export const fireConfetti = () => {
 };
 
 export const fireSparkles = () => {
-  party.sparkles(document.body, {
-    count: party.variation.range(180, 200),
-    size: party.variation.range(1, 3),
-    speed: party.variation.range(600, 800),
-  });
+  const triggerSparkles = () => {
+    party.sparkles(document.body, {
+      count: party.variation.range(180, 200),
+      size: party.variation.range(1, 3),
+      speed: party.variation.range(400, 600),
+    });
+  };
+
+  triggerSparkles();
+
+  setTimeout(() => {
+    triggerSparkles();
+  }, 1000);
 };
 
 export const fireBubbles = () => {
-  party.confetti(document.body, {
-    shapes: ["circle", "roundedRectangle"],
-    count: party.variation.range(280, 300),
-    size: party.variation.range(1, 3),
-    speed: party.variation.range(600, 800),
-  });
+  const triggerBubbles = () => {
+    party.confetti(document.body, {
+      shapes: ["circle", "roundedRectangle"],
+      count: party.variation.range(280, 300),
+      size: party.variation.range(1, 3),
+      speed: party.variation.range(600, 800),
+    });
+  };
+
+  triggerBubbles();
+
+  setTimeout(() => {
+    triggerBubbles();
+  }, 500);
 };
