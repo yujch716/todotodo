@@ -69,7 +69,7 @@ export default function MemoEditor({ memo, onChange }: Props) {
 
   return (
     <div className="border border-gray-300 rounded-lg">
-      <div className="flex gap-2 border-b border-gray-300 p-2 bg-gray-50">
+      <div className="flex flex-wrap gap-2 border-b border-gray-300 p-2 bg-gray-50">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={editor.isActive("bold") ? "text-blue-500" : ""}
