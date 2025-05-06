@@ -1,11 +1,12 @@
 import { Button } from "../ui/button.tsx";
-import type { Checklist } from "../../types/checklist.ts";
+import type { Checklist } from "@/types/checklist.ts";
 interface Props {
   checklists: Checklist[];
   selectedId: number | null;
   onSelect: (id: number) => void;
   onAddChecklist: (title: string) => void;
 }
+import { Plus } from 'lucide-react';
 
 export default function ChecklistSidebar({
   checklists,
@@ -28,28 +29,32 @@ export default function ChecklistSidebar({
   };
 
   return (
-    <div className="border-r w-full sm:w-64 bg-slate-600 text-white flex flex-col">
-      <div className="p-1">
+    <div className="border-r w-full sm:w-64 bg-slate-800 text-white flex flex-col">
+      <div className="p-4">
         <Button
           onClick={handleAddChecklist}
           variant="ghost"
-          className="w-full justify-center bg-slate-800 hover:bg-slate-700 text-white hover:text-white font-semibold py-2 rounded-lg border border-transparent"
+          className="w-full justify-center bg-slate-600 hover:bg-slate-500 text-white hover:text-white font-semibold py-2 rounded-lg border border-transparent"
         >
-          + 체크리스트 추가
+          <Plus />
         </Button>
       </div>
 
-      {checklists.map((list) => (
-        <Button
-          key={list.id}
-          variant={list.id === selectedId ? "default" : "ghost"}
-          className={`w-full justify-start rounded-none ${
-            list.id === selectedId ? "bg-slate-400" : ""
-          }`}
-          onClick={() => onSelect(list.id)}
-        >
-          {list.title}
-        </Button>
+      {checklists.map((list, index) => (
+        <div key={list.id}>
+          <Button
+            className={`w-full justify-start rounded-none bg-slate-800
+            ${list.id === selectedId ? "bg-slate-700 text-white" : ""}
+            hover:bg-slate-700
+          `}
+            onClick={() => onSelect(list.id)}
+          >
+            {list.title}
+          </Button>
+          {index !== checklists.length - 1 && (
+            <div className="h-px bg-white/20 mx-4" />
+          )}
+        </div>
       ))}
     </div>
   );
