@@ -44,7 +44,7 @@ export default function ChecklistItem({
       setShowMessage(randomMessage);
       setTimeout(() => {
         setShowMessage(null);
-      }, 1600);
+      }, 2000);
     }
     onToggle(item.id);
   };
