@@ -50,7 +50,14 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
-  		}
+  		},
+		screens: {
+			sm: '640px',  // sm: 작은 화면 (모바일)
+			md: '768px',  // md: 중간 크기 (태블릿)
+			lg: '1024px', // lg: 큰 화면 (데스크탑)
+			xl: '1280px', // xl: 매우 큰 화면
+			'2xl': '1536px', // 2xl: 더 큰 화면
+		},
   	}
   },
   plugins: [require("tailwindcss-animate")],
