@@ -1,5 +1,5 @@
-import { Button } from "./ui/button";
-import type { Checklist } from "../types/checklist";
+import { Button } from "../ui/button.tsx";
+import type { Checklist } from "../../types/checklist.ts";
 interface Props {
   checklists: Checklist[];
   selectedId: number | null;
