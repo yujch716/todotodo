@@ -68,8 +68,8 @@ export default function MemoEditor({ memo, onChange }: Props) {
   if (!editor) return null;
 
   return (
-    <div className="border border-gray-300 rounded-lg">
-      <div className="flex flex-wrap gap-2 border-b border-gray-300 p-2 bg-gray-50">
+    <div className="border rounded-lg">
+      <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={editor.isActive("bold") ? "text-blue-500" : ""}
