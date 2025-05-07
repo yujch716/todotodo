@@ -13,12 +13,11 @@ export const fireConfetti = () => {
     });
   };
 
-  const burstCount = 6;
-  const interval = 200;
+  const burstCount = 15;
+  const interval = 100;
 
   for (let i = 0; i < burstCount; i++) {
     setTimeout(() => {
-      fire();
       fire();
     }, i * interval);
   }
