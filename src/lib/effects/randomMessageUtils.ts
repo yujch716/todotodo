@@ -44,5 +44,5 @@ export const showRandomText = () => {
     setTimeout(() => {
       document.body.removeChild(textElement);
     }, 1000);
-  }, 3000);
+  }, 2500);
 };
