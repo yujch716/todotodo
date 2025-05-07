@@ -1,13 +1,7 @@
 import { Checkbox } from "../ui/checkbox.tsx";
 import type { ChecklistItem as ChecklistItemType } from "../../types/checklist.ts";
 import { useState, useRef, useEffect } from "react";
-import {
-  fireBubbles,
-  fireConfetti,
-  fireSparkles,
-  getRandomEffect,
-  getRandomMessage,
-} from "@/lib/effects";
+import { showCelebration } from "@/lib/effects";
 
 interface Props {
   item: ChecklistItemType;
@@ -25,26 +19,12 @@ export default function ChecklistItem({
   setEditingItemId,
 }: Props) {
   const [title, setTitle] = useState(item.title);
-  const [showMessage, setShowMessage] = useState<string | null>(null);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleToggle = () => {
     if (!item.isChecked) {
-      const randomEffect = getRandomEffect();
-      if (randomEffect === "confetti") {
-        fireConfetti();
-      } else if (randomEffect === "bubbles") {
-        fireBubbles();
-      } else if (randomEffect === "sparkles") {
-        fireSparkles();
-      }
-
-      const randomMessage = getRandomMessage();
-      setShowMessage(randomMessage);
-      setTimeout(() => {
-        setShowMessage(null);
-      }, 2000);
+      showCelebration();
     }
     onToggle(item.id);
   };
@@ -87,12 +67,6 @@ export default function ChecklistItem({
           >
             {item.title}
           </span>
-        )}
-
-        {showMessage && (
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold text-black animate-pulse z-[9999] pointer-events-none">
-            {showMessage}
-          </div>
         )}
       </div>
     </div>
