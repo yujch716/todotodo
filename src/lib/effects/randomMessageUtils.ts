@@ -22,16 +22,11 @@ const messages = [
   "당신에게 주어지는 합격 목걸이 🏅",
 ];
 
-export const getRandomMessage = () => {
-  const randomIndex = Math.floor(Math.random() * messages.length);
-  return messages[randomIndex];
-};
-
 export const showRandomText = () => {
-  const message = getRandomMessage();
+  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
 
   const textElement = document.createElement("div");
-  textElement.textContent = message;
+  textElement.textContent = randomMessage;
   textElement.style.position = "fixed";
   textElement.style.top = "50%";
   textElement.style.left = "50%";
