@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import LoadingModal from "@/components/LoadingModal.tsx";
-import MoveAlertModal from "@/components/MoveAlertModal.tsx";
+import AlertModal from "@/components/AlertModal.tsx";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -51,7 +51,7 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
       <LoadingModal open={isLoading} />
-      <MoveAlertModal
+      <AlertModal
         open={isSuccess}
         message="이메일 인증메일이 발송되었습니다. 메일함을 확인해주세요."
       />
@@ -60,16 +60,17 @@ export default function SignUpPage() {
         <CardContent className="space-y-4">
           <h1 className="py-6 text-2xl font-semibold text-center">회원가입</h1>
           <form onSubmit={handleSignUp}>
-            <div className="space-y-2">
+            <div className="py-2">
               <Label htmlFor="email">이메일</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
-            <div className="space-y-2">
+            <div className="py-2">
               <Label htmlFor="password">비밀번호</Label>
               <div className="relative">
                 <Input
@@ -77,6 +78,7 @@ export default function SignUpPage() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                   className="pr-10"
                 />
                 <button
@@ -88,7 +90,7 @@ export default function SignUpPage() {
                 </button>
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="py-2">
               <Label htmlFor="confirm-password">비밀번호 확인</Label>
               <div className="relative">
                 <Input
@@ -96,6 +98,7 @@ export default function SignUpPage() {
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
                   className="pr-10"
                 />
                 <button
@@ -111,13 +114,14 @@ export default function SignUpPage() {
                 </button>
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="py-2">
               <Label htmlFor="name">이름</Label>
               <Input
                 id="name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
               />
             </div>
             {errorMessage && (

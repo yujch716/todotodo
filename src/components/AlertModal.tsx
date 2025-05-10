@@ -1,8 +1,15 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog.tsx";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog.tsx";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
-export default function MoveAlertModal({
+export default function AlertModal({
   open,
   message,
 }: {
@@ -16,16 +23,19 @@ export default function MoveAlertModal({
 
   return (
     <Dialog open={open}>
-      <DialogContent className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-        <p className="text-center text-slate-800 font-medium">{message}</p>
-        <div className="flex justify-center">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{message}</DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
           <Button
             onClick={handleConfirm}
             className="bg-slate-800 hover:bg-slate-700"
           >
             확인
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
