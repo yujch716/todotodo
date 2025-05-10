@@ -56,7 +56,7 @@ export default function ChecklistDetail({
   };
 
   return (
-    <div className="p-10 flex gap-8 flex-1 overflow-auto">
+    <div className="p-8 flex gap-8 flex-1 overflow-auto">
       <div className="w-1/2">
         <div className="text-xl font-bold">
           {isEditingTitle ? (

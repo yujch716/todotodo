@@ -1,7 +1,9 @@
 import { useState } from "react";
 import type { Checklist } from "../types/checklist";
-import ChecklistSidebar from "../components/Checklist/ChecklistSidebar.tsx";
+//import ChecklistSidebar from "../components/Checklist/ChecklistSidebar.tsx";
 import ChecklistDetail from "../components/Checklist/ChecklistDetail.tsx";
+import HomeSidebar from "@/components/HomeSidebar.tsx";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 
 const sampleChecklists: Checklist[] = [
   {
@@ -75,21 +77,24 @@ export default function HomePage() {
 
   return (
     <div className="flex h-screen">
-      <ChecklistSidebar
-        checklists={checklists}
-        selectedId={selectedChecklistId}
-        onSelect={setSelectedChecklistId}
-        onAddChecklist={handleAddChecklist}
-      />
-      <div className="flex-1">
-        {selectedChecklist && (
-          <ChecklistDetail
-            checklist={selectedChecklist}
-            onToggleItem={toggleItemChecked}
-            onUpdateMemo={handleMemoChange}
-          />
-        )}
-      </div>
+      <SidebarProvider>
+        <HomeSidebar
+          checklists={checklists}
+          selectedId={selectedChecklistId}
+          onSelect={setSelectedChecklistId}
+          onAddChecklist={handleAddChecklist}
+        />
+        <main className="flex-1">
+          <SidebarTrigger />
+          {selectedChecklist && (
+            <ChecklistDetail
+              checklist={selectedChecklist}
+              onToggleItem={toggleItemChecked}
+              onUpdateMemo={handleMemoChange}
+            />
+          )}
+        </main>
+      </SidebarProvider>
     </div>
   );
 }
