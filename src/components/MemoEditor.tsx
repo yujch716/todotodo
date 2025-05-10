@@ -151,7 +151,7 @@ export default function MemoEditor({ memo, onChange }: Props) {
       <div className="p-4 h-[800px] overflow-y-auto">
         <EditorContent
           editor={editor}
-          className="tiptap h-full overflow-y-auto"
+          className="tiptap w-full h-full [&>div]:min-h-full [&>p]:min-h-full"
           style={{ outline: "none", boxShadow: "none" }}
         />
       </div>
