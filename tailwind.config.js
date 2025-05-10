@@ -49,15 +49,25 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--sidebar-background))',
+  				foreground: 'hsl(var(--sidebar-foreground))',
+  				primary: 'hsl(var(--sidebar-primary))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				accent: 'hsl(var(--sidebar-accent))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+  				border: 'hsl(var(--sidebar-border))',
+  				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
-		screens: {
-			sm: '640px',  // sm: 작은 화면 (모바일)
-			md: '768px',  // md: 중간 크기 (태블릿)
-			lg: '1024px', // lg: 큰 화면 (데스크탑)
-			xl: '1280px', // xl: 매우 큰 화면
-			'2xl': '1536px', // 2xl: 더 큰 화면
-		},
+  		screens: {
+  			sm: '640px',
+  			md: '768px',
+  			lg: '1024px',
+  			xl: '1280px',
+  			'2xl': '1536px'
+  		}
   	}
   },
   plugins: [require("tailwindcss-animate")],
