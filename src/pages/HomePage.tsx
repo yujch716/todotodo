@@ -1,9 +1,8 @@
 import { useState } from "react";
 import type { Checklist } from "../types/checklist";
-//import ChecklistSidebar from "../components/Checklist/ChecklistSidebar.tsx";
 import ChecklistDetail from "../components/Checklist/ChecklistDetail.tsx";
 import HomeSidebar from "@/components/HomeSidebar.tsx";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
+import { SidebarProvider } from "@/components/ui/sidebar.tsx";
 
 const sampleChecklists: Checklist[] = [
   {
@@ -85,7 +84,6 @@ export default function HomePage() {
           onAddChecklist={handleAddChecklist}
         />
         <main className="flex-1">
-          <SidebarTrigger />
           {selectedChecklist && (
             <ChecklistDetail
               checklist={selectedChecklist}
