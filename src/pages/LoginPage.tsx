@@ -37,6 +37,19 @@ export default function LoginPage() {
     setIsLoading(false);
   };
 
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}`,
+      },
+    });
+
+    if (error) {
+      console.error("Google login error:", error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
       <LoadingModal open={isLoading} />
@@ -81,6 +94,25 @@ export default function LoginPage() {
               로그인
             </Button>
           </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white px-2 text-gray-500">또는</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleLogin}
+          >
+            <img src="/google-logo.png" alt="Google" className="w-5 h-5" />
+            Google로 로그인
+          </Button>
 
           <p className="text-center text-sm text-gray-600 mt-4">
             계정이 없으신가요?{" "}
