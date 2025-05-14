@@ -11,6 +11,7 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar.tsx";
 import type { Checklist } from "@/types/checklist.ts";
 import {
@@ -18,8 +19,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu.tsx";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { List, MoreHorizontal, Plus } from "lucide-react";
+import {
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
+import { List, LogOut, MoreHorizontal, Plus } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/lib/supabaseClient.ts";
 
 interface Props {
   checklists: Checklist[];
@@ -34,6 +40,8 @@ export default function HomeSidebar({
   onSelect,
   onAddChecklist,
 }: Props) {
+  const [hovered, setHovered] = useState(false);
+
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -48,19 +56,25 @@ export default function HomeSidebar({
     onAddChecklist(title);
   };
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    window.location.href = "/login";
+
+    if (error) {
+      console.error("Error logging out:", error.message);
+    }
+  };
+
   return (
-    <Sidebar
-      side="left"
-      variant="sidebar"
-      collapsible="icon"
-      className={"bg-slate-800"}
-    >
-      <SidebarHeader>
+    <Sidebar side="left" variant="sidebar" collapsible="icon">
+      <SidebarHeader className="bg-slate-100">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <span>🔫 todotodo</span>
-            </SidebarMenuButton>
+            <SidebarTrigger
+              hovered={hovered}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction>
@@ -71,8 +85,9 @@ export default function HomeSidebar({
                 <DropdownMenuItem>
                   <span>Setting</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Log out</span>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut /> Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -80,7 +95,7 @@ export default function HomeSidebar({
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-slate-100">
         <SidebarGroup>
           <SidebarGroupLabel>Add Checklist</SidebarGroupLabel>
           <SidebarGroupAction title="Add Project">
@@ -100,7 +115,7 @@ export default function HomeSidebar({
                   <SidebarMenuButton asChild>
                     <button
                       className={`w-full justify-start
-                        ${item.id === selectedId ? "bg-slate-700 text-white" : ""}
+                        ${item.id === selectedId ? "bg-slate-600 text-white" : ""}
                         hover:bg-slate-300
                       `}
                       onClick={() => onSelect(item.id)}
@@ -115,7 +130,7 @@ export default function HomeSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter />
+      <SidebarFooter className="bg-slate-100" />
     </Sidebar>
   );
 }
