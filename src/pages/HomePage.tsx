@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Checklist } from "../types/checklist";
 import ChecklistDetail from "../components/Checklist/ChecklistDetail.tsx";
 import HomeSidebar from "@/components/HomeSidebar.tsx";
-import { SidebarProvider } from "@/components/ui/sidebar.tsx";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 
 const sampleChecklists: Checklist[] = [
   {
@@ -50,19 +50,6 @@ export default function HomePage() {
     setChecklists(updatedChecklists);
   };
 
-  const nextId = Math.max(0, ...checklists.map((c) => c.id)) + 1;
-  const handleAddChecklist = (title: string) => {
-    const newChecklist: Checklist = {
-      id: nextId,
-      title,
-      items: [],
-      memo: "",
-    };
-
-    setChecklists([...checklists, newChecklist]);
-    setSelectedChecklistId(newChecklist.id);
-  };
-
   const handleMemoChange = (newMemo: string) => {
     if (!selectedChecklist) return;
 
@@ -77,11 +64,11 @@ export default function HomePage() {
   return (
     <div className="flex h-screen">
       <SidebarProvider>
+        <SidebarTrigger />
         <HomeSidebar
           checklists={checklists}
           selectedId={selectedChecklistId}
           onSelect={setSelectedChecklistId}
-          onAddChecklist={handleAddChecklist}
         />
         <main className="flex-1">
           {selectedChecklist && (

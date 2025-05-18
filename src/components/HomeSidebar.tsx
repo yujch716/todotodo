@@ -23,38 +23,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { List, LogOut, MoreHorizontal, Plus } from "lucide-react";
+import { List, LogOut, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
+import CreateChecklistModal from "@/components/CreateChecklistModal.tsx";
 
 interface Props {
   checklists: Checklist[];
   selectedId: number | null;
   onSelect: (id: number) => void;
-  onAddChecklist: (title: string) => void;
 }
 
 export default function HomeSidebar({
   checklists,
   selectedId,
   onSelect,
-  onAddChecklist,
 }: Props) {
   const [hovered, setHovered] = useState(false);
-
-  const getTodayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-
-    return `${year}년 ${month}월 ${day}일`;
-  };
-
-  const handleAddChecklist = () => {
-    const title = getTodayDate();
-    onAddChecklist(title);
-  };
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -99,8 +84,7 @@ export default function HomeSidebar({
         <SidebarGroup>
           <SidebarGroupLabel>Add Checklist</SidebarGroupLabel>
           <SidebarGroupAction title="Add Project">
-            <Plus onClick={handleAddChecklist} />{" "}
-            <span className="sr-only">Add Checklist</span>
+            <CreateChecklistModal />
           </SidebarGroupAction>
         </SidebarGroup>
 
