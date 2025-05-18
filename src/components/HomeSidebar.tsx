@@ -12,7 +12,6 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar.tsx";
-import type { Checklist } from "@/types/checklist.ts";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +25,7 @@ import { List, LogOut, MoreHorizontal } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
 import CreateChecklistModal from "@/components/CreateChecklistModal.tsx";
+import type {ChecklistType} from "@/types/checklist.ts";
 
 interface Props {
   selectedId: string | null;
@@ -33,7 +33,7 @@ interface Props {
 }
 
 export default function HomeSidebar({ selectedId, onSelect }: Props) {
-  const [checklists, setChecklists] = useState<Checklist[]>([]);
+  const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [hovered, setHovered] = useState(false);
 
   const fetchChecklists = useCallback(async () => {

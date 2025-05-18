@@ -1,8 +1,8 @@
 import { Checkbox } from "../ui/checkbox.tsx";
-import type { ChecklistItem as ChecklistItemType } from "../../types/checklist.ts";
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
 import { showCelebration } from "@/lib/effects";
+import type {ChecklistItemType} from "@/types/checklist.ts";
 
 interface Props {
   item: ChecklistItemType;
