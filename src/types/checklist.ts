@@ -1,12 +1,12 @@
-export interface ChecklistItem {
-  id: number;
+export interface ChecklistItemType {
+  id: string;
   content: string;
   is_checked: boolean;
 }
 
-export interface Checklist {
-  id: number;
+export interface ChecklistType {
+  id: string;
   title: string;
-  items: ChecklistItem[];
   memo: string;
+  date: Date;
 }
