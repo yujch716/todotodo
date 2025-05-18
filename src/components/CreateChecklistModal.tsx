@@ -44,7 +44,7 @@ export default function CreateChecklistModal({ onCreated }: Props) {
 
     const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
 
-    const { data, error } = await supabase.from("checklist").insert([
+    const { error } = await supabase.from("checklist").insert([
       {
         title,
         date: formattedDate,
@@ -61,7 +61,6 @@ export default function CreateChecklistModal({ onCreated }: Props) {
       return;
     }
 
-    console.log("CheckList 생성 완료:", data);
     setTitle("");
     setDate(undefined);
     setTags("");
@@ -74,9 +73,10 @@ export default function CreateChecklistModal({ onCreated }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
+      <DialogTrigger className="flex items-center justify-center px-3 py-1.5 rounded-md border bg-slate-600 text-white hover:bg-slate-500">
         <Plus />
       </DialogTrigger>
+
       <DialogContent className="w-full max-w-md mx-4 sm:mx-auto z-50">
         <DialogHeader>
           <DialogTitle>체크리스트 만들기</DialogTitle>

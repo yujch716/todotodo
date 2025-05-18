@@ -3,7 +3,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -24,20 +23,20 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { List, LogOut, MoreHorizontal } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
 import CreateChecklistModal from "@/components/CreateChecklistModal.tsx";
 
 interface Props {
-  selectedId: number | null;
-  onSelect: (id: number) => void;
+  selectedId: string | null;
+  onSelect: (string: string) => void;
 }
 
 export default function HomeSidebar({ selectedId, onSelect }: Props) {
   const [checklists, setChecklists] = useState<Checklist[]>([]);
   const [hovered, setHovered] = useState(false);
 
-  const fetchChecklists = async () => {
+  const fetchChecklists = useCallback(async () => {
     const { data, error } = await supabase
       .from("checklist")
       .select("*")
@@ -53,14 +52,11 @@ export default function HomeSidebar({ selectedId, onSelect }: Props) {
     if (!selectedId && data && data.length > 0) {
       onSelect(data[0].id);
     }
-  };
+  }, [onSelect, selectedId]);
 
   useEffect(() => {
-    async function load() {
-      await fetchChecklists();
-    }
-    void load();
-  }, []);
+    fetchChecklists();
+  }, [fetchChecklists]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -103,10 +99,11 @@ export default function HomeSidebar({ selectedId, onSelect }: Props) {
 
       <SidebarContent className="bg-slate-100">
         <SidebarGroup>
-          <SidebarGroupLabel>Add Checklist</SidebarGroupLabel>
-          <SidebarGroupAction title="Add Project">
-            <CreateChecklistModal onCreated={fetchChecklists} />
-          </SidebarGroupAction>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <CreateChecklistModal onCreated={fetchChecklists} />
+            </SidebarMenu>
+          </SidebarGroupContent>
         </SidebarGroup>
 
         <SidebarGroup>
@@ -120,7 +117,7 @@ export default function HomeSidebar({ selectedId, onSelect }: Props) {
                   <SidebarMenuButton asChild>
                     <button
                       className={`w-full justify-start ${
-                        item.id === selectedId ? "bg-slate-600 text-white" : ""
+                        item.id === selectedId ? "bg-slate-300 " : ""
                       } hover:bg-slate-300`}
                       onClick={() => onSelect(item.id)}
                     >

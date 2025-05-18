@@ -15,55 +15,109 @@ import {
   AlignRight,
   PaintBucket,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { supabase } from "@/lib/supabaseClient.ts";
+import debounce from "lodash.debounce";
 
-interface Props {
-  memo: string;
-  onChange: (value: string) => void;
-}
+export default function MemoPanel() {
+  const [searchParams] = useSearchParams();
+  const checklistId = searchParams.get("id");
+  const [memo, setMemo] = useState("");
+  const [textColor, setTextColor] = useState("#000000");
+  const [fontFamily, setFontFamily] = useState("Arial");
 
-export default function MemoEditor({ memo, onChange }: Props) {
+  const memoRef = useRef("");
+  const hasUnsavedChanges = useRef(false);
+
+  const updateMemo = useCallback(
+    async (newMemo: string) => {
+      if (!checklistId || !hasUnsavedChanges.current) return;
+
+      const { error } = await supabase
+        .from("checklist")
+        .update({ memo: newMemo })
+        .eq("id", checklistId);
+
+      if (error) {
+        console.error("메모 저장 실패:", error.message);
+      } else {
+        hasUnsavedChanges.current = false;
+      }
+    },
+    [checklistId],
+  );
+
+  const debouncedUpdateMemo = useRef(
+    debounce((newMemo: string) => {
+      updateMemo(newMemo);
+    }, 1000),
+  );
+
+  useEffect(() => {
+    debouncedUpdateMemo.current = debounce((newMemo: string) => {
+      updateMemo(newMemo);
+    }, 1000);
+  }, [updateMemo]);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
       Underline,
       TextStyle,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
-      FontFamily.configure({
-        types: ["textStyle"],
-      }),
-      Color.configure({
-        types: ["textStyle"],
-      }),
+      FontFamily.configure({ types: ["textStyle"] }),
+      Color.configure({ types: ["textStyle"] }),
     ],
     content: memo,
     onUpdate({ editor }) {
-      onChange(editor.getHTML());
+      const newMemo = editor.getHTML();
+      setMemo(newMemo);
+      memoRef.current = newMemo;
+      hasUnsavedChanges.current = true;
+      debouncedUpdateMemo.current(newMemo);
     },
   });
 
-  const [fontFamily, setFontFamily] = useState("Arial");
-  const [textColor, setTextColor] = useState("#000000");
+  useEffect(() => {
+    if (!checklistId) return;
+
+    const fetchMemo = async () => {
+      const { data, error } = await supabase
+        .from("checklist")
+        .select("memo")
+        .eq("id", checklistId)
+        .single();
+
+      if (error) {
+        console.error("메모 불러오기 실패:", error.message);
+        return;
+      }
+
+      setMemo(data.memo || "");
+      memoRef.current = data.memo || "";
+      editor?.commands.setContent(data.memo || "");
+    };
+
+    fetchMemo();
+  }, [checklistId, editor]);
 
   useEffect(() => {
-    if (editor && editor.getHTML() !== memo) {
-      editor.commands.setContent(memo);
-    }
-  }, [memo, editor]);
+    const handleBlur = () => {
+      if (hasUnsavedChanges.current) {
+        updateMemo(memoRef.current);
+      }
+    };
 
-  const handleFontFamilyChange = (family: string) => {
-    if (editor) {
-      setFontFamily(family);
-      editor.chain().focus().setFontFamily(family).run(); // setFontFamily 사용
-    }
-  };
+    window.addEventListener("blur", handleBlur);
+    const editorElement = document.querySelector(".tiptap");
+    editorElement?.addEventListener("focusout", handleBlur);
 
-  const handleColorChange = (color: string) => {
-    if (editor) {
-      setTextColor(color);
-      editor.chain().focus().setColor(color).run();
-    }
-  };
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+      editorElement?.removeEventListener("focusout", handleBlur);
+    };
+  }, [updateMemo]);
 
   if (!editor) return null;
 
@@ -157,4 +211,14 @@ export default function MemoEditor({ memo, onChange }: Props) {
       </div>
     </div>
   );
+
+  function handleFontFamilyChange(family: string) {
+    setFontFamily(family);
+    editor?.chain().focus().setFontFamily(family).run();
+  }
+
+  function handleColorChange(color: string) {
+    setTextColor(color);
+    editor?.chain().focus().setColor(color).run();
+  }
 }

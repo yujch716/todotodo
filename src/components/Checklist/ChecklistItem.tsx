@@ -1,44 +1,29 @@
 import { Checkbox } from "../ui/checkbox.tsx";
 import type { ChecklistItem as ChecklistItemType } from "../../types/checklist.ts";
 import { useState, useRef, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient.ts";
 import { showCelebration } from "@/lib/effects";
 
 interface Props {
   item: ChecklistItemType;
-  onToggle: (id: number) => void;
-  onUpdateTitle: (id: number, newTitle: string) => void;
+  onToggle: (id: string) => void;
+  onUpdateContent: (id: string, newContent: string) => void;
   isEditing: boolean;
-  setEditingItemId: (id: number | null) => void;
+  setEditingItemId: (id: string | null) => void;
+  onAddEmptyItem: () => void;
 }
 
 export default function ChecklistItem({
   item,
   onToggle,
-  onUpdateTitle,
+  onUpdateContent,
   isEditing,
   setEditingItemId,
+  onAddEmptyItem,
 }: Props) {
-  const [title, setTitle] = useState(item.title);
+  const [content, setContent] = useState(item.content);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleToggle = () => {
-    if (!item.isChecked) {
-      showCelebration();
-    }
-    onToggle(item.id);
-  };
-
-  const handleSaveTitle = () => {
-    onUpdateTitle(item.id, title.trim());
-    setEditingItemId(null);
-
-    if (title.trim() !== "") {
-      const nextId = item.id + 1;
-      onUpdateTitle(nextId, "");
-      setEditingItemId(nextId);
-    }
-  };
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -46,26 +31,74 @@ export default function ChecklistItem({
     }
   }, [isEditing]);
 
+  const handleToggle = async () => {
+    if (!item.is_checked) {
+      showCelebration();
+    }
+
+    onToggle(item.id);
+  };
+
+  const handleSaveContent = async () => {
+    const trimmed = content.trim();
+
+    if (trimmed === "") {
+      setEditingItemId(null);
+      return;
+    }
+
+    const { error } = await supabase
+      .from("checklist_item")
+      .update({ content: trimmed })
+      .eq("id", item.id);
+
+    if (error) {
+      console.error("항목 내용 업데이트 실패:", error);
+      return;
+    }
+
+    onUpdateContent(item.id, trimmed);
+    setEditingItemId(null);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (
+      (e.key === "Backspace" || e.key === "Delete") &&
+      content.trim() === ""
+    ) {
+      e.preventDefault();
+      onUpdateContent(item.id, "");
+    }
+
+    if (e.key === "Enter") {
+      handleSaveContent();
+      onAddEmptyItem();
+      setEditingItemId(null);
+    }
+  };
+
   return (
-    <div className="w-full">
-      <div className="flex items-center space-x-2 w-full">
-        <Checkbox checked={item.isChecked} onCheckedChange={handleToggle} />
+    <div data-checklist-item="" className="w-full flex items-center space-x-2">
+      <div className="flex-shrink-0 flex-grow-0 basis-1/11">
+        <Checkbox checked={item.is_checked} onCheckedChange={handleToggle} />
+      </div>
+      <div className="flex-grow basis-10/11">
         {isEditing ? (
           <input
             ref={inputRef}
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onBlur={handleSaveTitle}
-            onKeyDown={(e) => e.key === "Enter" && handleSaveTitle()}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            onBlur={handleSaveContent}
+            onKeyDown={handleKeyDown}
             className="w-full border-b border-gray-300 focus:outline-none"
           />
         ) : (
           <span
-            className={`w-full ${item.isChecked ? "line-through text-gray-400" : ""}`}
+            className={`w-full inline-block min-h-[1.25rem] ${item.is_checked ? "line-through text-gray-400" : ""}`}
             onClick={() => setEditingItemId(item.id)}
           >
-            {item.title}
+            {item.content || "\u00A0"}
           </span>
         )}
       </div>
