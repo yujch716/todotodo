@@ -1,9 +1,11 @@
 import { useState } from "react";
 import {
   Dialog,
-  DialogContent, DialogDescription,
+  DialogContent,
+  DialogDescription,
   DialogHeader,
-  DialogTitle, DialogTrigger,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,10 +18,11 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import {Plus} from "lucide-react";
-import {supabase} from "@/lib/supabaseClient.ts";
+import { Plus } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient.ts";
 
 export default function CreateChecklistModal() {
+  const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [tags, setTags] = useState("");
@@ -42,9 +45,9 @@ export default function CreateChecklistModal() {
         title,
         date: formattedDate,
         tags: tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag !== ""),
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== ""),
         user_id: user.id,
       },
     ]);
@@ -58,15 +61,20 @@ export default function CreateChecklistModal() {
     setTitle("");
     setDate(undefined);
     setTags("");
+    setOpen(false);
   };
 
+  const isFormValid = title.trim() !== "" && date !== undefined;
+
   return (
-    <Dialog >
-      <DialogTrigger><Plus /></DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger>
+        <Plus />
+      </DialogTrigger>
       <DialogContent className="w-full max-w-md mx-4 sm:mx-auto z-50">
         <DialogHeader>
           <DialogTitle>체크리스트 만들기</DialogTitle>
-          <DialogDescription/>
+          <DialogDescription />
         </DialogHeader>
         <div className="grid gap-2">
           <div className="grid grid-cols-5 items-center gap-4">
@@ -121,7 +129,9 @@ export default function CreateChecklistModal() {
           </div>
         </div>
         <div className="flex justify-end">
-          <Button onClick={handleSubmit}>만들기</Button>
+          <Button onClick={handleSubmit} disabled={!isFormValid}>
+            만들기
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
