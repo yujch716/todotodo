@@ -6,6 +6,8 @@ const images = [
   "images/company1.png",
   "images/company2.png",
   "images/james-thumb-up.jpg",
+  "images/pengsu1.gif",
+  "images/spongebob.gif",
 ];
 
 export const showRandomImage = () => {
