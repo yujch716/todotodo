@@ -1,15 +1,17 @@
-import type { Checklist } from "@/types/checklist.ts";
 import ChecklistItem from "./ChecklistItem.tsx";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
 import { useSearchParams } from "react-router-dom";
+import EmptyChecklist from "@/components/EmptyChecklist.tsx";
+import type { ChecklistItemType } from "@/types/checklist.ts";
 
 export default function ChecklistPanel() {
   const [searchParams] = useSearchParams();
   const checklistId = searchParams.get("id");
 
   const [title, setTitle] = useState("");
-  const [items, setItems] = useState<Checklist["items"]>([]);
+  const [date, setDate] = useState<Date | null>(null);
+  const [items, setItems] = useState<ChecklistItemType[]>([]);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
 
@@ -19,7 +21,7 @@ export default function ChecklistPanel() {
     const fetchChecklistAndItems = async () => {
       const { data: checklistData, error: checklistError } = await supabase
         .from("checklist")
-        .select("id, title, memo")
+        .select("id, title, memo, date")
         .eq("id", checklistId)
         .single();
 
@@ -29,6 +31,7 @@ export default function ChecklistPanel() {
       }
 
       setTitle(checklistData.title);
+      setDate(checklistData.date);
 
       const { data: itemsData, error: itemsError } = await supabase
         .from("checklist_item")
@@ -168,11 +171,20 @@ export default function ChecklistPanel() {
     createEmptyItem();
   };
 
-  if (!checklistId) return <div className="p-8">체크리스트 ID가 없습니다.</div>;
+  if (!checklistId)
+    return (
+      <div className="p-8">
+        <EmptyChecklist />
+      </div>
+    );
 
   return (
     <>
-      <div className="text-xl font-bold">
+      <div className="text-sm text-gray-500 mb-1">
+        {date ? String(date) : null}
+      </div>
+
+      <div className="pt-2 text-xl font-bold">
         {isEditingTitle ? (
           <input
             value={title}

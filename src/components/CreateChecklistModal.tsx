@@ -121,18 +121,18 @@ export default function CreateChecklistModal({ onCreated }: Props) {
               </PopoverContent>
             </Popover>
           </div>
-          <div className="grid grid-cols-5 items-center gap-4">
-            <Label htmlFor="tags" className="text-left">
-              태그
-            </Label>
-            <Input
-              id="tags"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              className="col-span-4"
-              placeholder="쉼표로 구분 (예: 학교,중요)"
-            />
-          </div>
+          {/*<div className="grid grid-cols-5 items-center gap-4">*/}
+          {/*  <Label htmlFor="tags" className="text-left">*/}
+          {/*    태그*/}
+          {/*  </Label>*/}
+          {/*  <Input*/}
+          {/*    id="tags"*/}
+          {/*    value={tags}*/}
+          {/*    onChange={(e) => setTags(e.target.value)}*/}
+          {/*    className="col-span-4"*/}
+          {/*    placeholder="쉼표로 구분 (예: 학교,중요)"*/}
+          {/*  />*/}
+          {/*</div>*/}
         </div>
         <div className="flex justify-end">
           <Button onClick={handleSubmit} disabled={!isFormValid}>
