@@ -1,7 +1,7 @@
 export interface ChecklistItem {
   id: number;
-  title: string;
-  isChecked: boolean;
+  content: string;
+  is_checked: boolean;
 }
 
 export interface Checklist {

@@ -23,38 +23,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { List, LogOut, MoreHorizontal, Plus } from "lucide-react";
-import { useState } from "react";
+import { List, LogOut, MoreHorizontal } from "lucide-react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
+import CreateChecklistModal from "@/components/CreateChecklistModal.tsx";
 
 interface Props {
-  checklists: Checklist[];
   selectedId: number | null;
   onSelect: (id: number) => void;
-  onAddChecklist: (title: string) => void;
 }
 
-export default function HomeSidebar({
-  checklists,
-  selectedId,
-  onSelect,
-  onAddChecklist,
-}: Props) {
+export default function HomeSidebar({ selectedId, onSelect }: Props) {
+  const [checklists, setChecklists] = useState<Checklist[]>([]);
   const [hovered, setHovered] = useState(false);
 
-  const getTodayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
+  const fetchChecklists = async () => {
+    const { data, error } = await supabase
+      .from("checklist")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    return `${year}년 ${month}월 ${day}일`;
+    if (error) {
+      console.error("Checklist 불러오기 오류:", error);
+      return;
+    }
+
+    setChecklists(data || []);
+
+    if (!selectedId && data && data.length > 0) {
+      onSelect(data[0].id);
+    }
   };
 
-  const handleAddChecklist = () => {
-    const title = getTodayDate();
-    onAddChecklist(title);
-  };
+  useEffect(() => {
+    async function load() {
+      await fetchChecklists();
+    }
+    void load();
+  }, []);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -99,8 +105,7 @@ export default function HomeSidebar({
         <SidebarGroup>
           <SidebarGroupLabel>Add Checklist</SidebarGroupLabel>
           <SidebarGroupAction title="Add Project">
-            <Plus onClick={handleAddChecklist} />{" "}
-            <span className="sr-only">Add Checklist</span>
+            <CreateChecklistModal onCreated={fetchChecklists} />
           </SidebarGroupAction>
         </SidebarGroup>
 
@@ -114,10 +119,9 @@ export default function HomeSidebar({
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton asChild>
                     <button
-                      className={`w-full justify-start
-                        ${item.id === selectedId ? "bg-slate-600 text-white" : ""}
-                        hover:bg-slate-300
-                      `}
+                      className={`w-full justify-start ${
+                        item.id === selectedId ? "bg-slate-600 text-white" : ""
+                      } hover:bg-slate-300`}
                       onClick={() => onSelect(item.id)}
                     >
                       {item.title}

@@ -2,37 +2,59 @@ import type { Checklist } from "@/types/checklist.ts";
 import ChecklistItem from "./ChecklistItem.tsx";
 import { useEffect, useState } from "react";
 import MemoEditor from "@/components/MemoEditor.tsx";
+import { supabase } from "@/lib/supabaseClient.ts";
+import { useSearchParams } from "react-router-dom";
 
-interface Props {
-  checklist: Checklist;
-  onToggleItem: (id: number) => void;
-  onUpdateMemo: (memo: string) => void;
-}
+export default function ChecklistDetail() {
+  const [searchParams] = useSearchParams();
+  const checklistId = searchParams.get("id");
 
-export default function ChecklistDetail({
-  checklist,
-  onToggleItem,
-  onUpdateMemo,
-}: Props) {
-  const [title, setTitle] = useState(checklist.title);
+  const [title, setTitle] = useState("");
+  const [memo, setMemo] = useState("");
+  const [items, setItems] = useState<Checklist["items"]>([]);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<number | null>(null);
 
   useEffect(() => {
-    setTitle(checklist.title);
-  }, [checklist]);
+    if (!checklistId) return;
+
+    const fetchChecklist = async () => {
+      const { data, error } = await supabase
+        .from("checklist")
+        .select(
+          `
+          id,
+          title,
+          memo,
+          items:checklist_item (
+            id,
+            content,
+            is_checked
+          )
+        `,
+        )
+        .eq("id", checklistId)
+        .single();
+
+      if (error || !data) {
+        console.error("Checklist 불러오기 오류:", error?.message);
+        return;
+      }
+
+      setTitle(data.title);
+      setMemo(data.memo);
+      setItems(data.items);
+    };
+
+    fetchChecklist();
+  }, [checklistId]);
 
   const handleTitleSave = () => {
     if (title.trim() !== "") {
       setIsEditingTitle(false);
+      // 필요 시 서버로 업데이트 로직 추가
     }
   };
-
-  const [items, setItems] = useState(checklist.items);
-  const [editingItemId, setEditingItemId] = useState<number | null>(null);
-
-  useEffect(() => {
-    setItems(checklist.items);
-  }, [checklist]);
 
   const onUpdateItemTitle = (id: number, newTitle: string) => {
     setItems((prevItems) => {
@@ -44,7 +66,7 @@ export default function ChecklistDetail({
 
       if (id === prevItems[prevItems.length - 1].id) {
         const newId = Date.now();
-        updatedItems.push({ id: newId, title: "", isChecked: false });
+        updatedItems.push({ id: newId, content: "", is_checked: false });
 
         setTimeout(() => {
           setEditingItemId(newId);
@@ -54,6 +76,21 @@ export default function ChecklistDetail({
       return updatedItems;
     });
   };
+
+  const onToggleItem = (id: number) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, is_checked: !item.is_checked } : item,
+      ),
+    );
+  };
+
+  const onUpdateMemo = (newMemo: string) => {
+    setMemo(newMemo);
+    // 서버 업데이트 로직 필요 시 여기에 추가
+  };
+
+  if (!checklistId) return <div className="p-8">체크리스트 ID가 없습니다.</div>;
 
   return (
     <div className="p-8 flex gap-8 flex-1 overflow-auto">
@@ -93,7 +130,7 @@ export default function ChecklistDetail({
       </div>
 
       <div className="w-1/2">
-        <MemoEditor memo={checklist.memo} onChange={onUpdateMemo} />
+        <MemoEditor memo={memo} onChange={onUpdateMemo} />
       </div>
     </div>
   );
