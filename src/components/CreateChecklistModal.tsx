@@ -21,7 +21,11 @@ import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient.ts";
 
-export default function CreateChecklistModal() {
+interface Props {
+  onCreated: () => void;
+}
+
+export default function CreateChecklistModal({ onCreated }: Props) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -62,6 +66,8 @@ export default function CreateChecklistModal() {
     setDate(undefined);
     setTags("");
     setOpen(false);
+
+    onCreated();
   };
 
   const isFormValid = title.trim() !== "" && date !== undefined;
