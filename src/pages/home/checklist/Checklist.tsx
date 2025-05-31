@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
-import ChecklistPanel from "@/components/Checklist/ChecklistPanel.tsx";
-import MemoPanel from "@/components/Checklist/MemoPanel.tsx";
-import EmptyChecklist from "@/components/EmptyChecklist.tsx";
+import ChecklistPanel from "@/pages/home/checklist/ChecklistPanel.tsx";
+import MemoPanel from "@/pages/home/checklist/MemoPanel.tsx";
+import EmptyChecklist from "@/pages/home/checklist/EmptyChecklist.tsx";
 
 const Checklist = () => {
   const [searchParams] = useSearchParams();

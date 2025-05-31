@@ -2,7 +2,7 @@ import ChecklistItem from "./ChecklistItem.tsx";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
 import { useSearchParams } from "react-router-dom";
-import EmptyChecklist from "@/components/EmptyChecklist.tsx";
+import EmptyChecklist from "@/pages/home/checklist/EmptyChecklist.tsx";
 import type { ChecklistItemType } from "@/types/checklist.ts";
 
 const ChecklistPanel = () => {
@@ -26,7 +26,7 @@ const ChecklistPanel = () => {
         .single();
 
       if (checklistError || !checklistData) {
-        console.error("Checklist 불러오기 오류:", checklistError?.message);
+        console.error("checklist 불러오기 오류:", checklistError?.message);
         return;
       }
 
@@ -40,7 +40,7 @@ const ChecklistPanel = () => {
         .order("created_at", { ascending: true });
 
       if (itemsError || !itemsData) {
-        console.error("Checklist 아이템 불러오기 오류:", itemsError?.message);
+        console.error("checklist 아이템 불러오기 오류:", itemsError?.message);
         return;
       }
 

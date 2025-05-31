@@ -1,19 +1,18 @@
-import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card.tsx";
-import { Label } from "../components/ui/label.tsx";
-import { Input } from "../components/ui/input.tsx";
+import { Button } from "../../components/ui/button.tsx";
+import { Card, CardContent } from "../../components/ui/card.tsx";
+import { Label } from "../../components/ui/label.tsx";
+import { Input } from "../../components/ui/input.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient.ts";
 import LoadingModal from "@/components/LoadingModal.tsx";
-import { Eye, EyeOff } from "lucide-react";
+import PasswordInput from "@/components/PasswordInput.tsx";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -70,22 +69,12 @@ const LoginPage = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">비밀번호</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+              <PasswordInput
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
             {errorMessage && (
               <p className="text-sm text-red-500">{errorMessage}</p>

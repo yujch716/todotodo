@@ -1,7 +1,7 @@
-import HomeSidebar from "@/components/HomeSidebar.tsx";
+import HomeSidebar from "@/pages/home/sidebar/HomeSidebar.tsx";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { useSearchParams } from "react-router-dom";
-import Checklist from "@/components/Checklist/Checklist.tsx";
+import Checklist from "@/pages/home/checklist/Checklist.tsx";
 
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
