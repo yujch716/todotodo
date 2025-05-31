@@ -1,4 +1,4 @@
-import { Checkbox } from "../ui/checkbox.tsx";
+import { Checkbox } from "../../../components/ui/checkbox.tsx";
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
 import { showCelebration } from "@/lib/effects";
