@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import EmptyChecklist from "@/components/EmptyChecklist.tsx";
 import type { ChecklistItemType } from "@/types/checklist.ts";
 
-export default function ChecklistPanel() {
+const ChecklistPanel = () => {
   const [searchParams] = useSearchParams();
   const checklistId = searchParams.get("id");
 
@@ -223,4 +223,6 @@ export default function ChecklistPanel() {
       </div>
     </>
   );
-}
+};
+
+export default ChecklistPanel;

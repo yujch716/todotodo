@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabaseClient";
 import LoadingModal from "@/components/LoadingModal.tsx";
 import AlertModal from "@/components/AlertModal.tsx";
 
-export default function SignUpPage() {
+const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -135,4 +135,6 @@ export default function SignUpPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default SignUpPage;

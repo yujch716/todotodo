@@ -20,7 +20,7 @@ import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient.ts";
 import debounce from "lodash.debounce";
 
-export default function MemoPanel() {
+const MemoPanel = () => {
   const [searchParams] = useSearchParams();
   const checklistId = searchParams.get("id");
   const [memo, setMemo] = useState("");
@@ -221,4 +221,6 @@ export default function MemoPanel() {
     setTextColor(color);
     editor?.chain().focus().setColor(color).run();
   }
-}
+};
+
+export default MemoPanel;

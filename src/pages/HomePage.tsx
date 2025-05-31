@@ -1,9 +1,9 @@
 import HomeSidebar from "@/components/HomeSidebar.tsx";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { useSearchParams } from "react-router-dom";
-import Main from "@/components/Checklist/Checklist.tsx";
+import Checklist from "@/components/Checklist/Checklist.tsx";
 
-export default function HomePage() {
+const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("id");
 
@@ -17,9 +17,11 @@ export default function HomePage() {
         <SidebarTrigger />
         <HomeSidebar selectedId={selectedId} onSelect={handleSelectChecklist} />
         <main className="flex-1">
-          <Main />
+          <Checklist />
         </main>
       </SidebarProvider>
     </div>
   );
-}
+};
+
+export default HomePage;
