@@ -32,7 +32,7 @@ interface Props {
   onSelect: (string: string) => void;
 }
 
-export default function HomeSidebar({ selectedId, onSelect }: Props) {
+ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [hovered, setHovered] = useState(false);
 
@@ -135,3 +135,5 @@ export default function HomeSidebar({ selectedId, onSelect }: Props) {
     </Sidebar>
   );
 }
+
+export default HomeSidebar;
