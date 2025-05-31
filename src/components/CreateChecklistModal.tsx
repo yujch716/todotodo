@@ -25,7 +25,7 @@ interface Props {
   onCreated: () => void;
 }
 
-export default function CreateChecklistModal({ onCreated }: Props) {
+const CreateChecklistModal = ({ onCreated }: Props) => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -142,4 +142,6 @@ export default function CreateChecklistModal({ onCreated }: Props) {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default CreateChecklistModal;

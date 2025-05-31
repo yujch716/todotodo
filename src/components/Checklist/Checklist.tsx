@@ -3,7 +3,7 @@ import ChecklistPanel from "@/components/Checklist/ChecklistPanel.tsx";
 import MemoPanel from "@/components/Checklist/MemoPanel.tsx";
 import EmptyChecklist from "@/components/EmptyChecklist.tsx";
 
-export default function Main() {
+const Checklist = () => {
   const [searchParams] = useSearchParams();
   const checklistId = searchParams.get("id");
 
@@ -25,4 +25,6 @@ export default function Main() {
       </div>
     </div>
   );
-}
+};
+
+export default Checklist;

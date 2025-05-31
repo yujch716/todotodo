@@ -9,14 +9,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
 import { DialogTitle } from "@radix-ui/react-dialog";
 
-export default function AlertModal({
-  open,
-  message,
-}: {
+interface AlertModalProps {
   open: boolean;
   message: string;
-}) {
+}
+
+const AlertModal = ({ open, message }: AlertModalProps) => {
   const navigate = useNavigate();
+
   const handleConfirm = () => {
     navigate("/login");
   };
@@ -26,7 +26,7 @@ export default function AlertModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{message}</DialogTitle>
-          <DialogDescription></DialogDescription>
+          <DialogDescription />
         </DialogHeader>
         <DialogFooter>
           <Button
@@ -39,4 +39,6 @@ export default function AlertModal({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default AlertModal;

@@ -25,14 +25,14 @@ import { List, LogOut, MoreHorizontal } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
 import CreateChecklistModal from "@/components/CreateChecklistModal.tsx";
-import type {ChecklistType} from "@/types/checklist.ts";
+import type { ChecklistType } from "@/types/checklist.ts";
 
 interface Props {
   selectedId: string | null;
   onSelect: (string: string) => void;
 }
 
-export default function HomeSidebar({ selectedId, onSelect }: Props) {
+const HomeSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [hovered, setHovered] = useState(false);
 
@@ -134,4 +134,6 @@ export default function HomeSidebar({ selectedId, onSelect }: Props) {
       <SidebarFooter className="bg-slate-100" />
     </Sidebar>
   );
-}
+};
+
+export default HomeSidebar;

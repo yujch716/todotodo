@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabaseClient.ts";
 import LoadingModal from "@/components/LoadingModal.tsx";
 import { Eye, EyeOff } from "lucide-react";
 
-export default function LoginPage() {
+const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -127,4 +127,6 @@ export default function LoginPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default LoginPage;

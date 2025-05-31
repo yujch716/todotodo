@@ -2,7 +2,7 @@ import { Checkbox } from "../ui/checkbox.tsx";
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient.ts";
 import { showCelebration } from "@/lib/effects";
-import type {ChecklistItemType} from "@/types/checklist.ts";
+import type { ChecklistItemType } from "@/types/checklist.ts";
 
 interface Props {
   item: ChecklistItemType;
@@ -13,14 +13,14 @@ interface Props {
   onAddEmptyItem: () => void;
 }
 
-export default function ChecklistItem({
+const ChecklistItem = ({
   item,
   onToggle,
   onUpdateContent,
   isEditing,
   setEditingItemId,
   onAddEmptyItem,
-}: Props) {
+}: Props) => {
   const [content, setContent] = useState(item.content);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -104,4 +104,6 @@ export default function ChecklistItem({
       </div>
     </div>
   );
-}
+};
+
+export default ChecklistItem;
