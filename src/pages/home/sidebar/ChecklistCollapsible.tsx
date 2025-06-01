@@ -1,4 +1,3 @@
-// ChecklistCollapsible.tsx
 import {
   Collapsible,
   CollapsibleContent,
@@ -27,43 +26,49 @@ const ChecklistCollapsible = ({
   onSelect,
   isOpen,
   onOpenChange,
-}: Props) => (
-  <Collapsible
-    open={isOpen}
-    onOpenChange={onOpenChange}
-    className="group/collapsible"
-  >
-    <SidebarMenuItem>
-      <CollapsibleTrigger asChild>
-        <SidebarMenuButton className="flex items-center justify-between w-full">
-          <div className="flex items-center">
-            <List className="mr-2" />
-            Checklist
-          </div>
+}: Props) => {
+  const handleSelectChecklist = (id: string) => {
+    onSelect(id);
+  };
+
+  return (
+      <Collapsible
+          open={isOpen}
+          onOpenChange={onOpenChange}
+          className="group/collapsible"
+      >
+        <SidebarMenuItem>
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton className="flex items-center w-full gap-2">
+              <List className="w-4 h-4"/>
+              <span>Checklist</span>
+              <span className="ml-auto">
           {isOpen ? (
-            <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4"/>
           ) : (
-            <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4"/>
           )}
-        </SidebarMenuButton>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <SidebarMenuSub>
-          {checklists.map((item) => (
-            <SidebarMenuSubItem
-              key={item.id}
-              className={`flex items-center w-full justify-start px-1 py-1 rounded-md text-sm transition-colors ${
-                item.id === selectedId ? "bg-slate-300" : "hover:bg-slate-200"
-              }`}
-              onClick={() => onSelect(item.id)}
-            >
-              {item.title}
-            </SidebarMenuSubItem>
-          ))}
-        </SidebarMenuSub>
-      </CollapsibleContent>
-    </SidebarMenuItem>
-  </Collapsible>
-);
+        </span>
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <SidebarMenuSub>
+              {checklists.map((item) => (
+                  <SidebarMenuSubItem
+                      key={item.id}
+                      className={`flex items-center w-full justify-start px-1 py-1 rounded-md text-sm transition-colors ${
+                          item.id === selectedId ? "bg-slate-300" : "hover:bg-slate-200"
+                      }`}
+                      onClick={() => handleSelectChecklist(item.id)}
+                  >
+                    {item.title}
+                  </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          </CollapsibleContent>
+        </SidebarMenuItem>
+      </Collapsible>
+  );
+};
 
 export default ChecklistCollapsible;

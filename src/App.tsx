@@ -1,24 +1,23 @@
 import "./App.css";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage.tsx";
-import HomePage from "@/pages/home/HomePage.tsx";
 import SignUpPage from "@/pages/auth/SignUpPage.tsx";
 import PrivateRoute from "@/components/PrivateRoute.tsx";
+import Checklist from "@/pages/home/checklist/Checklist.tsx";
+import ChecklistCalendar from "@/pages/home/calendar/Calendar.tsx";
+import Layout from "@/layouts/Layout.tsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <HomePage />{" "}
-            </PrivateRoute>
-          }
-        />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+
+          <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
+              <Route path="/checklist" element={<Checklist />} />
+              <Route path="/calendar" element={<ChecklistCalendar />} />
+          </Route>
       </Routes>
     </BrowserRouter>
   );

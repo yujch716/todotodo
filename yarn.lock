@@ -1296,7 +1296,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-slot@npm:1.2.2, @radix-ui/react-slot@npm:^1.2.2":
+"@radix-ui/react-slot@npm:1.2.2":
   version: 1.2.2
   resolution: "@radix-ui/react-slot@npm:1.2.2"
   dependencies:
@@ -1311,7 +1311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-slot@npm:1.2.3":
+"@radix-ui/react-slot@npm:1.2.3, @radix-ui/react-slot@npm:^1.2.3":
   version: 1.2.3
   resolution: "@radix-ui/react-slot@npm:1.2.3"
   dependencies:
@@ -5900,7 +5900,7 @@ __metadata:
     "@radix-ui/react-label": "npm:^2.1.5"
     "@radix-ui/react-popover": "npm:^1.1.13"
     "@radix-ui/react-separator": "npm:^1.1.6"
-    "@radix-ui/react-slot": "npm:^1.2.2"
+    "@radix-ui/react-slot": "npm:^1.2.3"
     "@radix-ui/react-tooltip": "npm:^1.2.6"
     "@supabase/supabase-js": "npm:^2.49.4"
     "@tiptap/core": "npm:^2.12.0"
