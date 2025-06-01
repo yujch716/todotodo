@@ -7,6 +7,7 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { useCallback, useEffect, useState } from "react";
@@ -15,7 +16,8 @@ import CreateChecklistModal from "@/pages/home/checklist/CreateChecklistModal.ts
 import type { ChecklistType } from "@/types/checklist.ts";
 import UserMenu from "@/pages/home/sidebar/UserMenu.tsx";
 import ChecklistCollapsible from "@/pages/home/sidebar/ChecklistCollapsible.tsx";
-
+import { Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 interface Props {
   selectedId: string | null;
   onSelect: (string: string) => void;
@@ -24,6 +26,8 @@ interface Props {
 const HomeSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [isOpen, setIsOpen] = useState(true);
+
+  const navigate = useNavigate();
 
   const fetchChecklists = useCallback(async () => {
     const { data, error } = await supabase
@@ -38,10 +42,11 @@ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
 
     setChecklists(data || []);
 
-    if (!selectedId && data && data.length > 0) {
-      onSelect(data[0].id);
-    }
   }, [onSelect, selectedId]);
+
+  const handleSelect = (id: string) => {
+    onSelect(id);
+  };
 
   useEffect(() => {
     fetchChecklists();
@@ -69,11 +74,28 @@ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="my-1">
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                    onClick={() => {
+                      navigate({
+                        pathname: "/calendar",
+                        search: "",
+                      }, { replace: true });
+                    }}
+                    className="flex items-center gap-2 cursor-pointer"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>Calendar</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+
+            <SidebarMenu className="my-1">
               <ChecklistCollapsible
                 checklists={checklists}
                 selectedId={selectedId}
-                onSelect={onSelect}
+                onSelect={handleSelect}
                 isOpen={isOpen}
                 onOpenChange={setIsOpen}
               />
