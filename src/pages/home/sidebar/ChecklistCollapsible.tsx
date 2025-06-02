@@ -57,7 +57,7 @@ const ChecklistCollapsible = ({
               <SidebarMenuSubItem
                 key={item.id}
                 className={`flex items-center w-full justify-start px-1 py-1 rounded-md text-sm transition-colors ${
-                  item.id === selectedId ? "bg-slate-300" : "hover:bg-slate-200"
+                  item.id === selectedId ? "bg-sky-200" : "hover:bg-sky-200"
                 }`}
                 onClick={() => handleSelectChecklist(item.id)}
               >

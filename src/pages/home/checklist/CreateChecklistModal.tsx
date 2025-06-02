@@ -53,7 +53,7 @@ const CreateChecklistModal = ({ onCreated }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="flex items-center justify-center px-3 py-1.5 rounded-md border bg-slate-600 text-white hover:bg-slate-500">
+      <DialogTrigger className="flex items-center justify-center px-3 py-1.5 rounded-md border bg-sky-600 text-white hover:bg-sky-500">
         <Plus />
       </DialogTrigger>
 
