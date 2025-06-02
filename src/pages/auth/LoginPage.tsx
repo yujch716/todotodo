@@ -4,9 +4,9 @@ import { Label } from "../../components/ui/label.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabaseClient.ts";
 import LoadingModal from "@/components/LoadingModal.tsx";
 import PasswordInput from "@/components/PasswordInput.tsx";
+import { googleLogin, login } from "@/api/auth.ts";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -20,10 +20,7 @@ const LoginPage = () => {
     setIsLoading(true);
     setErrorMessage("");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await login(email, password);
 
     if (error) {
       setErrorMessage(
@@ -37,12 +34,7 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/calendar`,
-      },
-    });
+    const { error } = await googleLogin();
 
     if (error) {
       console.error("Google login error:", error.message);

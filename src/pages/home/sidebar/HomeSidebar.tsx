@@ -11,13 +11,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient.ts";
 import CreateChecklistModal from "@/pages/home/checklist/CreateChecklistModal.tsx";
 import type { ChecklistType } from "@/types/checklist.ts";
 import UserMenu from "@/pages/home/sidebar/UserMenu.tsx";
 import ChecklistCollapsible from "@/pages/home/sidebar/ChecklistCollapsible.tsx";
 import { Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { fetchChecklists } from "@/api/checklist.ts";
+
 interface Props {
   selectedId: string | null;
   onSelect: (string: string) => void;
@@ -29,28 +30,18 @@ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
 
   const navigate = useNavigate();
 
-  const fetchChecklists = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("checklist")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("checklist 불러오기 오류:", error);
-      return;
-    }
-
-    setChecklists(data || []);
-
-  }, [onSelect, selectedId]);
+  const loadChecklists = useCallback(async () => {
+    const data = await fetchChecklists();
+    setChecklists(data);
+  }, []);
 
   const handleSelect = (id: string) => {
     onSelect(id);
   };
 
   useEffect(() => {
-    fetchChecklists();
-  }, [fetchChecklists]);
+    loadChecklists();
+  }, [loadChecklists]);
 
   return (
     <Sidebar side="left" variant="sidebar" collapsible="icon">
@@ -77,13 +68,16 @@ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
             <SidebarMenu className="my-1">
               <SidebarMenuItem>
                 <SidebarMenuButton
-                    onClick={() => {
-                      navigate({
+                  onClick={() => {
+                    navigate(
+                      {
                         pathname: "/calendar",
                         search: "",
-                      }, { replace: true });
-                    }}
-                    className="flex items-center gap-2 cursor-pointer"
+                      },
+                      { replace: true },
+                    );
+                  }}
+                  className="flex items-center gap-2 cursor-pointer"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>Calendar</span>

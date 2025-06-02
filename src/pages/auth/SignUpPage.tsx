@@ -3,10 +3,11 @@ import { Label } from "@/components/ui/label.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient.ts";
 import LoadingModal from "@/components/LoadingModal.tsx";
 import AlertModal from "@/components/AlertModal.tsx";
 import PasswordInput from "@/components/PasswordInput";
+import { signUp } from "@/api/auth.ts";
+import { upsertUserProfile } from "@/api/profile.ts";
 
 const SignUpPage = () => {
   const [email, setEmail] = useState("");
@@ -27,22 +28,19 @@ const SignUpPage = () => {
 
     setIsLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
+    const { data, error } = await signUp(email, password);
 
     if (error) {
       setErrorMessage(error.message);
       setIsLoading(false);
     } else {
       const user = data.user;
-      await supabase
-        .from("user_profile")
-        .upsert([{ id: user?.id, name: name }]);
+      if (user?.id) {
+        await upsertUserProfile(user.id, name);
 
-      setIsLoading(false);
-      setIsSuccess(true);
+        setIsLoading(false);
+        setIsSuccess(true);
+      }
     }
   };
 

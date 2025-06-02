@@ -19,7 +19,7 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils.ts";
 import { Plus } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient.ts";
+import { createChecklist } from "@/api/checklist.ts";
 
 interface Props {
   onCreated: () => void;
@@ -32,34 +32,14 @@ const CreateChecklistModal = ({ onCreated }: Props) => {
   const [tags, setTags] = useState("");
 
   const handleSubmit = async () => {
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
+    const parsedTags = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag !== "");
 
-    if (userError || !user) {
-      console.error("유저 정보를 가져오지 못했어요:", userError);
-      return;
-    }
+    if (!date) return;
 
-    const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
-
-    const { error } = await supabase.from("checklist").insert([
-      {
-        title,
-        date: formattedDate,
-        tags: tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag !== ""),
-        user_id: user.id,
-      },
-    ]);
-
-    if (error) {
-      console.error("CheckList 생성 오류:", error);
-      return;
-    }
+    await createChecklist(title, date, parsedTags);
 
     setTitle("");
     setDate(undefined);
