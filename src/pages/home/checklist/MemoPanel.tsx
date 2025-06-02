@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { supabase } from "@/lib/supabaseClient.ts";
 import debounce from "lodash.debounce";
+import { fetchChecklistMemo, updateChecklistMemo } from "@/api/checklist.ts";
 
 const MemoPanel = () => {
   const [searchParams] = useSearchParams();
@@ -34,15 +34,11 @@ const MemoPanel = () => {
     async (newMemo: string) => {
       if (!checklistId || !hasUnsavedChanges.current) return;
 
-      const { error } = await supabase
-        .from("checklist")
-        .update({ memo: newMemo })
-        .eq("id", checklistId);
-
-      if (error) {
-        console.error("메모 저장 실패:", error.message);
-      } else {
+      try {
+        await updateChecklistMemo(checklistId, newMemo);
         hasUnsavedChanges.current = false;
+      } catch (error) {
+        console.error("메모 저장 실패:", error);
       }
     },
     [checklistId],
@@ -83,20 +79,11 @@ const MemoPanel = () => {
     if (!checklistId) return;
 
     const fetchMemo = async () => {
-      const { data, error } = await supabase
-        .from("checklist")
-        .select("memo")
-        .eq("id", checklistId)
-        .single();
+      const memo = await fetchChecklistMemo(checklistId);
 
-      if (error) {
-        console.error("메모 불러오기 실패:", error.message);
-        return;
-      }
-
-      setMemo(data.memo || "");
-      memoRef.current = data.memo || "";
-      editor?.commands.setContent(data.memo || "");
+      setMemo(memo || "");
+      memoRef.current = memo || "";
+      editor?.commands.setContent(memo || "");
     };
 
     fetchMemo();

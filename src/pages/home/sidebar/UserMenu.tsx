@@ -1,7 +1,6 @@
 import { SidebarMenuAction, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { LogOut, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient.ts";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,12 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
+import { logout } from "@/api/auth.ts";
 
 const UserMenu = () => {
   const [hovered, setHovered] = useState(false);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await logout();
     if (error) {
       console.error("Logout error:", error.message);
       return;

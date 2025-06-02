@@ -1,9 +1,16 @@
 import ChecklistItem from "./ChecklistItem.tsx";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient.ts";
 import { useSearchParams } from "react-router-dom";
 import EmptyChecklist from "@/pages/home/checklist/EmptyChecklist.tsx";
 import type { ChecklistItemType } from "@/types/checklist.ts";
+import { fetchChecklistById, updateChecklistTitle } from "@/api/checklist.ts";
+import {
+  createChecklistItem,
+  deleteChecklistItem,
+  fetchChecklistItems,
+  toggleChecklistItem,
+  updateChecklistItemContent,
+} from "@/api/checklistItem.ts";
 
 const ChecklistPanel = () => {
   const [searchParams] = useSearchParams();
@@ -19,28 +26,18 @@ const ChecklistPanel = () => {
     if (!checklistId) return;
 
     const fetchChecklistAndItems = async () => {
-      const { data: checklistData, error: checklistError } = await supabase
-        .from("checklist")
-        .select("id, title, memo, date")
-        .eq("id", checklistId)
-        .single();
+      const checklistData = await fetchChecklistById(checklistId);
 
-      if (checklistError || !checklistData) {
-        console.error("checklist 불러오기 오류:", checklistError?.message);
+      if (!checklistData) {
         return;
       }
 
       setTitle(checklistData.title);
       setDate(checklistData.date);
 
-      const { data: itemsData, error: itemsError } = await supabase
-        .from("checklist_item")
-        .select("id, content, is_checked, created_at")
-        .eq("checklist_id", checklistId)
-        .order("created_at", { ascending: true });
+      const itemsData = await fetchChecklistItems(checklistId);
 
-      if (itemsError || !itemsData) {
-        console.error("checklist 아이템 불러오기 오류:", itemsError?.message);
+      if (!itemsData) {
         return;
       }
 
@@ -58,15 +55,7 @@ const ChecklistPanel = () => {
       return;
     }
 
-    const { error } = await supabase
-      .from("checklist")
-      .update({ title: trimmedTitle })
-      .eq("id", checklistId);
-
-    if (error) {
-      console.error("제목 업데이트 실패:", error.message);
-      return;
-    }
+    await updateChecklistTitle(checklistId, trimmedTitle);
 
     setIsEditingTitle(false);
   };
@@ -85,26 +74,11 @@ const ChecklistPanel = () => {
       );
     });
 
-    const { error } = await supabase
-      .from("checklist_item")
-      .update({ content: newContent })
-      .eq("id", id);
-
-    if (error) {
-      console.error("아이템 업데이트 실패:", error.message);
-    }
+    await updateChecklistItemContent(id, newContent);
   };
 
   const deleteItem = async (id: string) => {
-    const { error } = await supabase
-      .from("checklist_item")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      console.error("아이템 삭제 실패:", error.message);
-      return;
-    }
+    await deleteChecklistItem(id);
 
     setItems((prevItems) => {
       const index = prevItems.findIndex((item) => item.id === id);
@@ -128,14 +102,7 @@ const ChecklistPanel = () => {
       prev.map((i) => (i.id === id ? { ...i, is_checked: newChecked } : i)),
     );
 
-    const { error } = await supabase
-      .from("checklist_item")
-      .update({ is_checked: newChecked })
-      .eq("id", id);
-
-    if (error) {
-      console.error("체크 상태 업데이트 실패:", error.message);
-    }
+    await toggleChecklistItem(id, newChecked);
   };
 
   const createEmptyItem = async () => {
@@ -143,19 +110,14 @@ const ChecklistPanel = () => {
 
     if (items.some((item) => item.content.trim() === "")) return;
 
-    const { data, error } = await supabase
-      .from("checklist_item")
-      .insert({ checklist_id: checklistId, content: "", is_checked: false })
-      .select()
-      .single();
+    const newItem = await createChecklistItem(checklistId);
 
-    if (error || !data) {
-      console.error("새 항목 생성 실패:", error?.message);
+    if (!newItem) {
       return;
     }
 
-    setItems((prev) => [...prev, data]);
-    setEditingItemId(data.id);
+    setItems((prev) => [...prev, newItem]);
+    setEditingItemId(newItem.id);
   };
 
   const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {

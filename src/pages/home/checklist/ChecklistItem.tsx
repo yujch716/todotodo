@@ -1,8 +1,8 @@
-import { Checkbox } from "../../../components/ui/checkbox.tsx";
+import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useState, useRef, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient.ts";
 import { showCelebration } from "@/lib/effects";
 import type { ChecklistItemType } from "@/types/checklist.ts";
+import { updateChecklistItemContent } from "@/api/checklistItem.ts";
 
 interface Props {
   item: ChecklistItemType;
@@ -40,24 +40,16 @@ const ChecklistItem = ({
   };
 
   const handleSaveContent = async () => {
-    const trimmed = content.trim();
+    const newContent = content.trim();
 
-    if (trimmed === "") {
+    if (newContent === "") {
       setEditingItemId(null);
       return;
     }
 
-    const { error } = await supabase
-      .from("checklist_item")
-      .update({ content: trimmed })
-      .eq("id", item.id);
+    await updateChecklistItemContent(item.id, newContent);
 
-    if (error) {
-      console.error("항목 내용 업데이트 실패:", error);
-      return;
-    }
-
-    onUpdateContent(item.id, trimmed);
+    onUpdateContent(item.id, newContent);
     setEditingItemId(null);
   };
 

@@ -12,15 +12,21 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/" element={<AuthRedirect />} />
+        <Route path="/" element={<AuthRedirect />} />
 
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
 
-          <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
-              <Route path="/checklist" element={<Checklist />} />
-              <Route path="/calendar" element={<ChecklistCalendar />} />
-          </Route>
+        <Route
+          element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }
+        >
+          <Route path="/checklist" element={<Checklist />} />
+          <Route path="/calendar" element={<ChecklistCalendar />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
