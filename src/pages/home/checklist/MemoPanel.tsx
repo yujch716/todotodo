@@ -110,7 +110,7 @@ const MemoPanel = () => {
 
   return (
     <div className="border rounded-lg">
-      <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2">
+      <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-sky-100 p-2">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={editor.isActive("bold") ? "text-blue-500" : ""}

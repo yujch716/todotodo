@@ -45,7 +45,7 @@ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
 
   return (
     <Sidebar side="left" variant="sidebar" collapsible="icon">
-      <SidebarHeader className="bg-slate-100">
+      <SidebarHeader className="bg-sky-100">
         <SidebarMenu>
           <SidebarMenuItem>
             <UserMenu />
@@ -53,7 +53,7 @@ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="bg-slate-100">
+      <SidebarContent className="bg-sky-100">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -98,7 +98,7 @@ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="bg-slate-100" />
+      <SidebarFooter className="bg-sky-100" />
     </Sidebar>
   );
 };
