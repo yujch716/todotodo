@@ -87,7 +87,10 @@ const ChecklistCalendar = () => {
                     <ul className="text-[11px] leading-tight">
                       {titles.map((title, i) => (
                         <Card className="p-1 mb-1">
-                          <li key={i} className="truncate w-full text-muted-foreground">
+                          <li
+                            key={i}
+                            className="truncate w-full text-muted-foreground"
+                          >
                             {title}
                           </li>
                         </Card>
