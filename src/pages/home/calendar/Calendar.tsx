@@ -57,7 +57,7 @@ const ChecklistCalendar = () => {
           table: "w-full border-4 border-sky-100 border-collapse table-fixed",
           head_row: "",
           head_cell:
-            "font-medium text-center text-sm text-muted-foreground bg-sky-100 py-2",
+            "font-medium text-center text-sm bg-sky-100 py-2 font-bold",
           row: "",
           cell: "h-[90px] md:h-[110px] lg:h-[130px] text-sm p-0 relative border-2 border-sky-100 p-2",
           day: "h-full w-full p-1 font-normal flex flex-col items-center justify-start text-sm",
@@ -84,10 +84,10 @@ const ChecklistCalendar = () => {
                 </div>
                 <div className="">
                   {titles.length > 0 && (
-                    <ul className="text-[11px] leading-tight text-muted-foreground">
+                    <ul className="text-[11px] leading-tight">
                       {titles.map((title, i) => (
                         <Card className="p-1 mb-1">
-                          <li key={i} className="truncate w-full">
+                          <li key={i} className="truncate w-full text-muted-foreground">
                             {title}
                           </li>
                         </Card>
