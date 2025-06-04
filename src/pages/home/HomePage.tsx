@@ -1,4 +1,4 @@
-import HomeSidebar from "@/pages/home/sidebar/HomeSidebar.tsx";
+import AppSidebar from "@/pages/home/sidebar/AppSidebar.tsx";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { useSearchParams } from "react-router-dom";
 import Checklist from "@/pages/home/checklist/Checklist.tsx";
@@ -15,7 +15,7 @@ const HomePage = () => {
     <div className="flex h-screen">
       <SidebarProvider>
         <SidebarTrigger />
-        <HomeSidebar selectedId={selectedId} onSelect={handleSelectChecklist} />
+        <AppSidebar selectedId={selectedId} onSelect={handleSelectChecklist} />
         <main className="flex-1">
           <Checklist />
         </main>

@@ -24,7 +24,7 @@ interface Props {
   onSelect: (string: string) => void;
 }
 
-const HomeSidebar = ({ selectedId, onSelect }: Props) => {
+const AppSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [isOpen, setIsOpen] = useState(true);
 
@@ -103,4 +103,4 @@ const HomeSidebar = ({ selectedId, onSelect }: Props) => {
   );
 };
 
-export default HomeSidebar;
+export default AppSidebar;

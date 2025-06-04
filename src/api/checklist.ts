@@ -37,6 +37,18 @@ export const fetchChecklistMemo = async (checklistId: string) => {
   return data.memo || "";
 };
 
+export const fetchChecklistByDate = async (start: Date, end: Date) => {
+  const { data, error } = await supabase
+    .from("checklist")
+    .select("id, title, date")
+    .gte("date", start.toISOString())
+    .lte("date", end.toISOString());
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
 export const createChecklist = async (
   title: string,
   date: Date,
