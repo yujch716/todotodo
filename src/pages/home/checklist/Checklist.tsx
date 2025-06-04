@@ -16,7 +16,7 @@ const Checklist = () => {
   }
 
   return (
-    <div className="p-8 flex gap-8 flex-1 overflow-auto">
+    <div className="flex gap-8 flex-1 overflow-auto">
       <div className="w-1/2">
         <ChecklistPanel />
       </div>
