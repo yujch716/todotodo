@@ -23,9 +23,7 @@ const LoginPage = () => {
     const { error } = await login(email, password);
 
     if (error) {
-      setErrorMessage(
-        "이메일 인증이 완료되지 않았거나, 이메일 또는 비밀번호가 올바르지 않습니다.",
-      );
+      setErrorMessage(error);
     } else {
       navigate("/");
     }
@@ -34,15 +32,11 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = async () => {
-    const { error } = await googleLogin();
-
-    if (error) {
-      console.error("Google login error:", error.message);
-    }
+    await googleLogin();
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <LoadingModal open={isLoading} />
 
       <Card className="w-full max-w-sm sm:max-w-md p-6 shadow-xl">
@@ -71,7 +65,10 @@ const LoginPage = () => {
             {errorMessage && (
               <p className="text-sm text-red-500">{errorMessage}</p>
             )}
-            <Button className="w-full mt-4 bg-slate-800 hover:bg-slate-700">
+            <Button
+              type="submit"
+              className="w-full mt-4 bg-sky-400 hover:bg-sky-300"
+            >
               로그인
             </Button>
           </form>
