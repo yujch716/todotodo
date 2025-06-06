@@ -5,35 +5,57 @@ import { format } from "date-fns";
 export const fetchChecklists = async (): Promise<ChecklistType[]> => {
   const { data, error } = await supabase
     .from("checklist")
-    .select("*")
+    .select(
+      `
+      *,
+      checklist_item (*)
+    `,
+    )
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
 
-  return data ?? [];
+  return (data ?? []).map((checklist) => {
+    const items = checklist.checklist_item || [];
+    const totalCount = items.length;
+    const checkedCount = items.filter(
+        (item: { is_checked: any }) => item.is_checked,
+    ).length;
+
+    return {
+      ...checklist,
+      totalCount,
+      checkedCount,
+    };
+  });
 };
 
-export const fetchChecklistById = async (checklistId: string) => {
+export const fetchChecklistById = async (
+  checklistId: string,
+): Promise<ChecklistType> => {
   const { data, error } = await supabase
     .from("checklist")
-      .select(`
-    id,
-    title,
-    memo,
-    date,
-    checklist_item (
-      id,
-      content,
-      is_checked,
-      created_at
+    .select(
+      `
+    *,
+    checklist_item (*)
+  `,
     )
-  `)
     .eq("id", checklistId)
     .single();
 
   if (error) throw new Error(error.message);
 
-  return data;
+  const totalCount = data.checklist_item.length;
+  const checkedCount = data.checklist_item.filter(
+    (item: { is_checked: any }) => item.is_checked,
+  ).length;
+
+  return {
+    ...data,
+    totalCount,
+    checkedCount,
+  };
 };
 
 export const fetchChecklistMemo = async (checklistId: string) => {
@@ -48,16 +70,36 @@ export const fetchChecklistMemo = async (checklistId: string) => {
   return data.memo || "";
 };
 
-export const fetchChecklistByDate = async (start: Date, end: Date) => {
+export const fetchChecklistByDate = async (
+  start: Date,
+  end: Date,
+): Promise<ChecklistType[]> => {
   const { data, error } = await supabase
     .from("checklist")
-    .select("id, title, date")
+    .select(
+      `
+      *,
+      checklist_item (*)
+    `,
+    )
     .gte("date", start.toISOString())
     .lte("date", end.toISOString());
 
   if (error) throw new Error(error.message);
 
-  return data;
+  return (data ?? []).map((checklist) => {
+    const items = checklist.checklist_item || [];
+    const totalCount = items.length;
+    const checkedCount = items.filter(
+      (item: { is_checked: any }) => item.is_checked,
+    ).length;
+
+    return {
+      ...checklist,
+      totalCount,
+      checkedCount,
+    };
+  });
 };
 
 export const createChecklist = async (
