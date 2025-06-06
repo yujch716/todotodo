@@ -6,7 +6,7 @@ const images = [
   "images/company1.png",
   "images/company2.png",
   "images/james-thumb-up.jpg",
-  "images/pengsu1.gif",
+  "images/pengsu.gif",
   "images/spongebob.gif",
 ];
 
