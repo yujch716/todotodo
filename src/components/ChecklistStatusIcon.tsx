@@ -9,7 +9,6 @@ type Props = {
 export const ChecklistStatusIcon = ({ checkedCount, totalCount }: Props) => {
   let Icon = CircleX;
   let className = "text-red-500 bg-red-100 border-red-500";
-  console.log(checkedCount, totalCount);
 
   if (checkedCount === totalCount && totalCount > 0) {
     Icon = CircleCheck;
