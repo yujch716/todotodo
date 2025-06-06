@@ -1,13 +1,13 @@
 const images = [
-  "/images/leonardo-dicaprio-clapping.gif",
-  "images/lamb-thumbs-up.gif",
-  "images/jim-carrey-thumbs-up.gif",
-  "images/jang-thumb-up.gif",
-  "images/company1.png",
-  "images/company2.png",
-  "images/james-thumb-up.jpg",
-  "images/pengsu.gif",
-  "images/spongebob.gif",
+  "images/effect/leonardo-dicaprio-clapping.gif",
+  "images/effect/lamb-thumbs-up.gif",
+  "images/effect/jim-carrey-thumbs-up.gif",
+  "images/effect/jang-thumb-up.gif",
+  "images/effect/company1.png",
+  "images/effect/company2.png",
+  "images/effect/james-thumb-up.jpg",
+  "images/effect/pengsu.gif",
+  "images/effect/spongebob.gif",
 ];
 
 export const showRandomImage = () => {

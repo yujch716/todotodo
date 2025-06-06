@@ -2,22 +2,13 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { useCallback, useEffect, useState } from "react";
-import CreateChecklistModal from "@/pages/home/checklist/CreateChecklistModal.tsx";
 import type { ChecklistType } from "@/types/checklist.ts";
-import UserMenu from "@/pages/home/sidebar/UserMenu.tsx";
-import ChecklistCollapsible from "@/pages/home/sidebar/ChecklistCollapsible.tsx";
-import { Calendar } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { fetchChecklists } from "@/api/checklist.ts";
+import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
+import SidebarFooterSection from "@/pages/home/sidebar/SidebarFooterSection.tsx";
 
 interface Props {
   selectedId: string | null;
@@ -27,8 +18,6 @@ interface Props {
 const AppSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [isOpen, setIsOpen] = useState(true);
-
-  const navigate = useNavigate();
 
   const loadChecklists = useCallback(async () => {
     const data = await fetchChecklists();
@@ -46,59 +35,21 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
   return (
     <Sidebar side="left" variant="inset" collapsible="icon">
       <SidebarHeader className="bg-sky-100">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <UserMenu />
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <h1 className="text-base font-medium">todotodo</h1>
       </SidebarHeader>
 
       <SidebarContent className="bg-sky-100">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <CreateChecklistModal onCreated={fetchChecklists} />
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="my-1">
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => {
-                    navigate(
-                      {
-                        pathname: "/calendar",
-                        search: "",
-                      },
-                      { replace: true },
-                    );
-                  }}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span>Calendar</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-
-            <SidebarMenu className="my-1">
-              <ChecklistCollapsible
-                checklists={checklists}
-                selectedId={selectedId}
-                onSelect={handleSelect}
-                isOpen={isOpen}
-                onOpenChange={setIsOpen}
-              />
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <SidebarContentSection
+          checklistState={{ checklists, selectedId, isOpen }}
+          onSelect={handleSelect}
+          onOpenChange={setIsOpen}
+          onReload={loadChecklists}
+        />
       </SidebarContent>
 
-      <SidebarFooter className="bg-sky-100" />
+      <SidebarFooter className="bg-sky-100">
+        <SidebarFooterSection />
+      </SidebarFooter>
     </Sidebar>
   );
 };
