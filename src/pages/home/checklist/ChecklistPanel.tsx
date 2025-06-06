@@ -7,7 +7,6 @@ import { fetchChecklistById, updateChecklistTitle } from "@/api/checklist.ts";
 import {
   createChecklistItem,
   deleteChecklistItem,
-  fetchChecklistItems,
   toggleChecklistItem,
   updateChecklistItemContent,
 } from "@/api/checklistItem.ts";
@@ -34,14 +33,7 @@ const ChecklistPanel = () => {
 
       setTitle(checklistData.title);
       setDate(checklistData.date);
-
-      const itemsData = await fetchChecklistItems(checklistId);
-
-      if (!itemsData) {
-        return;
-      }
-
-      setItems(itemsData);
+      setItems(checklistData.checklist_item);
     };
 
     fetchChecklistAndItems();

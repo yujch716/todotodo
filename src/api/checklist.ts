@@ -16,7 +16,18 @@ export const fetchChecklists = async (): Promise<ChecklistType[]> => {
 export const fetchChecklistById = async (checklistId: string) => {
   const { data, error } = await supabase
     .from("checklist")
-    .select("id, title, memo, date")
+      .select(`
+    id,
+    title,
+    memo,
+    date,
+    checklist_item (
+      id,
+      content,
+      is_checked,
+      created_at
+    )
+  `)
     .eq("id", checklistId)
     .single();
 
