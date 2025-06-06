@@ -1,6 +1,5 @@
-import { SidebarMenuAction, SidebarTrigger } from "@/components/ui/sidebar.tsx";
+import { SidebarMenuAction } from "@/components/ui/sidebar.tsx";
 import { LogOut, MoreHorizontal } from "lucide-react";
-import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +10,6 @@ import {
 import { logout } from "@/api/auth.ts";
 
 const UserMenu = () => {
-  const [hovered, setHovered] = useState(false);
-
   const handleLogout = async () => {
     const { error } = await logout();
     if (error) {
@@ -24,11 +21,7 @@ const UserMenu = () => {
 
   return (
     <>
-      <SidebarTrigger
-        hovered={hovered}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      />
+      <h1 className="text-base font-medium">todotodo</h1>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuAction>

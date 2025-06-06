@@ -44,7 +44,7 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
   }, [loadChecklists]);
 
   return (
-    <Sidebar side="left" variant="sidebar" collapsible="icon">
+    <Sidebar side="left" variant="inset" collapsible="icon">
       <SidebarHeader className="bg-sky-100">
         <SidebarMenu>
           <SidebarMenuItem>

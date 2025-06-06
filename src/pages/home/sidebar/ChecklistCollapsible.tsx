@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sidebar.tsx";
 import { ChevronDown, ChevronRight, List } from "lucide-react";
 import type { ChecklistType } from "@/types/checklist.ts";
-import {ChecklistStatusIcon} from "@/components/ChecklistStatusIcon.tsx";
+import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
 
 interface Props {
   checklists: ChecklistType[];
@@ -63,9 +63,10 @@ const ChecklistCollapsible = ({
                 onClick={() => handleSelectChecklist(item.id)}
               >
                 <ChecklistStatusIcon
-                    checkedCount={item.checkedCount}
-                    totalCount={item.totalCount}
-                />{item.title}
+                  checkedCount={item.checkedCount}
+                  totalCount={item.totalCount}
+                />
+                {item.title}
               </SidebarMenuSubItem>
             ))}
           </SidebarMenuSub>

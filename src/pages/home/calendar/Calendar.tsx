@@ -6,10 +6,10 @@ import { Card } from "@/components/ui/card.tsx";
 import type { ChecklistType } from "@/types/checklist.ts";
 import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
 import { format, isSameDay } from "date-fns";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ChecklistCalendar = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -60,25 +60,25 @@ const ChecklistCalendar = () => {
           cell: "h-[90px] md:h-[110px] lg:h-[130px] text-sm p-0 relative border-2 border-sky-100",
           day: "h-full w-full p-1 font-normal flex flex-col items-center justify-start text-sm",
           day_selected: "bg-primary text-white hover:bg-primary/90",
-            day_outside: "text-gray-400",
+          day_outside: "text-gray-400",
         }}
         formatters={{
-            formatWeekdayName: (date) => format(date, "EEE"),
+          formatWeekdayName: (date) => format(date, "EEE"),
         }}
         components={{
           Day: (dayProps: any) => {
             const { date, className, onClick, onKeyDown, onFocus, onBlur } =
               dayProps;
             const checklistsForDate = getChecklistsForDate(date);
-              const isToday = isSameDay(date, new Date());
+            const isToday = isSameDay(date, new Date());
 
             return (
               <div
-                  className={cn(
-                      className,
-                      "flex flex-col h-full p-2",
-                      isToday && "bg-sky-50"
-                  )}
+                className={cn(
+                  className,
+                  "flex flex-col h-full p-2",
+                  isToday && "bg-sky-50",
+                )}
                 onClick={onClick}
                 onKeyDown={onKeyDown}
                 onFocus={onFocus}
@@ -87,11 +87,11 @@ const ChecklistCalendar = () => {
               >
                 <div className="flex pb-2">
                   <span
-                      className={cn(
-                          "text-xs",
-                          isToday &&
-                          "rounded-full border-2 border-sky-200 px-1 bg-sky-200"
-                      )}
+                    className={cn(
+                      "text-xs",
+                      isToday &&
+                        "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
+                    )}
                   >
                     {date.getDate()}
                   </span>
@@ -101,7 +101,11 @@ const ChecklistCalendar = () => {
                     <ul className="text-[11px] leading-tight">
                       {checklistsForDate.map((item, i) => {
                         return (
-                          <Card key={i} className="p-1 mb-1 hover:bg-slate-50" onClick={() => navigate(`/checklist?id=${item.id}`)}>
+                          <Card
+                            key={i}
+                            className="p-1 mb-1 hover:bg-slate-50"
+                            onClick={() => navigate(`/checklist?id=${item.id}`)}
+                          >
                             <li className="truncate w-full text-muted-foreground flex items-center gap-1">
                               <ChecklistStatusIcon
                                 checkedCount={item.checkedCount}

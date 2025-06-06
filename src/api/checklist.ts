@@ -19,7 +19,7 @@ export const fetchChecklists = async (): Promise<ChecklistType[]> => {
     const items = checklist.checklist_item || [];
     const totalCount = items.length;
     const checkedCount = items.filter(
-        (item: { is_checked: any }) => item.is_checked,
+      (item: { is_checked: any }) => item.is_checked,
     ).length;
 
     return {
