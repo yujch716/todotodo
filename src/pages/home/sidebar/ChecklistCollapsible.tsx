@@ -38,9 +38,9 @@ const ChecklistCollapsible = ({
       onOpenChange={onOpenChange}
       className="group/collapsible"
     >
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton className="flex items-center w-full gap-2">
+      <CollapsibleTrigger asChild>
+        <SidebarMenuItem>
+          <SidebarMenuButton className="flex items-center gap-2 hover:bg-sky-200">
             <List className="w-4 h-4" />
             <span>Checklist</span>
             <span className="ml-auto">
@@ -51,27 +51,32 @@ const ChecklistCollapsible = ({
               )}
             </span>
           </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {checklists.map((item) => (
-              <SidebarMenuSubItem
-                key={item.id}
-                className={`truncate gap-1 flex items-center w-full justify-start px-1 py-1 rounded-md text-sm transition-colors ${
-                  item.id === selectedId ? "bg-sky-200" : "hover:bg-sky-200"
-                }`}
-                onClick={() => handleSelectChecklist(item.id)}
-              >
+        </SidebarMenuItem>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <SidebarMenuSub>
+          {checklists.map((item) => (
+            <SidebarMenuSubItem
+              key={item.id}
+              className={`truncate flex flex-col justify-start py-1 px-1 rounded-md text-sm transition-colors ${
+                item.id === selectedId ? "bg-sky-200" : "hover:bg-sky-200"
+              }`}
+              onClick={() => handleSelectChecklist(item.id)}
+            >
+              <div className="flex items-center gap-1">
                 <ChecklistStatusIcon
                   checkedCount={item.checkedCount}
                   totalCount={item.totalCount}
                 />
-                {item.title}
-              </SidebarMenuSubItem>
-            ))}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuItem>
+                <span>{item.title}</span>
+              </div>
+              <span className="text-xs text-gray-500 ml-5">
+                {String(item.date)}
+              </span>
+            </SidebarMenuSubItem>
+          ))}
+        </SidebarMenuSub>
+      </CollapsibleContent>
     </Collapsible>
   );
 };
