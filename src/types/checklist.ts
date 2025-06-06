@@ -9,4 +9,7 @@ export interface ChecklistType {
   title: string;
   memo: string;
   date: Date;
+  checklist_item: ChecklistItemType[];
+  totalCount: number;
+  checkedCount: number;
 }
