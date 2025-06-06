@@ -54,7 +54,7 @@ const ChecklistCollapsible = ({
         </SidebarMenuItem>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <SidebarMenuSub className="border-sky-200">
+        <SidebarMenuSub className="border-l-2 border-sky-200">
           {checklists.map((item) => (
             <SidebarMenuSubItem
               key={item.id}

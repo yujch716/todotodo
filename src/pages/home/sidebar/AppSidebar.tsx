@@ -3,14 +3,12 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { useCallback, useEffect, useState } from "react";
 import type { ChecklistType } from "@/types/checklist.ts";
-import UserMenu from "@/pages/home/sidebar/UserMenu.tsx";
 import { fetchChecklists } from "@/api/checklist.ts";
 import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
+import SidebarFooterSection from "@/pages/home/sidebar/SidebarFooterSection.tsx";
 
 interface Props {
   selectedId: string | null;
@@ -37,11 +35,7 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
   return (
     <Sidebar side="left" variant="inset" collapsible="icon">
       <SidebarHeader className="bg-sky-100">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <UserMenu />
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <h1 className="text-base font-medium">todotodo</h1>
       </SidebarHeader>
 
       <SidebarContent className="bg-sky-100">
@@ -53,7 +47,9 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
         />
       </SidebarContent>
 
-      <SidebarFooter className="bg-sky-100" />
+      <SidebarFooter className="bg-sky-100">
+        <SidebarFooterSection />
+      </SidebarFooter>
     </Sidebar>
   );
 };
