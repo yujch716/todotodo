@@ -3,7 +3,7 @@ const urlsToCache = [
     "/",
     "/index.html",
     "/todotodo-logo.png",
-    "/app-icon.png",
+    "/app-icon-1200px.png",
 ];
 
 // install: 캐시 초기화
