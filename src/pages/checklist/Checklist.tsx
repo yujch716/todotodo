@@ -1,8 +1,7 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ChecklistPanel from "@/pages/checklist/ChecklistPanel.tsx";
 import MemoPanel from "@/pages/checklist/MemoPanel.tsx";
-import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ChecklistItemType } from "@/types/checklist.ts";
 import {
   deleteChecklistById,
@@ -12,8 +11,9 @@ import {
 import { Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress.tsx";
 import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
-import {useChecklistSidebarStore} from "@/store/checklistSidebarStore.ts";
-import {useChecklistDetailStore} from "@/store/checklistDetailStore.ts";
+import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
+import { useChecklistDetailStore } from "@/store/checklistDetailStore.ts";
+import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
 
 const Checklist = () => {
   const navigate = useNavigate();
@@ -28,18 +28,16 @@ const Checklist = () => {
   const [checkedCount, setCheckedCount] = useState(0);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
-  if (!checklistId) {
-    return (
-      <div className="p-8">
-        <EmptyChecklist />
-      </div>
-    );
-  }
+  const refreshChecklist = useChecklistDetailStore(
+    (store) => store.refreshChecklist,
+  );
+  const resetChecklistRefresh = useChecklistDetailStore(
+    (store) => store.resetChecklistRefresh,
+  );
 
-  const refreshChecklist = useChecklistDetailStore((store) => store.refreshChecklist);
-  const resetChecklistRefresh =  useChecklistDetailStore((store) => store.resetChecklistRefresh);
+  const loadChecklist = useCallback(async () => {
+    if (!checklistId) return;
 
-  const loadChecklist = async () => {
     const checklistData = await fetchChecklistById(checklistId);
 
     setTitle(checklistData.title);
@@ -48,22 +46,24 @@ const Checklist = () => {
     setMemo(checklistData.memo || "");
     setTotalCount(checklistData.totalCount);
     setCheckedCount(checklistData.checkedCount);
-  }
+  }, [checklistId]);
 
   useEffect(() => {
-    loadChecklist()
-  }, [checklistId]);
+    loadChecklist();
+  }, [loadChecklist]);
 
   useEffect(() => {
     if (refreshChecklist) {
       loadChecklist();
       resetChecklistRefresh();
     }
-  }, [refreshChecklist]);
+  }, [loadChecklist, refreshChecklist, resetChecklistRefresh]);
 
   const progressValue = totalCount > 0 ? (checkedCount / totalCount) * 100 : 0;
 
-  const triggerSidebarRefresh = useChecklistSidebarStore((state) => state.triggerSidebarRefresh);
+  const triggerSidebarRefresh = useChecklistSidebarStore(
+    (state) => state.triggerSidebarRefresh,
+  );
 
   const handleTitleSave = async () => {
     const trimmedTitle = title.trim();
@@ -81,6 +81,8 @@ const Checklist = () => {
   };
 
   const handleDelete = async () => {
+    if (!checklistId) return;
+
     if (!window.confirm("이 체크리스트를 정말 삭제하시겠습니까?")) return;
 
     try {
@@ -93,6 +95,8 @@ const Checklist = () => {
       alert("삭제에 실패했습니다.");
     }
   };
+
+  if (!checklistId) return <EmptyChecklist />;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">

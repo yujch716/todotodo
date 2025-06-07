@@ -8,8 +8,8 @@ import {
   toggleChecklistItem,
   updateChecklistItemContent,
 } from "@/api/checklistItem.ts";
-import {useChecklistSidebarStore} from "@/store/checklistSidebarStore.ts";
-import {useChecklistDetailStore} from "@/store/checklistDetailStore.ts";
+import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
+import { useChecklistDetailStore } from "@/store/checklistDetailStore.ts";
 
 interface Props {
   checklistId: string;
@@ -20,8 +20,12 @@ interface Props {
 const ChecklistPanel = ({ checklistId, items, setItems }: Props) => {
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
 
-  const triggerSidebarRefresh = useChecklistSidebarStore((state) => state.triggerSidebarRefresh);
-  const triggerChecklistRefresh = useChecklistDetailStore((state) => state.triggerChecklistRefresh);
+  const triggerSidebarRefresh = useChecklistSidebarStore(
+    (state) => state.triggerSidebarRefresh,
+  );
+  const triggerChecklistRefresh = useChecklistDetailStore(
+    (state) => state.triggerChecklistRefresh,
+  );
 
   const onUpdateItemContent = async (id: string, newContent: string) => {
     if (newContent.trim() === "") {

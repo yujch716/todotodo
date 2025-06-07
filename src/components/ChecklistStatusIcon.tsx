@@ -18,7 +18,7 @@ export const ChecklistStatusIcon = ({
   if (totalCount === 0) {
     Icon = Circle;
     className = "text-gray-500 bg-gray-100 border-gray-500";
-  }  else if (checkedCount === totalCount && totalCount > 0) {
+  } else if (checkedCount === totalCount && totalCount > 0) {
     Icon = CircleCheck;
     className = "text-green-500 bg-green-100 border-green-500";
   } else if (checkedCount > 0) {

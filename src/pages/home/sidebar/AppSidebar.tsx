@@ -12,7 +12,7 @@ import type { ChecklistType } from "@/types/checklist.ts";
 import { fetchChecklists } from "@/api/checklist.ts";
 import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
 import SidebarFooterSection from "@/pages/home/sidebar/SidebarFooterSection.tsx";
-import {useChecklistSidebarStore} from "@/store/checklistSidebarStore.ts";
+import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
 
 interface Props {
   selectedId: string | null;
@@ -23,8 +23,12 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const refreshSidebar = useChecklistSidebarStore((state) => state.refreshSidebar);
-  const resetSidebarRefresh = useChecklistSidebarStore((state) => state.resetSidebarRefresh);
+  const refreshSidebar = useChecklistSidebarStore(
+    (state) => state.refreshSidebar,
+  );
+  const resetSidebarRefresh = useChecklistSidebarStore(
+    (state) => state.resetSidebarRefresh,
+  );
 
   const loadChecklists = async () => {
     const data = await fetchChecklists();
@@ -40,7 +44,7 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
       loadChecklists();
       resetSidebarRefresh();
     }
-  }, [refreshSidebar]);
+  }, [refreshSidebar, resetSidebarRefresh]);
 
   const handleSelect = (id: string) => {
     onSelect(id);

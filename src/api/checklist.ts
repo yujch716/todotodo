@@ -94,10 +94,7 @@ export const fetchChecklistByDate = async (
   });
 };
 
-export const createChecklist = async (
-  title: string,
-  date: Date,
-) => {
+export const createChecklist = async (title: string, date: Date) => {
   const {
     data: { user },
     error: userError,
