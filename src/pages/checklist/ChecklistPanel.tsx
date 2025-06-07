@@ -1,7 +1,7 @@
 import ChecklistItem from "./ChecklistItem.tsx";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import EmptyChecklist from "@/pages/home/checklist/EmptyChecklist.tsx";
+import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
 import type { ChecklistItemType } from "@/types/checklist.ts";
 import { fetchChecklistById, updateChecklistTitle } from "@/api/checklist.ts";
 import {

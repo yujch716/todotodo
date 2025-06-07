@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/pages/home/sidebar/AppSidebar.tsx";
-import SiteHeader from "@/pages/home/siteHeader.tsx";
+import SiteHeader from "@/pages/home/SiteHeader.tsx";
 
 const Layout = () => {
   const navigate = useNavigate();

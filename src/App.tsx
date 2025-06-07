@@ -3,8 +3,8 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage.tsx";
 import SignUpPage from "@/pages/auth/SignUpPage.tsx";
 import PrivateRoute from "@/pages/auth/PrivateRoute.tsx";
-import Checklist from "@/pages/home/checklist/Checklist.tsx";
-import ChecklistCalendar from "@/pages/home/calendar/Calendar.tsx";
+import Checklist from "@/pages/checklist/Checklist.tsx";
+import ChecklistCalendar from "@/pages/calendar/Calendar.tsx";
 import Layout from "@/layouts/Layout.tsx";
 import AuthRedirect from "@/pages/auth/AuthRedirect.tsx";
 

@@ -7,7 +7,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { Calendar } from "lucide-react";
-import CreateChecklistModal from "@/pages/home/checklist/CreateChecklistModal.tsx";
+import CreateChecklistModal from "@/pages/checklist/CreateChecklistModal.tsx";
 import ChecklistCollapsible from "@/pages/home/sidebar/ChecklistCollapsible.tsx";
 import { useNavigate } from "react-router-dom";
 import type { ChecklistType } from "@/types/checklist.ts";
