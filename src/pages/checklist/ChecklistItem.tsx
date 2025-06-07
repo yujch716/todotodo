@@ -76,7 +76,8 @@ const ChecklistItem = ({
         <Checkbox
           checked={item.is_checked}
           onCheckedChange={handleToggle}
-          className="shrink-0"
+          className=" shrink-0"
+          data-checklist-item
         />
         <div className="flex-grow">
           {isEditing ? (

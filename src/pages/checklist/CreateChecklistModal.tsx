@@ -22,14 +22,14 @@ import { cn } from "@/lib/utils.ts";
 import { CalendarIcon, Plus } from "lucide-react";
 import { createChecklist } from "@/api/checklist.ts";
 import { DialogClose } from "@radix-ui/react-dialog";
-import {useChecklistStore} from "@/store/checklistStore.ts";
+import {useChecklistSidebarStore} from "@/store/checklistSidebarStore.ts";
 
 const CreateChecklistModal = () => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date>();
 
-  const triggerSidebarRefresh = useChecklistStore((state) => state.triggerSidebarRefresh);
+  const triggerSidebarRefresh = useChecklistSidebarStore((state) => state.triggerSidebarRefresh);
 
   const handleSubmit = async () => {
     if (!date) return;

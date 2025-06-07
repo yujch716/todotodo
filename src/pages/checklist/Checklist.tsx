@@ -12,6 +12,8 @@ import {
 import { Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress.tsx";
 import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
+import {useChecklistSidebarStore} from "@/store/checklistSidebarStore.ts";
+import {useChecklistDetailStore} from "@/store/checklistDetailStore.ts";
 
 const Checklist = () => {
   const navigate = useNavigate();
@@ -34,23 +36,34 @@ const Checklist = () => {
     );
   }
 
+  const refreshChecklist = useChecklistDetailStore((store) => store.refreshChecklist);
+  const resetChecklistRefresh =  useChecklistDetailStore((store) => store.resetChecklistRefresh);
+
+  const loadChecklist = async () => {
+    const checklistData = await fetchChecklistById(checklistId);
+
+    setTitle(checklistData.title);
+    setDate(checklistData.date);
+    setItems(checklistData.checklist_item || []);
+    setMemo(checklistData.memo || "");
+    setTotalCount(checklistData.totalCount);
+    setCheckedCount(checklistData.checkedCount);
+  }
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (!checklistId) return;
-      const checklistData = await fetchChecklistById(checklistId);
-
-      setTitle(checklistData.title);
-      setDate(checklistData.date);
-      setItems(checklistData.checklist_item || []);
-      setMemo(checklistData.memo || "");
-      setTotalCount(checklistData.totalCount);
-      setCheckedCount(checklistData.checkedCount);
-    };
-
-    fetchData();
+    loadChecklist()
   }, [checklistId]);
 
+  useEffect(() => {
+    if (refreshChecklist) {
+      loadChecklist();
+      resetChecklistRefresh();
+    }
+  }, [refreshChecklist]);
+
   const progressValue = totalCount > 0 ? (checkedCount / totalCount) * 100 : 0;
+
+  const triggerSidebarRefresh = useChecklistSidebarStore((state) => state.triggerSidebarRefresh);
 
   const handleTitleSave = async () => {
     const trimmedTitle = title.trim();
@@ -62,16 +75,18 @@ const Checklist = () => {
 
     await updateChecklistTitle(checklistId, trimmedTitle);
 
+    triggerSidebarRefresh();
+
     setIsEditingTitle(false);
   };
 
   const handleDelete = async () => {
-    if (!checklistId) return;
-
     if (!window.confirm("이 체크리스트를 정말 삭제하시겠습니까?")) return;
 
     try {
       await deleteChecklistById(checklistId);
+      triggerSidebarRefresh();
+
       navigate("/calendar");
     } catch (error) {
       console.error("삭제 실패:", error);
