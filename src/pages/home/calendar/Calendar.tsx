@@ -52,12 +52,12 @@ const ChecklistCalendar = () => {
           months: "flex flex-col sm:flex-row gap-4",
           month: "space-y-4",
           caption: "flex justify-between items-center px-2",
-          table: "w-full border-4 border-sky-100 border-collapse table-fixed",
+          table: "w-full border-4 border-slate-200 border-collapse table-fixed",
           head_row: "",
           head_cell:
-            "font-medium text-center text-sm bg-sky-100 py-2 font-bold",
+            "font-medium text-center text-sm bg-slate-200 py-2 font-bold",
           row: "",
-          cell: "h-[90px] md:h-[110px] lg:h-[130px] text-sm p-0 relative border-2 border-sky-100",
+          cell: "h-[90px] md:h-[110px] lg:h-[130px] text-sm p-0 relative border-2 border-slate-200",
           day: "h-full w-full p-1 font-normal flex flex-col items-center justify-start text-sm",
           day_selected: "bg-primary text-white hover:bg-primary/90",
           day_outside: "text-gray-400",
@@ -77,7 +77,7 @@ const ChecklistCalendar = () => {
                 className={cn(
                   className,
                   "flex flex-col h-full p-2",
-                  isToday && "bg-sky-50",
+                  isToday && "bg-slate-100",
                 )}
                 onClick={onClick}
                 onKeyDown={onKeyDown}
@@ -90,7 +90,7 @@ const ChecklistCalendar = () => {
                     className={cn(
                       "text-xs",
                       isToday &&
-                        "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
+                        "rounded-full border-2 border-slate-300 px-1 bg-slate-300",
                     )}
                   >
                     {date.getDate()}
