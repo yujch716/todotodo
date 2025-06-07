@@ -16,14 +16,16 @@ import {
   PaintBucket,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import debounce from "lodash.debounce";
-import { fetchChecklistMemo, updateChecklistMemo } from "@/api/checklist.ts";
+import { updateChecklistMemo } from "@/api/checklist.ts";
 
-const MemoPanel = () => {
-  const [searchParams] = useSearchParams();
-  const checklistId = searchParams.get("id");
-  const [memo, setMemo] = useState("");
+interface Props {
+  checklistId: string;
+  memo: string;
+  setMemo: (value: string) => void;
+}
+
+const MemoPanel = ({ checklistId, memo, setMemo }:Props) => {
   const [textColor, setTextColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("Arial");
 
@@ -87,18 +89,9 @@ const MemoPanel = () => {
   };
 
   useEffect(() => {
-    if (!checklistId) return;
-
-    const fetchMemo = async () => {
-      const memo = await fetchChecklistMemo(checklistId);
-
-      setMemo(memo || "");
-      memoRef.current = memo || "";
-      editor?.commands.setContent(memo || "");
-    };
-
-    fetchMemo();
-  }, [checklistId, editor]);
+    if (!editor) return;
+    editor.commands.setContent(memo);
+  }, [memo, editor]);
 
   useEffect(() => {
     const handleBlur = () => {

@@ -1,9 +1,8 @@
 import ChecklistItem from "./ChecklistItem.tsx";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
 import type { ChecklistItemType } from "@/types/checklist.ts";
-import { fetchChecklistById, updateChecklistTitle } from "@/api/checklist.ts";
+import { updateChecklistTitle } from "@/api/checklist.ts";
 import {
   createChecklistItem,
   deleteChecklistItem,
@@ -11,33 +10,25 @@ import {
   updateChecklistItemContent,
 } from "@/api/checklistItem.ts";
 
-const ChecklistPanel = () => {
-  const [searchParams] = useSearchParams();
-  const checklistId = searchParams.get("id");
+interface Props {
+  checklistId: string;
+  title: string;
+  date: Date | null;
+  items: ChecklistItemType[];
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
+  setItems: React.Dispatch<React.SetStateAction<ChecklistItemType[]>>;
+}
 
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState<Date | null>(null);
-  const [items, setItems] = useState<ChecklistItemType[]>([]);
+const ChecklistPanel = ({
+  checklistId,
+  title,
+  date,
+  items,
+  setTitle,
+  setItems,
+}: Props) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!checklistId) return;
-
-    const fetchChecklistAndItems = async () => {
-      const checklistData = await fetchChecklistById(checklistId);
-
-      if (!checklistData) {
-        return;
-      }
-
-      setTitle(checklistData.title);
-      setDate(checklistData.date);
-      setItems(checklistData.checklist_item);
-    };
-
-    fetchChecklistAndItems();
-  }, [checklistId]);
 
   const handleTitleSave = async () => {
     const trimmedTitle = title.trim();

@@ -58,18 +58,6 @@ export const fetchChecklistById = async (
   };
 };
 
-export const fetchChecklistMemo = async (checklistId: string) => {
-  const { data, error } = await supabase
-    .from("checklist")
-    .select("memo")
-    .eq("id", checklistId)
-    .single();
-
-  if (error) throw new Error(error.message);
-
-  return data.memo || "";
-};
-
 export const fetchChecklistByDate = async (
   start: Date,
   end: Date,
