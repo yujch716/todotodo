@@ -14,19 +14,23 @@ import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
 import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
 import { useChecklistDetailStore } from "@/store/checklistDetailStore.ts";
 import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
+import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 
 const Checklist = () => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
   const checklistId = searchParams.get("id");
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date | null>(null);
   const [items, setItems] = useState<ChecklistItemType[]>([]);
   const [memo, setMemo] = useState("");
   const [totalCount, setTotalCount] = useState(0);
   const [checkedCount, setCheckedCount] = useState(0);
+
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const refreshChecklist = useChecklistDetailStore(
     (store) => store.refreshChecklist,
@@ -83,7 +87,12 @@ const Checklist = () => {
   const handleDelete = async () => {
     if (!checklistId) return;
 
-    if (!window.confirm("이 체크리스트를 정말 삭제하시겠습니까?")) return;
+    setIsAlertOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!checklistId) return;
+    setIsAlertOpen(false);
 
     try {
       await deleteChecklistById(checklistId);
@@ -99,66 +108,78 @@ const Checklist = () => {
   if (!checklistId) return <EmptyChecklist />;
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <header className="flex gap-8 mb-5 items-center">
-        <div className="w-1/2">
-          <div className="text-sm text-gray-500 mb-1">
-            {date ? String(date) : null}
-          </div>
-          <div className="pt-2 text-xl font-bold">
-            {isEditingTitle ? (
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                onBlur={handleTitleSave}
-                onKeyDown={(e) => e.key === "Enter" && handleTitleSave()}
-                className="w-full border-b border-gray-300 focus:outline-none"
-                autoFocus
-              />
-            ) : (
-              <h2
-                className="w-full cursor-pointer"
-                onClick={() => setIsEditingTitle(true)}
-              >
-                {title}
-              </h2>
-            )}
-          </div>
-        </div>
-
-        <div className="w-1/2 flex items-center gap-2">
-          <div className="flex items-center gap-2 flex-grow">
-            <ChecklistStatusIcon
-              checkedCount={checkedCount}
-              totalCount={totalCount}
-              iconClassName="w-6 h-6"
-            />
-            <div className="w-2/3">
-              <Progress value={progressValue} className="border-2" />
+    <>
+      <div className="flex flex-col h-full overflow-hidden">
+        <header className="flex gap-8 mb-5 items-center">
+          <div className="w-1/2">
+            <div className="text-sm text-gray-500 mb-1">
+              {date ? String(date) : null}
+            </div>
+            <div className="pt-2 text-xl font-bold">
+              {isEditingTitle ? (
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onBlur={handleTitleSave}
+                  onKeyDown={(e) => e.key === "Enter" && handleTitleSave()}
+                  className="w-full border-b border-gray-300 focus:outline-none"
+                  autoFocus
+                />
+              ) : (
+                <h2
+                  className="w-full cursor-pointer"
+                  onClick={() => setIsEditingTitle(true)}
+                >
+                  {title}
+                </h2>
+              )}
             </div>
           </div>
-          <div
-            className="flex justify-end cursor-pointer hover:text-red-500"
-            onClick={handleDelete}
-          >
-            <Trash2 />
+
+          <div className="w-1/2 flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-grow">
+              <ChecklistStatusIcon
+                checkedCount={checkedCount}
+                totalCount={totalCount}
+                iconClassName="w-6 h-6"
+              />
+              <div className="w-2/3">
+                <Progress value={progressValue} className="border-2" />
+              </div>
+            </div>
+            <div
+              className="flex justify-end cursor-pointer hover:text-red-500"
+              onClick={handleDelete}
+            >
+              <Trash2 />
+            </div>
+          </div>
+        </header>
+
+        <div className="flex flex-grow overflow-hidden gap-8">
+          <div className="w-1/2 h-full flex flex-col overflow-auto">
+            <ChecklistPanel
+              checklistId={checklistId}
+              items={items}
+              setItems={setItems}
+            />
+          </div>
+          <div className="w-1/2 h-full flex flex-col overflow-auto">
+            <MemoPanel
+              checklistId={checklistId}
+              memo={memo}
+              setMemo={setMemo}
+            />
           </div>
         </div>
-      </header>
-
-      <div className="flex flex-grow overflow-hidden gap-8">
-        <div className="w-1/2 h-full flex flex-col overflow-auto">
-          <ChecklistPanel
-            checklistId={checklistId}
-            items={items}
-            setItems={setItems}
-          />
-        </div>
-        <div className="w-1/2 h-full flex flex-col overflow-auto">
-          <MemoPanel checklistId={checklistId} memo={memo} setMemo={setMemo} />
-        </div>
       </div>
-    </div>
+      <AlertConfirmModal
+        open={isAlertOpen}
+        message="이 체크리스트를 삭제하시겠습니까?"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setIsAlertOpen(false)}
+      />
+    </>
   );
 };
 
