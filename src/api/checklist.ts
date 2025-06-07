@@ -97,7 +97,6 @@ export const fetchChecklistByDate = async (
 export const createChecklist = async (
   title: string,
   date: Date,
-  tags: string[],
 ) => {
   const {
     data: { user },
@@ -114,7 +113,6 @@ export const createChecklist = async (
     {
       title,
       date: formattedDate,
-      tags,
       user_id: user.id,
     },
   ]);
