@@ -19,8 +19,14 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
+import { getUser } from "@/api/user.ts";
+import { useEffect, useState } from "react";
+import type { UserProfile } from "@/types/user.ts";
 
 const SidebarFooterSection = () => {
+  const { isMobile } = useSidebar();
+  const [user, setUser] = useState<UserProfile | null>(null);
+
   const handleLogout = async () => {
     const { error } = await logout();
     if (error) {
@@ -30,13 +36,17 @@ const SidebarFooterSection = () => {
     window.location.href = "/login";
   };
 
-  const user = {
-    email: "이메일",
-    name: "이름",
-    avatar: "images/avatar/cat.png",
-  };
-
-  const { isMobile } = useSidebar();
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      const user = await getUser();
+      setUser({
+        name: user?.user_metadata?.name ?? "사용자",
+        email: user?.email ?? "",
+        avatar_url: user?.user_metadata?.picture ?? "",
+      });
+    };
+    loadUserProfile();
+  }, []);
 
   return (
     <SidebarMenu>
@@ -48,13 +58,13 @@ const SidebarFooterSection = () => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-lg border-2 border-sky-200 hover:bg-sky-50"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={user?.avatar_url} alt={user?.name} />
                 <AvatarFallback className="rounded-lg">X</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{user?.name}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
+                  {user?.email}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
