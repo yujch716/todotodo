@@ -7,7 +7,6 @@ import LoadingModal from "@/components/LoadingModal.tsx";
 import AlertModal from "@/components/AlertModal.tsx";
 import PasswordInput from "@/components/PasswordInput";
 import { signUp } from "@/api/auth.ts";
-import { upsertUserProfile } from "@/api/profile.ts";
 
 const SignUpPage = () => {
   const [email, setEmail] = useState("");
@@ -28,20 +27,14 @@ const SignUpPage = () => {
 
     setIsLoading(true);
 
-    const { data, error } = await signUp(email, password);
+    const { error } = await signUp(email, password);
 
     if (error) {
       setErrorMessage(error.message);
       setIsLoading(false);
-    } else {
-      const user = data.user;
-      if (user?.id) {
-        await upsertUserProfile(user.id, name);
-
-        setIsLoading(false);
-        setIsSuccess(true);
-      }
     }
+
+    setIsSuccess(true);
   };
 
   return (
