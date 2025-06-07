@@ -101,7 +101,7 @@ const ChecklistPanel = ({ checklistId, items, setItems }: Props) => {
   return (
     <>
       <div
-        className="mt-6 space-y-3 p-2 flex-1 overflow-auto min-h-full"
+        className="space-y-3"
         onClick={handlePanelClick}
         style={{ minHeight: "100%" }}
       >

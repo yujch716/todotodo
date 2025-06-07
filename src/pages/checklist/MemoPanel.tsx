@@ -192,7 +192,7 @@ const MemoPanel = ({ checklistId, memo, setMemo }: Props) => {
         </div>
       </div>
 
-      <div className="p-4 h-[800px] overflow-y-auto bg-white">
+      <div className="p-4 h-[750px] overflow-y-auto bg-white">
         <EditorContent
           editor={editor}
           className="tiptap w-full h-full [&>div]:min-h-full [&>p]:min-h-full"
