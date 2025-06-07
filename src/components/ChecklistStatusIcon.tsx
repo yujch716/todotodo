@@ -1,4 +1,4 @@
-import { CircleCheck, CircleMinus, CircleX } from "lucide-react";
+import { CircleCheck, CircleMinus, CircleX, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -15,7 +15,10 @@ export const ChecklistStatusIcon = ({
   let Icon = CircleX;
   let className = "text-red-500 bg-red-100 border-red-500";
 
-  if (checkedCount === totalCount && totalCount > 0) {
+  if (totalCount === 0) {
+    Icon = Circle;
+    className = "text-gray-500 bg-gray-100 border-gray-500";
+  }  else if (checkedCount === totalCount && totalCount > 0) {
     Icon = CircleCheck;
     className = "text-green-500 bg-green-100 border-green-500";
   } else if (checkedCount > 0) {
