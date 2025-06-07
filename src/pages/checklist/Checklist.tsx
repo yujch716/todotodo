@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import type { ChecklistItemType } from "@/types/checklist.ts";
 import { fetchChecklistById, updateChecklistTitle } from "@/api/checklist.ts";
 import {Trash2} from "lucide-react";
+import {Progress} from "@/components/ui/progress.tsx";
+import {ChecklistStatusIcon} from "@/components/ChecklistStatusIcon.tsx";
 
 const Checklist = () => {
   const [searchParams] = useSearchParams();
@@ -14,6 +16,8 @@ const Checklist = () => {
   const [date, setDate] = useState<Date | null>(null);
   const [items, setItems] = useState<ChecklistItemType[]>([]);
   const [memo, setMemo] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+  const [checkedCount, setCheckedCount] = useState(0);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
   if (!checklistId) {
@@ -28,14 +32,19 @@ const Checklist = () => {
     const fetchData = async () => {
       if (!checklistId) return;
       const checklistData = await fetchChecklistById(checklistId);
+
       setTitle(checklistData.title);
       setDate(checklistData.date);
       setItems(checklistData.checklist_item || []);
       setMemo(checklistData.memo || "");
+      setTotalCount(checklistData.totalCount);
+      setCheckedCount(checklistData.checkedCount);
     };
 
     fetchData();
   }, [checklistId]);
+
+  const progressValue = totalCount > 0 ? (checkedCount / totalCount) * 100 : 0;
 
   const handleTitleSave = async () => {
     const trimmedTitle = title.trim();
@@ -77,8 +86,17 @@ const Checklist = () => {
             )}
           </div>
         </div>
-        <div className="w-1/2 flex justify-end">
-          <Trash2 />
+
+        <div className="w-1/2 flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-grow">
+            <ChecklistStatusIcon checkedCount={checkedCount} totalCount={totalCount} iconClassName="w-6 h-6"/>
+            <div className="w-2/3">
+              <Progress value={progressValue} className="border-2" />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Trash2 />
+          </div>
         </div>
       </header>
 
