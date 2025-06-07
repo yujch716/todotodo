@@ -13,7 +13,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-sky-100 relative">
+    <div className="flex w-screen bg-sky-100 relative">
       <div className="absolute inset-0 bg-sky-100" />
       <SidebarProvider>
         <AppSidebar selectedId={selectedId} onSelect={handleSelectChecklist} />
