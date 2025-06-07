@@ -12,6 +12,7 @@ import type { ChecklistType } from "@/types/checklist.ts";
 import { fetchChecklists } from "@/api/checklist.ts";
 import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
 import SidebarFooterSection from "@/pages/home/sidebar/SidebarFooterSection.tsx";
+import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
 
 interface Props {
   selectedId: string | null;
@@ -22,18 +23,32 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSelect = (id: string) => {
-    onSelect(id);
+  const refreshSidebar = useChecklistSidebarStore(
+    (state) => state.refreshSidebar,
+  );
+  const resetSidebarRefresh = useChecklistSidebarStore(
+    (state) => state.resetSidebarRefresh,
+  );
+
+  const loadChecklists = async () => {
+    const data = await fetchChecklists();
+    setChecklists(data);
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchChecklists();
-      setChecklists(data);
-    };
-
-    fetchData();
+    loadChecklists();
   }, []);
+
+  useEffect(() => {
+    if (refreshSidebar) {
+      loadChecklists();
+      resetSidebarRefresh();
+    }
+  }, [refreshSidebar, resetSidebarRefresh]);
+
+  const handleSelect = (id: string) => {
+    onSelect(id);
+  };
 
   return (
     <Sidebar side="left" variant="inset" collapsible="icon">

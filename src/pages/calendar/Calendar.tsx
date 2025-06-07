@@ -1,12 +1,13 @@
 import { DayPicker } from "react-day-picker";
 import { fetchChecklistByDate } from "@/api/checklist.ts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils.ts";
 import { Card } from "@/components/ui/card.tsx";
 import type { ChecklistType } from "@/types/checklist.ts";
 import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
 import { format, isSameDay } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useChecklistCalendarStore } from "@/store/checklistCalendarStore.ts";
 
 const ChecklistCalendar = () => {
   const navigate = useNavigate();
@@ -14,7 +15,14 @@ const ChecklistCalendar = () => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  useEffect(() => {
+  const refreshCalendar = useChecklistCalendarStore(
+    (state) => state.refreshCalendar,
+  );
+  const resetCalendarRefresh = useChecklistCalendarStore(
+    (state) => state.resetCalendarRefresh,
+  );
+
+  const loadChecklists = useCallback(async () => {
     const start = new Date(
       currentMonth.getFullYear(),
       currentMonth.getMonth(),
@@ -26,13 +34,20 @@ const ChecklistCalendar = () => {
       0,
     );
 
-    const fetchChecklists = async () => {
-      const checklist = await fetchChecklistByDate(start, end);
-      setChecklists(checklist);
-    };
-
-    fetchChecklists();
+    const data = await fetchChecklistByDate(start, end);
+    setChecklists(data);
   }, [currentMonth]);
+
+  useEffect(() => {
+    loadChecklists();
+  }, [loadChecklists]);
+
+  useEffect(() => {
+    if (refreshCalendar) {
+      loadChecklists();
+      resetCalendarRefresh();
+    }
+  }, [refreshCalendar, loadChecklists, resetCalendarRefresh]);
 
   const getChecklistsForDate = (date: Date) => {
     return checklists.filter(

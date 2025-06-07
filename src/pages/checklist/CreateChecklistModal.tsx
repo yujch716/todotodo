@@ -22,26 +22,31 @@ import { cn } from "@/lib/utils.ts";
 import { CalendarIcon, Plus } from "lucide-react";
 import { createChecklist } from "@/api/checklist.ts";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
+import { useChecklistCalendarStore } from "@/store/checklistCalendarStore.ts";
 
 const CreateChecklistModal = () => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
-  const [tags, setTags] = useState("");
+  const [date, setDate] = useState<Date>();
+
+  const triggerSidebarRefresh = useChecklistSidebarStore(
+    (state) => state.triggerSidebarRefresh,
+  );
+  const triggerCalendarRefresh = useChecklistCalendarStore(
+    (state) => state.triggerCalendarRefresh,
+  );
 
   const handleSubmit = async () => {
-    const parsedTags = tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== "");
-
     if (!date) return;
 
-    await createChecklist(title, date, parsedTags);
+    await createChecklist(title, date);
+
+    triggerSidebarRefresh();
+    triggerCalendarRefresh();
 
     setTitle("");
     setDate(undefined);
-    setTags("");
     setOpen(false);
   };
 

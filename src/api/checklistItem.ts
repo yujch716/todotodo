@@ -1,17 +1,5 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 
-export const fetchChecklistItems = async (checklistId: string) => {
-  const { data, error } = await supabase
-    .from("checklist_item")
-    .select("id, content, is_checked, created_at")
-    .eq("checklist_id", checklistId)
-    .order("created_at", { ascending: true });
-
-  if (error) throw new Error(error.message);
-
-  return data;
-};
-
 export const createChecklistItem = async (checklistId: string) => {
   const { data, error } = await supabase
     .from("checklist_item")

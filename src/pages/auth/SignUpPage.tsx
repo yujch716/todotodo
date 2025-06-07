@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
 import LoadingModal from "@/components/LoadingModal.tsx";
-import AlertModal from "@/components/AlertModal.tsx";
+import AlertMoveModal from "@/components/AlertMoveModal.tsx";
 import PasswordInput from "@/components/PasswordInput";
 import { signUp } from "@/api/auth.ts";
 
@@ -40,7 +40,7 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
       <LoadingModal open={isLoading} />
-      <AlertModal
+      <AlertMoveModal
         open={isSuccess}
         message="이메일 인증메일이 발송되었습니다. 메일함을 확인해주세요."
       />

@@ -8,6 +8,8 @@ import {
   toggleChecklistItem,
   updateChecklistItemContent,
 } from "@/api/checklistItem.ts";
+import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
+import { useChecklistDetailStore } from "@/store/checklistDetailStore.ts";
 
 interface Props {
   checklistId: string;
@@ -17,6 +19,13 @@ interface Props {
 
 const ChecklistPanel = ({ checklistId, items, setItems }: Props) => {
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
+
+  const triggerSidebarRefresh = useChecklistSidebarStore(
+    (state) => state.triggerSidebarRefresh,
+  );
+  const triggerChecklistRefresh = useChecklistDetailStore(
+    (state) => state.triggerChecklistRefresh,
+  );
 
   const onUpdateItemContent = async (id: string, newContent: string) => {
     if (newContent.trim() === "") {
@@ -37,6 +46,9 @@ const ChecklistPanel = ({ checklistId, items, setItems }: Props) => {
 
   const deleteItem = async (id: string) => {
     await deleteChecklistItem(id);
+
+    triggerChecklistRefresh();
+    triggerSidebarRefresh();
 
     setItems((prevItems) => {
       const index = prevItems.findIndex((item) => item.id === id);
@@ -61,6 +73,9 @@ const ChecklistPanel = ({ checklistId, items, setItems }: Props) => {
     );
 
     await toggleChecklistItem(id, newChecked);
+
+    triggerChecklistRefresh();
+    triggerSidebarRefresh();
   };
 
   const createEmptyItem = async () => {
@@ -70,9 +85,8 @@ const ChecklistPanel = ({ checklistId, items, setItems }: Props) => {
 
     const newItem = await createChecklistItem(checklistId);
 
-    if (!newItem) {
-      return;
-    }
+    triggerChecklistRefresh();
+    triggerSidebarRefresh();
 
     setItems((prev) => [...prev, newItem]);
     setEditingItemId(newItem.id);
@@ -83,12 +97,15 @@ const ChecklistPanel = ({ checklistId, items, setItems }: Props) => {
     if (
       target.closest("input") ||
       target.closest("textarea") ||
+      target.closest("textarea") ||
       target.closest("[data-checklist-item]")
     ) {
       return;
     }
 
     createEmptyItem();
+
+    triggerSidebarRefresh();
   };
 
   if (!checklistId)
