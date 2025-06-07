@@ -75,6 +75,17 @@ const MemoPanel = () => {
     },
   });
 
+  const handleFontFamilyChange = (family: string) => {
+    setFontFamily(family);
+    editor?.chain().focus().setFontFamily(family).run();
+  };
+
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const color = e.target.value;
+    setTextColor(color);
+    editor?.chain().focus().setColor(color).run();
+  };
+
   useEffect(() => {
     if (!checklistId) return;
 
@@ -110,7 +121,7 @@ const MemoPanel = () => {
 
   return (
     <div className="border rounded-lg">
-      <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-sky-100 p-2">
+      <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={editor.isActive("bold") ? "text-blue-500" : ""}
@@ -176,16 +187,15 @@ const MemoPanel = () => {
         </select>
 
         <div className="flex items-center gap-1">
-          <span className="text-sm">
-            <PaintBucket size={18} />
-          </span>
-          <input
-            type="color"
-            value={textColor}
-            onChange={(e) => handleColorChange(e.target.value)}
-            className="w-6 h-8 p-0 border-0 cursor-pointer"
-            title="Text color"
-          />
+          <label className="cursor-pointer">
+            <PaintBucket size={18} fill={textColor} />
+            <input
+              type="color"
+              value={textColor}
+              onChange={handleColorChange}
+              className="sr-only"
+            />
+          </label>
         </div>
       </div>
 
@@ -198,16 +208,6 @@ const MemoPanel = () => {
       </div>
     </div>
   );
-
-  function handleFontFamilyChange(family: string) {
-    setFontFamily(family);
-    editor?.chain().focus().setFontFamily(family).run();
-  }
-
-  function handleColorChange(color: string) {
-    setTextColor(color);
-    editor?.chain().focus().setColor(color).run();
-  }
 };
 
 export default MemoPanel;
