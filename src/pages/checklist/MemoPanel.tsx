@@ -25,7 +25,7 @@ interface Props {
   setMemo: (value: string) => void;
 }
 
-const MemoPanel = ({ checklistId, memo, setMemo }:Props) => {
+const MemoPanel = ({ checklistId, memo, setMemo }: Props) => {
   const [textColor, setTextColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("Arial");
 
@@ -192,7 +192,7 @@ const MemoPanel = ({ checklistId, memo, setMemo }:Props) => {
         </div>
       </div>
 
-      <div className="p-4 h-[800px] overflow-y-auto">
+      <div className="p-4 h-[800px] overflow-y-auto bg-white">
         <EditorContent
           editor={editor}
           className="tiptap w-full h-full [&>div]:min-h-full [&>p]:min-h-full"

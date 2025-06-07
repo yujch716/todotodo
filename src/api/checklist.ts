@@ -37,11 +37,15 @@ export const fetchChecklistById = async (
     .from("checklist")
     .select(
       `
-    *,
-    checklist_item (*)
-  `,
+        *,
+        checklist_item (
+          *,
+          created_at
+        )
+      `,
     )
     .eq("id", checklistId)
+    .order("created_at", { foreignTable: "checklist_item", ascending: true })
     .single();
 
   if (error) throw new Error(error.message);

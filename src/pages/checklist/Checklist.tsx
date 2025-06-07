@@ -4,7 +4,7 @@ import MemoPanel from "@/pages/checklist/MemoPanel.tsx";
 import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
 import { useEffect, useState } from "react";
 import type { ChecklistItemType } from "@/types/checklist.ts";
-import { fetchChecklistById } from "@/api/checklist.ts";
+import { fetchChecklistById, updateChecklistTitle } from "@/api/checklist.ts";
 
 const Checklist = () => {
   const [searchParams] = useSearchParams();
@@ -13,6 +13,7 @@ const Checklist = () => {
   const [date, setDate] = useState<Date | null>(null);
   const [items, setItems] = useState<ChecklistItemType[]>([]);
   const [memo, setMemo] = useState("");
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
 
   if (!checklistId) {
     return (
@@ -35,24 +36,57 @@ const Checklist = () => {
     fetchData();
   }, [checklistId]);
 
+  const handleTitleSave = async () => {
+    const trimmedTitle = title.trim();
+
+    if (trimmedTitle === "" || !checklistId) {
+      setIsEditingTitle(false);
+      return;
+    }
+
+    await updateChecklistTitle(checklistId, trimmedTitle);
+
+    setIsEditingTitle(false);
+  };
+
   return (
-    <div className="flex gap-8 flex-1 overflow-auto">
-      <div className="w-1/2">
-        <ChecklistPanel
-          checklistId={checklistId}
-          title={title}
-          date={date}
-          items={items}
-          setTitle={setTitle}
-          setItems={setItems}
-        />
-      </div>
-      <div className="w-1/2">
-        <MemoPanel
-          checklistId={checklistId}
-          memo={memo}
-          setMemo={setMemo}
-        />
+    <div className="flex flex-col flex-1 overflow-auto">
+      <header>
+        <div className="text-sm text-gray-500 mb-1">
+          {date ? String(date) : null}
+        </div>
+        <div className="pt-2 text-xl font-bold">
+          {isEditingTitle ? (
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onBlur={handleTitleSave}
+              onKeyDown={(e) => e.key === "Enter" && handleTitleSave()}
+              className="w-full border-b border-gray-300 focus:outline-none"
+              autoFocus
+            />
+          ) : (
+            <h2
+              className="w-full cursor-pointer"
+              onClick={() => setIsEditingTitle(true)}
+            >
+              {title}
+            </h2>
+          )}
+        </div>
+      </header>
+
+      <div className="flex gap-8 flex-1 overflow-auto">
+        <div className="w-1/2">
+          <ChecklistPanel
+            checklistId={checklistId}
+            items={items}
+            setItems={setItems}
+          />
+        </div>
+        <div className="w-1/2">
+          <MemoPanel checklistId={checklistId} memo={memo} setMemo={setMemo} />
+        </div>
       </div>
     </div>
   );

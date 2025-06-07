@@ -21,7 +21,7 @@ const Layout = () => {
           <header>
             <SiteHeader />
           </header>
-          <main className="py-6 px-4 gap-4">
+          <main className="p-6">
             <Outlet />
           </main>
         </SidebarInset>
