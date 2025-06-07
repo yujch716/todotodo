@@ -7,7 +7,11 @@ type Props = {
   iconClassName?: string;
 };
 
-export const ChecklistStatusIcon = ({ checkedCount, totalCount, iconClassName = "w-4 h-4" }: Props) => {
+export const ChecklistStatusIcon = ({
+  checkedCount,
+  totalCount,
+  iconClassName = "w-4 h-4",
+}: Props) => {
   let Icon = CircleX;
   let className = "text-red-500 bg-red-100 border-red-500";
 
