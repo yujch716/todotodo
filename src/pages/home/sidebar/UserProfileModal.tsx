@@ -19,7 +19,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import { Pencil } from "lucide-react";
+import { Pencil, UserRoundCog } from "lucide-react";
 
 const UserProfileModal = () => {
   const [name, setName] = useState("");
@@ -60,7 +60,7 @@ const UserProfileModal = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-            Setting
+            <UserRoundCog /> Setting
           </DropdownMenuItem>
         </DialogTrigger>
         <DialogContent className="w-full max-w-md sm:mx-auto z-50">
