@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -18,8 +19,9 @@ import {
 } from "@/components/ui/popover.tsx";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils.ts";
-import { Plus } from "lucide-react";
+import { CalendarIcon, Plus } from "lucide-react";
 import { createChecklist } from "@/api/checklist.ts";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 interface Props {
   onCreated: () => void;
@@ -53,42 +55,38 @@ const CreateChecklistModal = ({ onCreated }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="flex items-center justify-center px-3 py-1.5 rounded-md border bg-sky-600 text-white hover:bg-sky-500">
-        <Plus />
+      <DialogTrigger>
+        <div className="flex items-center justify-center px-3 py-1.5 rounded-md border bg-sky-600 text-white hover:bg-sky-500">
+          <Plus />
+        </div>
       </DialogTrigger>
 
-      <DialogContent className="w-full max-w-md mx-4 sm:mx-auto z-50">
+      <DialogContent className="max-w-md mx-4 sm:mx-auto z-50">
         <DialogHeader>
           <DialogTitle>체크리스트 만들기</DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <div className="grid gap-2">
-          <div className="grid grid-cols-5 items-center gap-4">
-            <Label htmlFor="title" className="text-left">
-              제목
-            </Label>
+
+        <div className="grid gap-4">
+          <div className="grid gap-3 mb-1">
+            <Label htmlFor="name-1">제목</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="col-span-4"
               placeholder="예: 공부하기"
             />
           </div>
-          <div className="grid grid-cols-5 items-center gap-4">
-            <Label htmlFor="date" className="text-left">
-              날짜
-            </Label>
+          <div className="grid gap-3">
+            <Label htmlFor="username-1">날짜</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full col-span-4 justify-start text-left font-normal",
-                    !date && "text-muted-foreground",
-                  )}
+                  variant={"outline"}
+                  className={cn(!date && "text-muted-foreground")}
                 >
                   {date ? format(date, "yyyy-MM-dd") : "날짜 선택"}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -96,29 +94,21 @@ const CreateChecklistModal = ({ onCreated }: Props) => {
                   mode="single"
                   selected={date}
                   onSelect={setDate}
-                  initialFocus
+                  captionLayout="dropdown"
                 />
               </PopoverContent>
             </Popover>
           </div>
-          {/*<div className="grid grid-cols-5 items-center gap-4">*/}
-          {/*  <Label htmlFor="tags" className="text-left">*/}
-          {/*    태그*/}
-          {/*  </Label>*/}
-          {/*  <Input*/}
-          {/*    id="tags"*/}
-          {/*    value={tags}*/}
-          {/*    onChange={(e) => setTags(e.target.value)}*/}
-          {/*    className="col-span-4"*/}
-          {/*    placeholder="쉼표로 구분 (예: 학교,중요)"*/}
-          {/*  />*/}
-          {/*</div>*/}
         </div>
-        <div className="flex justify-end">
+
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
           <Button onClick={handleSubmit} disabled={!isFormValid}>
-            만들기
+            Save
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
