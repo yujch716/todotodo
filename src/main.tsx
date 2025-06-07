@@ -11,13 +11,12 @@ createRoot(document.getElementById("root")!).render(
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then((reg) => {
-        console.log("✅ Service Worker 등록 성공:", reg.scope);
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('Service Worker registered with scope:', registration.scope);
       })
-      .catch((err) => {
-        console.error("❌ Service Worker 등록 실패:", err);
+      .catch(error => {
+        console.log('Service Worker registration failed:', error);
       });
   });
 }
