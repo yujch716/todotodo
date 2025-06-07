@@ -61,7 +61,7 @@ const CreateChecklistModal = ({ onCreated }: Props) => {
         </div>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md mx-4 sm:mx-auto z-50">
+      <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
           <DialogTitle>체크리스트 만들기</DialogTitle>
           <DialogDescription />

@@ -22,6 +22,7 @@ import {
 import { getUser } from "@/api/user.ts";
 import { useEffect, useState } from "react";
 import type { UserProfile } from "@/types/user.ts";
+import UserProfileModal from "@/pages/home/sidebar/UserProfileModal.tsx";
 
 const SidebarFooterSection = () => {
   const { isMobile } = useSidebar();
@@ -37,7 +38,7 @@ const SidebarFooterSection = () => {
   };
 
   useEffect(() => {
-    const loadUserProfile = async () => {
+    const fetchUser = async () => {
       const user = await getUser();
       setUser({
         name: user?.user_metadata?.name ?? "사용자",
@@ -45,7 +46,7 @@ const SidebarFooterSection = () => {
         avatar_url: user?.user_metadata?.picture ?? "",
       });
     };
-    loadUserProfile();
+    fetchUser();
   }, []);
 
   return (
@@ -59,7 +60,9 @@ const SidebarFooterSection = () => {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user?.avatar_url} alt={user?.name} />
-                <AvatarFallback className="rounded-lg">X</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  <img src="/images/avatar/cat.png" alt="todotodo logo" />
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user?.name}</span>
@@ -72,9 +75,7 @@ const SidebarFooterSection = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent side={isMobile ? "bottom" : "right"} align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <span>Setting</span>
-              </DropdownMenuItem>
+              <UserProfileModal />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
