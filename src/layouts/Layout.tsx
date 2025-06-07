@@ -13,15 +13,15 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-sky-100">
+    <div className="flex h-screen w-screen bg-sky-100 relative">
       <div className="absolute inset-0 bg-sky-100" />
-      <SidebarProvider className="h-full w-full">
+      <SidebarProvider>
         <AppSidebar selectedId={selectedId} onSelect={handleSelectChecklist} />
-        <SidebarInset>
+        <SidebarInset className="flex flex-col h-full">
           <header>
             <SiteHeader />
           </header>
-          <main className="p-6">
+          <main className="flex-1 p-6">
             <Outlet />
           </main>
         </SidebarInset>

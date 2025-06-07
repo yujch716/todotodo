@@ -113,8 +113,8 @@ const MemoPanel = ({ checklistId, memo, setMemo }: Props) => {
   if (!editor) return null;
 
   return (
-    <div className="border rounded-lg">
-      <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2">
+    <div className="flex flex-col h-full border rounded-lg overflow-hidden">
+      <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2 shrink-0">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={editor.isActive("bold") ? "text-blue-500" : ""}
@@ -192,11 +192,14 @@ const MemoPanel = ({ checklistId, memo, setMemo }: Props) => {
         </div>
       </div>
 
-      <div className="p-4 h-[750px] overflow-y-auto bg-white">
+      <div className="flex-grow overflow-y-auto bg-white p-4">
         <EditorContent
           editor={editor}
-          className="tiptap w-full h-full [&>div]:min-h-full [&>p]:min-h-full"
-          style={{ outline: "none", boxShadow: "none" }}
+          className="tiptap h-full [&>div]:min-h-full [&>p]:min-h-full"
+          style={{
+            outline: "none",
+            boxShadow: "none",
+          }}
         />
       </div>
     </div>

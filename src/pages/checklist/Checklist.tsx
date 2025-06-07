@@ -80,7 +80,7 @@ const Checklist = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 overflow-auto">
+    <div className="flex flex-col h-full overflow-hidden">
       <header className="flex gap-8 mb-5 items-center">
         <div className="w-1/2">
           <div className="text-sm text-gray-500 mb-1">
@@ -127,15 +127,15 @@ const Checklist = () => {
         </div>
       </header>
 
-      <div className="flex gap-8 flex-1">
-        <div className="w-1/2 overflow-auto">
+      <div className="flex flex-grow overflow-hidden gap-8">
+        <div className="w-1/2 h-full flex flex-col overflow-auto">
           <ChecklistPanel
             checklistId={checklistId}
             items={items}
             setItems={setItems}
           />
         </div>
-        <div className="w-1/2 overflow-auto">
+        <div className="w-1/2 h-full flex flex-col overflow-auto">
           <MemoPanel checklistId={checklistId} memo={memo} setMemo={setMemo} />
         </div>
       </div>
