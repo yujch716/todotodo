@@ -1,13 +1,17 @@
-import {useNavigate, useSearchParams} from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ChecklistPanel from "@/pages/checklist/ChecklistPanel.tsx";
 import MemoPanel from "@/pages/checklist/MemoPanel.tsx";
 import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
 import { useEffect, useState } from "react";
 import type { ChecklistItemType } from "@/types/checklist.ts";
-import {deleteChecklistById, fetchChecklistById, updateChecklistTitle} from "@/api/checklist.ts";
-import {Trash2} from "lucide-react";
-import {Progress} from "@/components/ui/progress.tsx";
-import {ChecklistStatusIcon} from "@/components/ChecklistStatusIcon.tsx";
+import {
+  deleteChecklistById,
+  fetchChecklistById,
+  updateChecklistTitle,
+} from "@/api/checklist.ts";
+import { Trash2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress.tsx";
+import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
 
 const Checklist = () => {
   const navigate = useNavigate();
@@ -105,12 +109,19 @@ const Checklist = () => {
 
         <div className="w-1/2 flex items-center gap-2">
           <div className="flex items-center gap-2 flex-grow">
-            <ChecklistStatusIcon checkedCount={checkedCount} totalCount={totalCount} iconClassName="w-6 h-6"/>
+            <ChecklistStatusIcon
+              checkedCount={checkedCount}
+              totalCount={totalCount}
+              iconClassName="w-6 h-6"
+            />
             <div className="w-2/3">
               <Progress value={progressValue} className="border-2" />
             </div>
           </div>
-          <div className="flex justify-end cursor-pointer hover:text-red-500" onClick={handleDelete}>
+          <div
+            className="flex justify-end cursor-pointer hover:text-red-500"
+            onClick={handleDelete}
+          >
             <Trash2 />
           </div>
         </div>
