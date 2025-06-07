@@ -22,14 +22,12 @@ interface Props {
   checklistState: ChecklistState;
   onSelect: (id: string) => void;
   onOpenChange: (open: boolean) => void;
-  onReload: () => void;
 }
 
 const SidebarContentSection = ({
   checklistState,
   onSelect,
   onOpenChange,
-  onReload,
 }: Props) => {
   const { checklists, selectedId, isOpen } = checklistState;
   const navigate = useNavigate();
@@ -39,7 +37,7 @@ const SidebarContentSection = ({
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
-            <CreateChecklistModal onCreated={onReload} />
+            <CreateChecklistModal />
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>

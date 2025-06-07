@@ -23,11 +23,7 @@ import { CalendarIcon, Plus } from "lucide-react";
 import { createChecklist } from "@/api/checklist.ts";
 import { DialogClose } from "@radix-ui/react-dialog";
 
-interface Props {
-  onCreated: () => void;
-}
-
-const CreateChecklistModal = ({ onCreated }: Props) => {
+const CreateChecklistModal = () => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -47,8 +43,6 @@ const CreateChecklistModal = ({ onCreated }: Props) => {
     setDate(undefined);
     setTags("");
     setOpen(false);
-
-    onCreated();
   };
 
   const isFormValid = title.trim() !== "" && date !== undefined;

@@ -145,3 +145,12 @@ export const updateChecklistMemo = async (
 
   if (error) throw new Error(error.message);
 };
+
+export const deleteChecklistById =  async (checklistId: string) => {
+  const { error } = await supabase
+    .from("checklist")
+    .delete()
+    .eq("id", checklistId);
+
+  if (error) throw new Error(error.message);
+}

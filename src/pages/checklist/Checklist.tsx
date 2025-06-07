@@ -1,15 +1,17 @@
-import { useSearchParams } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import ChecklistPanel from "@/pages/checklist/ChecklistPanel.tsx";
 import MemoPanel from "@/pages/checklist/MemoPanel.tsx";
 import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
 import { useEffect, useState } from "react";
 import type { ChecklistItemType } from "@/types/checklist.ts";
-import { fetchChecklistById, updateChecklistTitle } from "@/api/checklist.ts";
+import {deleteChecklistById, fetchChecklistById, updateChecklistTitle} from "@/api/checklist.ts";
 import {Trash2} from "lucide-react";
 import {Progress} from "@/components/ui/progress.tsx";
 import {ChecklistStatusIcon} from "@/components/ChecklistStatusIcon.tsx";
 
 const Checklist = () => {
+  const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const checklistId = searchParams.get("id");
   const [title, setTitle] = useState("");
@@ -59,6 +61,20 @@ const Checklist = () => {
     setIsEditingTitle(false);
   };
 
+  const handleDelete = async () => {
+    if (!checklistId) return;
+
+    if (!window.confirm("이 체크리스트를 정말 삭제하시겠습니까?")) return;
+
+    try {
+      await deleteChecklistById(checklistId);
+      navigate("/calendar");
+    } catch (error) {
+      console.error("삭제 실패:", error);
+      alert("삭제에 실패했습니다.");
+    }
+  };
+
   return (
     <div className="flex flex-col flex-1 overflow-auto">
       <header className="flex gap-8 mb-5 items-center">
@@ -94,7 +110,7 @@ const Checklist = () => {
               <Progress value={progressValue} className="border-2" />
             </div>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end cursor-pointer hover:text-red-500" onClick={handleDelete}>
             <Trash2 />
           </div>
         </div>
