@@ -20,7 +20,7 @@ interface Props {
 
 const AppSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const loadChecklists = useCallback(async () => {
     const data = await fetchChecklists();
