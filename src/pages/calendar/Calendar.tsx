@@ -1,7 +1,7 @@
 import { DayPicker } from "react-day-picker";
 import { fetchChecklistByDate } from "@/api/checklist.ts";
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
 import { Card } from "@/components/ui/card.tsx";
 import type { ChecklistType } from "@/types/checklist.ts";
 import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";

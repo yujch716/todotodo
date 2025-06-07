@@ -4,9 +4,10 @@ import { cn } from "@/lib/utils";
 type Props = {
   checkedCount: number;
   totalCount: number;
+  iconClassName?: string;
 };
 
-export const ChecklistStatusIcon = ({ checkedCount, totalCount }: Props) => {
+export const ChecklistStatusIcon = ({ checkedCount, totalCount, iconClassName = "w-4 h-4" }: Props) => {
   let Icon = CircleX;
   let className = "text-red-500 bg-red-100 border-red-500";
 
@@ -20,7 +21,7 @@ export const ChecklistStatusIcon = ({ checkedCount, totalCount }: Props) => {
 
   return (
     <span className={cn("rounded-full flex items-center", className)}>
-      <Icon className="w-4 h-4" />
+      <Icon className={iconClassName} />
     </span>
   );
 };

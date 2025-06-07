@@ -37,11 +37,15 @@ export const fetchChecklistById = async (
     .from("checklist")
     .select(
       `
-    *,
-    checklist_item (*)
-  `,
+        *,
+        checklist_item (
+          *,
+          created_at
+        )
+      `,
     )
     .eq("id", checklistId)
+    .order("created_at", { foreignTable: "checklist_item", ascending: true })
     .single();
 
   if (error) throw new Error(error.message);
@@ -56,18 +60,6 @@ export const fetchChecklistById = async (
     totalCount,
     checkedCount,
   };
-};
-
-export const fetchChecklistMemo = async (checklistId: string) => {
-  const { data, error } = await supabase
-    .from("checklist")
-    .select("memo")
-    .eq("id", checklistId)
-    .single();
-
-  if (error) throw new Error(error.message);
-
-  return data.memo || "";
 };
 
 export const fetchChecklistByDate = async (
@@ -153,3 +145,12 @@ export const updateChecklistMemo = async (
 
   if (error) throw new Error(error.message);
 };
+
+export const deleteChecklistById =  async (checklistId: string) => {
+  const { error } = await supabase
+    .from("checklist")
+    .delete()
+    .eq("id", checklistId);
+
+  if (error) throw new Error(error.message);
+}

@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { showCelebration } from "@/lib/effects";
 import type { ChecklistItemType } from "@/types/checklist.ts";
 import { updateChecklistItemContent } from "@/api/checklistItem.ts";
+import { Card } from "@/components/ui/card.tsx";
 
 interface Props {
   item: ChecklistItemType;
@@ -70,31 +71,37 @@ const ChecklistItem = ({
   };
 
   return (
-    <div data-checklist-item="" className="w-full flex items-center space-x-2">
-      <div className="flex-shrink-0 flex-grow-0 basis-1/11">
-        <Checkbox checked={item.is_checked} onCheckedChange={handleToggle} />
+    <Card className="w-full p-2">
+      <div className="flex items-center gap-2">
+        <Checkbox
+          checked={item.is_checked}
+          onCheckedChange={handleToggle}
+          className="shrink-0"
+        />
+        <div className="flex-grow">
+          {isEditing ? (
+            <input
+              ref={inputRef}
+              type="text"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              onBlur={handleSaveContent}
+              onKeyDown={handleKeyDown}
+              className="w-full border-b border-gray-300 focus:outline-none text-sm leading-6"
+            />
+          ) : (
+            <span
+              onClick={() => setEditingItemId(item.id)}
+              className={`inline-block w-full text-sm leading-6 cursor-text ${
+                item.is_checked ? "line-through text-gray-400" : ""
+              }`}
+            >
+              {item.content || "\u00A0"}
+            </span>
+          )}
+        </div>
       </div>
-      <div className="flex-grow basis-10/11">
-        {isEditing ? (
-          <input
-            ref={inputRef}
-            type="text"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            onBlur={handleSaveContent}
-            onKeyDown={handleKeyDown}
-            className="w-full border-b border-gray-300 focus:outline-none"
-          />
-        ) : (
-          <span
-            className={`w-full inline-block min-h-[1.25rem] ${item.is_checked ? "line-through text-gray-400" : ""}`}
-            onClick={() => setEditingItemId(item.id)}
-          >
-            {item.content || "\u00A0"}
-          </span>
-        )}
-      </div>
-    </div>
+    </Card>
   );
 };
 

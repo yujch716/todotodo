@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ChecklistType } from "@/types/checklist.ts";
 import { fetchChecklists } from "@/api/checklist.ts";
 import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
@@ -20,20 +20,20 @@ interface Props {
 
 const AppSidebar = ({ selectedId, onSelect }: Props) => {
   const [checklists, setChecklists] = useState<ChecklistType[]>([]);
-  const [isOpen, setIsOpen] = useState(true);
-
-  const loadChecklists = useCallback(async () => {
-    const data = await fetchChecklists();
-    setChecklists(data);
-  }, []);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (id: string) => {
     onSelect(id);
   };
 
   useEffect(() => {
-    loadChecklists();
-  }, [loadChecklists]);
+    const fetchData = async () => {
+      const data = await fetchChecklists();
+      setChecklists(data);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <Sidebar side="left" variant="inset" collapsible="icon">
@@ -57,7 +57,6 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
           checklistState={{ checklists, selectedId, isOpen }}
           onSelect={handleSelect}
           onOpenChange={setIsOpen}
-          onReload={loadChecklists}
         />
       </SidebarContent>
 
