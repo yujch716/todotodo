@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card.tsx";
+import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -53,8 +53,15 @@ const SignUpPage = () => {
       />
 
       <Card className="w-full max-w-sm sm:max-w-md p-6 shadow-xl">
+        <CardHeader className="flex flex-col items-center gap-2">
+          <img
+            src="/todotodo-logo.png"
+            alt="todotodo logo"
+            className="w-10 h-10"
+          />
+          <h1 className="text-2xl font-semibold">회원가입</h1>
+        </CardHeader>
         <CardContent className="space-y-4">
-          <h1 className="py-6 text-2xl font-semibold text-center">회원가입</h1>
           <form onSubmit={handleSignUp}>
             <div className="py-2">
               <Label htmlFor="email">이메일</Label>
@@ -97,7 +104,7 @@ const SignUpPage = () => {
             {errorMessage && (
               <p className="pt-2 text-red-500">{errorMessage}</p>
             )}
-            <Button className="w-full mt-4 bg-slate-800 hover:bg-slate-700">
+            <Button className="w-full mt-4 bg-sky-600 hover:bg-sky-500">
               회원가입
             </Button>
           </form>

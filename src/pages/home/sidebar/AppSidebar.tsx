@@ -34,7 +34,8 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
 
   return (
     <Sidebar side="left" variant="inset" collapsible="icon">
-      <SidebarHeader className="bg-sky-100">
+      <SidebarHeader className="bg-sky-100 flex flex-row items-center gap-2 px-3 py-2">
+        <img src="/todotodo-logo.png" alt="todotodo logo" className="w-6 h-6" />
         <h1 className="text-base font-medium">todotodo</h1>
       </SidebarHeader>
 

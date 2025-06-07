@@ -90,7 +90,7 @@ const ChecklistCalendar = () => {
                     className={cn(
                       "text-xs",
                       isToday &&
-                        "rounded-full border-2 border-slate-300 px-1 bg-slate-300",
+                        "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
                     )}
                   >
                     {date.getDate()}

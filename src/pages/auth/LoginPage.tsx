@@ -1,5 +1,5 @@
 import { Button } from "../../components/ui/button.tsx";
-import { Card, CardContent } from "../../components/ui/card.tsx";
+import { Card, CardContent, CardHeader } from "../../components/ui/card.tsx";
 import { Label } from "../../components/ui/label.tsx";
 import { Input } from "../../components/ui/input.tsx";
 import { useState } from "react";
@@ -40,8 +40,15 @@ const LoginPage = () => {
       <LoadingModal open={isLoading} />
 
       <Card className="w-full max-w-sm sm:max-w-md p-6 shadow-xl">
+        <CardHeader className="flex flex-col items-center gap-2">
+          <img
+            src="/todotodo-logo.png"
+            alt="todotodo logo"
+            className="w-10 h-10"
+          />
+          <h1 className="text-2xl font-semibold">todotodo</h1>
+        </CardHeader>
         <CardContent className="space-y-4">
-          <h1 className="py-6 text-2xl font-semibold text-center">todotodo</h1>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">이메일</Label>
@@ -67,7 +74,7 @@ const LoginPage = () => {
             )}
             <Button
               type="submit"
-              className="w-full mt-4 bg-sky-400 hover:bg-sky-300"
+              className="w-full mt-4 bg-sky-600 hover:bg-sky-500"
             >
               로그인
             </Button>
@@ -85,7 +92,7 @@ const LoginPage = () => {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full bg-sky-50"
             onClick={handleGoogleLogin}
           >
             <img src="/google-logo.png" alt="Google" className="w-5 h-5" />
