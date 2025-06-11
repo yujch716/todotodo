@@ -1,4 +1,4 @@
-import { fireConfetti, fireCircles, fireSparkles } from "./fireEffects";
+import { fireConfetti } from "./fireEffects";
 import { showRandomText } from "./randomMessageUtils";
 import { showRandomImage } from "./randomImageUtils";
 
@@ -7,10 +7,10 @@ export const showCelebration = () => {
   const randomContent =
     contentEffects[Math.floor(Math.random() * contentEffects.length)];
 
-  const particleEffects = [fireConfetti, fireCircles, fireSparkles];
-  const randomParticle =
-    particleEffects[Math.floor(Math.random() * particleEffects.length)];
+  // const particleEffects = [fireConfetti, fireCircles, fireSparkles];
+  // const randomParticle =
+  //   particleEffects[Math.floor(Math.random() * particleEffects.length)];
 
   randomContent();
-  randomParticle();
+  fireConfetti();
 };
