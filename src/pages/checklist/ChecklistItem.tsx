@@ -71,13 +71,12 @@ const ChecklistItem = ({
   };
 
   return (
-    <Card className="w-full p-2">
+    <Card className="w-full p-2" data-checklist-item>
       <div className="flex items-center gap-2">
         <Checkbox
           checked={item.is_checked}
           onCheckedChange={handleToggle}
           className=" shrink-0"
-          data-checklist-item
         />
         <div className="flex-grow">
           {isEditing ? (
