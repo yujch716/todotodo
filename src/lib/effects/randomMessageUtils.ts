@@ -36,7 +36,6 @@ export const showRandomText = () => {
   textElement.style.zIndex = "9999";
   textElement.style.opacity = "1";
   textElement.style.transition = "opacity 1s ease-out";
-  textElement.style.whiteSpace = "nowrap";
   textElement.style.whiteSpace = "normal";
   textElement.style.maxWidth = "90%";
   textElement.style.textAlign = "center";
