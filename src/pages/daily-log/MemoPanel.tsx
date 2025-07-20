@@ -17,15 +17,15 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash.debounce";
-import { updateChecklistMemo } from "@/api/checklist.ts";
+import { updateDailyLogMemo } from "@/api/daily-log.ts";
 
 interface Props {
-  checklistId: string;
+  dailyLogId: string;
   memo: string;
   setMemo: (value: string) => void;
 }
 
-const MemoPanel = ({ checklistId, memo, setMemo }: Props) => {
+const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
   const [textColor, setTextColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("Arial");
 
@@ -34,16 +34,16 @@ const MemoPanel = ({ checklistId, memo, setMemo }: Props) => {
 
   const updateMemo = useCallback(
     async (newMemo: string) => {
-      if (!checklistId || !hasUnsavedChanges.current) return;
+      if (!dailyLogId || !hasUnsavedChanges.current) return;
 
       try {
-        await updateChecklistMemo(checklistId, newMemo);
+        await updateDailyLogMemo(dailyLogId, newMemo);
         hasUnsavedChanges.current = false;
       } catch (error) {
         console.error("메모 저장 실패:", error);
       }
     },
-    [checklistId],
+    [dailyLogId],
   );
 
   const debouncedUpdateMemo = useRef(

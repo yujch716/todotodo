@@ -3,8 +3,8 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage.tsx";
 import SignUpPage from "@/pages/auth/SignUpPage.tsx";
 import PrivateRoute from "@/pages/auth/PrivateRoute.tsx";
-import Checklist from "@/pages/checklist/Checklist.tsx";
-import ChecklistCalendar from "@/pages/calendar/Calendar.tsx";
+import DailyLog from "@/pages/daily-log/DailyLog.tsx";
+import Calendar from "@/pages/calendar/Calendar.tsx";
 import Layout from "@/layouts/Layout.tsx";
 import AuthRedirect from "@/pages/auth/AuthRedirect.tsx";
 
@@ -24,8 +24,8 @@ function App() {
             </PrivateRoute>
           }
         >
-          <Route path="/checklist" element={<Checklist />} />
-          <Route path="/calendar" element={<ChecklistCalendar />} />
+          <Route path="/daily" element={<DailyLog />} />
+          <Route path="/calendar" element={<Calendar />} />
         </Route>
       </Routes>
     </BrowserRouter>

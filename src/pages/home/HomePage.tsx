@@ -1,13 +1,13 @@
 import AppSidebar from "@/pages/home/sidebar/AppSidebar.tsx";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { useSearchParams } from "react-router-dom";
-import Checklist from "@/pages/checklist/Checklist.tsx";
+import DailyLog from "@/pages/daily-log/DailyLog.tsx";
 
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("id");
 
-  const handleSelectChecklist = (id: string) => {
+  const handleSelectDailyLog = (id: string) => {
     setSearchParams({ id: String(id) });
   };
 
@@ -15,9 +15,9 @@ const HomePage = () => {
     <div className="flex h-screen">
       <SidebarProvider>
         <SidebarTrigger />
-        <AppSidebar selectedId={selectedId} onSelect={handleSelectChecklist} />
+        <AppSidebar selectedId={selectedId} onSelect={handleSelectDailyLog} />
         <main className="flex-1">
-          <Checklist />
+          <DailyLog />
         </main>
       </SidebarProvider>
     </div>

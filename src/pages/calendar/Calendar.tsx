@@ -1,28 +1,26 @@
 import { DayPicker } from "react-day-picker";
-import { fetchChecklistByDate } from "@/api/checklist.ts";
+import { getDailyLogsByDate } from "@/api/daily-log.ts";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils.ts";
 import { Card } from "@/components/ui/card.tsx";
-import type { ChecklistType } from "@/types/checklist.ts";
-import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
+import type { DailyLogType } from "@/types/daily-log.ts";
+import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { format, isSameDay } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { useChecklistCalendarStore } from "@/store/checklistCalendarStore.ts";
+import { useCalendarStore } from "@/store/calendarStore.ts";
 
-const ChecklistCalendar = () => {
+const Calendar = () => {
   const navigate = useNavigate();
 
-  const [checklists, setChecklists] = useState<ChecklistType[]>([]);
+  const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const refreshCalendar = useChecklistCalendarStore(
-    (state) => state.refreshCalendar,
-  );
-  const resetCalendarRefresh = useChecklistCalendarStore(
+  const refreshCalendar = useCalendarStore((state) => state.refreshCalendar);
+  const resetCalendarRefresh = useCalendarStore(
     (state) => state.resetCalendarRefresh,
   );
 
-  const loadChecklists = useCallback(async () => {
+  const loadDailyLogs = useCallback(async () => {
     const start = new Date(
       currentMonth.getFullYear(),
       currentMonth.getMonth(),
@@ -34,23 +32,23 @@ const ChecklistCalendar = () => {
       0,
     );
 
-    const data = await fetchChecklistByDate(start, end);
-    setChecklists(data);
+    const data = await getDailyLogsByDate(start, end);
+    setDailyLogs(data);
   }, [currentMonth]);
 
   useEffect(() => {
-    loadChecklists();
-  }, [loadChecklists]);
+    loadDailyLogs();
+  }, [loadDailyLogs]);
 
   useEffect(() => {
     if (refreshCalendar) {
-      loadChecklists();
+      loadDailyLogs();
       resetCalendarRefresh();
     }
-  }, [refreshCalendar, loadChecklists, resetCalendarRefresh]);
+  }, [refreshCalendar, loadDailyLogs, resetCalendarRefresh]);
 
-  const getChecklistsForDate = (date: Date) => {
-    return checklists.filter(
+  const getDailyLogsForDate = (date: Date) => {
+    return dailyLogs.filter(
       (item) => new Date(item.date).toDateString() === date.toDateString(),
     );
   };
@@ -84,7 +82,7 @@ const ChecklistCalendar = () => {
           Day: (dayProps: any) => {
             const { date, className, onClick, onKeyDown, onFocus, onBlur } =
               dayProps;
-            const checklistsForDate = getChecklistsForDate(date);
+            const dailyLogsForDate = getDailyLogsForDate(date);
             const isToday = isSameDay(date, new Date());
 
             return (
@@ -112,21 +110,21 @@ const ChecklistCalendar = () => {
                   </span>
                 </div>
                 <div>
-                  {checklistsForDate.length > 0 && (
+                  {dailyLogsForDate.length > 0 && (
                     <ul className="text-[11px] leading-tight">
-                      {checklistsForDate.map((item, i) => {
+                      {dailyLogsForDate.map((item, i) => {
                         return (
                           <Card
                             key={i}
                             className="p-1 mb-1 hover:bg-slate-50"
-                            onClick={() => navigate(`/checklist?id=${item.id}`)}
+                            onClick={() => navigate(`/daily?id=${item.id}`)}
                           >
                             <li className="truncate w-full text-muted-foreground flex items-center gap-1">
-                              <ChecklistStatusIcon
+                              <DailyLogStatusIcon
                                 checkedCount={item.checkedCount}
                                 totalCount={item.totalCount}
                               />
-                              {item.title}
+                              Daily
                             </li>
                           </Card>
                         );
@@ -143,4 +141,4 @@ const ChecklistCalendar = () => {
   );
 };
 
-export default ChecklistCalendar;
+export default Calendar;

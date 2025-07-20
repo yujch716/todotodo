@@ -1,0 +1,185 @@
+import DailyTodoItem from "./DailyTodoItem.tsx";
+import { useCallback, useEffect, useState } from "react";
+import EmptyDailyLog from "@/pages/daily-log/EmptyDailyLog.tsx";
+import type { DailyTodoType } from "@/types/daily-log.ts";
+import {
+  createDailyTodo,
+  deleteDailyTodo,
+  getDailyTodoByDailyLogId,
+  toggleDailyTodo,
+  updateDailyTodoContent,
+} from "@/api/daily-todo.ts";
+import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
+import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";
+import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
+import { Progress } from "@/components/ui/progress.tsx";
+
+interface Props {
+  dailyLogId: string;
+}
+
+const DailyTodoPanel = ({ dailyLogId }: Props) => {
+  const [items, setItems] = useState<DailyTodoType[]>([]);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [checkedCount, setCheckedCount] = useState(0);
+
+  const triggerSidebarRefresh = useDailyLogSidebarStore(
+    (state) => state.triggerSidebarRefresh,
+  );
+  const triggerDailyLogRefresh = useDailyLogDetailStore(
+    (state) => state.triggerDailyLogRefresh,
+  );
+  const refreshDailyLog = useDailyLogDetailStore(
+    (store) => store.refreshDailyLog,
+  );
+  const resetDailyLogRefresh = useDailyLogDetailStore(
+    (store) => store.resetDailyLogRefresh,
+  );
+
+  const loadDailyTodo = useCallback(async () => {
+    if (!dailyLogId) return;
+
+    const dailyTodo = await getDailyTodoByDailyLogId(dailyLogId);
+
+    setItems(dailyTodo.items);
+    setTotalCount(dailyTodo.totalCount);
+    setCheckedCount(dailyTodo.checkedCount);
+  }, [dailyLogId]);
+
+  useEffect(() => {
+    loadDailyTodo();
+  }, [loadDailyTodo]);
+
+  useEffect(() => {
+    if (refreshDailyLog) {
+      loadDailyTodo();
+      resetDailyLogRefresh();
+    }
+  }, [loadDailyTodo, refreshDailyLog, resetDailyLogRefresh]);
+
+  const onUpdateItemContent = async (id: string, newContent: string) => {
+    if (newContent.trim() === "") {
+      await deleteItem(id);
+      return;
+    }
+
+    setItems((prevItems) => {
+      if (newContent.trim() === "") return prevItems;
+
+      return prevItems.map((item) =>
+        item.id === id ? { ...item, content: newContent } : item,
+      );
+    });
+
+    await updateDailyTodoContent(id, newContent);
+  };
+
+  const deleteItem = async (id: string) => {
+    await deleteDailyTodo(id);
+
+    triggerDailyLogRefresh();
+    triggerSidebarRefresh();
+
+    setItems((prevItems) => {
+      const index = prevItems.findIndex((item) => item.id === id);
+      if (index === -1) return prevItems;
+
+      const newItems = prevItems.filter((item) => item.id !== id);
+
+      const focusId = index > 0 ? prevItems[index - 1].id : null;
+      setEditingItemId(focusId);
+
+      return newItems;
+    });
+  };
+
+  const onToggleItem = async (id: string) => {
+    const item = items.find((i) => i.id === id);
+    if (!item) return;
+
+    const newChecked = !item.is_checked;
+    setItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, is_checked: newChecked } : i)),
+    );
+
+    await toggleDailyTodo(id, newChecked);
+
+    triggerDailyLogRefresh();
+    triggerSidebarRefresh();
+  };
+
+  const createEmptyItem = async () => {
+    if (!dailyLogId) return;
+
+    if (items.some((item) => item.content.trim() === "")) return;
+
+    const newItem = await createDailyTodo(dailyLogId);
+
+    triggerDailyLogRefresh();
+    triggerSidebarRefresh();
+
+    setItems((prev) => [...prev, newItem]);
+    setEditingItemId(newItem.id);
+  };
+
+  const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.closest("input") ||
+      target.closest("textarea") ||
+      target.closest("textarea") ||
+      target.closest("[data-daily-todo-item]")
+    ) {
+      return;
+    }
+
+    createEmptyItem();
+
+    triggerSidebarRefresh();
+  };
+
+  const progressValue = totalCount > 0 ? (checkedCount / totalCount) * 100 : 0;
+
+  if (!dailyLogId)
+    return (
+      <div className="p-8">
+        <EmptyDailyLog />
+      </div>
+    );
+
+  return (
+    <>
+      <div
+        className="space-y-3"
+        onClick={handlePanelClick}
+        style={{ minHeight: "100%" }}
+      >
+        <div className="flex items-center gap-2 flex-grow">
+          <DailyLogStatusIcon
+            checkedCount={checkedCount}
+            totalCount={totalCount}
+            iconClassName="w-6 h-6"
+          />
+          <div className="w-2/3">
+            <Progress value={progressValue} className="border-2" />
+          </div>
+        </div>
+
+        {items.map((item) => (
+          <DailyTodoItem
+            key={item.id}
+            item={item}
+            onToggle={onToggleItem}
+            onUpdateContent={onUpdateItemContent}
+            isEditing={editingItemId === item.id}
+            setEditingItemId={setEditingItemId}
+            onAddEmptyItem={createEmptyItem}
+          />
+        ))}
+      </div>
+    </>
+  );
+};
+
+export default DailyTodoPanel;

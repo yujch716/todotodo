@@ -7,7 +7,7 @@ type Props = {
   iconClassName?: string;
 };
 
-export const ChecklistStatusIcon = ({
+export const DailyLogStatusIcon = ({
   checkedCount,
   totalCount,
   iconClassName = "w-4 h-4",

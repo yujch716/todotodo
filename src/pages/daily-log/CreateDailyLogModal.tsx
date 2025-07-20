@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.tsx";
-import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
@@ -21,36 +20,37 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils.ts";
 import { CalendarIcon, Plus } from "lucide-react";
-import { createChecklist } from "@/api/checklist.ts";
-import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
-import { useChecklistCalendarStore } from "@/store/checklistCalendarStore.ts";
+import {createDailyLog, getDailyLogByDate} from "@/api/daily-log.ts";
+import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
+import { useCalendarStore } from "@/store/calendarStore.ts";
 
-const CreateChecklistModal = () => {
+const CreateDailyLogModal = () => {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date>();
 
-  const triggerSidebarRefresh = useChecklistSidebarStore(
+  const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
   );
-  const triggerCalendarRefresh = useChecklistCalendarStore(
+  const triggerCalendarRefresh = useCalendarStore(
     (state) => state.triggerCalendarRefresh,
   );
 
   const handleSubmit = async () => {
     if (!date) return;
 
-    await createChecklist(title, date);
+    const dailyLog = await getDailyLogByDate(date);
+    if (dailyLog) {
+      alert('이미 존재해서 안됨');
+    }
+
+    await createDailyLog(date);
 
     triggerSidebarRefresh();
     triggerCalendarRefresh();
 
-    setTitle("");
     setDate(undefined);
     setOpen(false);
   };
-
-  const isFormValid = title.trim() !== "" && date !== undefined;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -67,15 +67,6 @@ const CreateChecklistModal = () => {
         </DialogHeader>
 
         <div className="grid gap-4">
-          <div className="grid gap-3 mb-1">
-            <Label htmlFor="name-1">제목</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="예: 공부하기"
-            />
-          </div>
           <div className="grid gap-3">
             <Label htmlFor="username-1">날짜</Label>
             <Popover>
@@ -104,13 +95,11 @@ const CreateChecklistModal = () => {
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={handleSubmit} disabled={!isFormValid}>
-            Save
-          </Button>
+          <Button onClick={handleSubmit}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default CreateChecklistModal;
+export default CreateDailyLogModal;

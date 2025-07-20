@@ -8,11 +8,11 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { useEffect, useState } from "react";
-import type { ChecklistType } from "@/types/checklist.ts";
-import { fetchChecklists } from "@/api/checklist.ts";
+import type { DailyLogType } from "@/types/daily-log.ts";
+import { getDailyLogs } from "@/api/daily-log.ts";
 import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
 import SidebarFooterSection from "@/pages/home/sidebar/SidebarFooterSection.tsx";
-import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
+import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 
 interface Props {
   selectedId: string | null;
@@ -20,28 +20,28 @@ interface Props {
 }
 
 const AppSidebar = ({ selectedId, onSelect }: Props) => {
-  const [checklists, setChecklists] = useState<ChecklistType[]>([]);
+  const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const refreshSidebar = useChecklistSidebarStore(
+  const refreshSidebar = useDailyLogSidebarStore(
     (state) => state.refreshSidebar,
   );
-  const resetSidebarRefresh = useChecklistSidebarStore(
+  const resetSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.resetSidebarRefresh,
   );
 
-  const loadChecklists = async () => {
-    const data = await fetchChecklists();
-    setChecklists(data);
+  const loadDailyLogs = async () => {
+    const data = await getDailyLogs();
+    setDailyLogs(data);
   };
 
   useEffect(() => {
-    loadChecklists();
+    loadDailyLogs();
   }, []);
 
   useEffect(() => {
     if (refreshSidebar) {
-      loadChecklists();
+      loadDailyLogs();
       resetSidebarRefresh();
     }
   }, [refreshSidebar, resetSidebarRefresh]);
@@ -69,7 +69,7 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
 
       <SidebarContent className="bg-sky-100">
         <SidebarContentSection
-          checklistState={{ checklists, selectedId, isOpen }}
+          dailyLogState={{ dailyLogs, selectedId, isOpen }}
           onSelect={handleSelect}
           onOpenChange={setIsOpen}
         />
