@@ -1,4 +1,4 @@
-export default function EmptyChecklist() {
+export default function EmptyDailyLog() {
   return (
     <div
       style={{

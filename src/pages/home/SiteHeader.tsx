@@ -8,7 +8,7 @@ const SiteHeader = () => {
   const location = useLocation();
 
   const getTitle = () => {
-    if (location.pathname.startsWith("/checklist")) return "Checklist";
+    if (location.pathname.startsWith("/daily-log")) return "DailyLog";
     if (location.pathname.startsWith("/calendar")) return "Calendar";
     return "Dashboard";
   };

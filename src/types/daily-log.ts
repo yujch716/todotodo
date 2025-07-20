@@ -1,31 +1,16 @@
-export interface ChecklistItemType {
+export interface DailyLogType {
   id: string;
-  content: string;
-  is_checked: boolean;
-}
-
-export interface ChecklistType {
-  id: string;
-  title: string;
   memo: string;
   date: Date;
-  todo: ChecklistItemType[];
+  daily_todo: DailyTodoType[];
   totalCount: number;
   checkedCount: number;
 }
 
-export interface DailyLog {
-  id: string;
-  title: string;
-  memo: string;
-  date: Date;
-  todo: ChecklistItemType[];
-  totalCount: number;
-  checkedCount: number;
-}
-
-export interface DailyTodo {
+export interface DailyTodoType {
   id: string;
   content: string;
   is_checked: boolean;
+  totalCount: number;
+  checkedCount: number;
 }

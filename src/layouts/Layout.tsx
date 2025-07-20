@@ -8,15 +8,15 @@ const Layout = () => {
   const [searchParams] = useSearchParams();
   const selectedId = searchParams.get("id");
 
-  const handleSelectChecklist = (id: string) => {
-    navigate(`/checklist?id=${id}`);
+  const handleSelectDaily = (id: string) => {
+    navigate(`/daily?id=${id}`);
   };
 
   return (
     <div className="flex w-screen bg-sky-100 relative">
       <div className="absolute inset-0 bg-sky-100" />
       <SidebarProvider>
-        <AppSidebar selectedId={selectedId} onSelect={handleSelectChecklist} />
+        <AppSidebar selectedId={selectedId} onSelect={handleSelectDaily} />
         <SidebarInset className="flex flex-col h-full">
           <header>
             <SiteHeader />

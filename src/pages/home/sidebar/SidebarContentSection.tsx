@@ -7,29 +7,29 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { Calendar } from "lucide-react";
-import CreateChecklistModal from "@/pages/checklist/CreateChecklistModal.tsx";
-import ChecklistCollapsible from "@/pages/home/sidebar/ChecklistCollapsible.tsx";
+import CreateDailyLogModal from "@/pages/daily-log/CreateDailyLogModal.tsx";
+import DailyLogCollapsible from "@/pages/home/sidebar/DailyLogCollapsible.tsx";
 import { useNavigate } from "react-router-dom";
-import type { ChecklistType } from "@/types/daily-log.ts";
+import type { DailyLogType } from "@/types/daily-log.ts";
 
-interface ChecklistState {
-  checklists: ChecklistType[];
+interface DailyLogState {
+  dailyLogs: DailyLogType[];
   selectedId: string | null;
   isOpen: boolean;
 }
 
 interface Props {
-  checklistState: ChecklistState;
+  dailyLogState: DailyLogState;
   onSelect: (id: string) => void;
   onOpenChange: (open: boolean) => void;
 }
 
 const SidebarContentSection = ({
-  checklistState,
+  dailyLogState,
   onSelect,
   onOpenChange,
 }: Props) => {
-  const { checklists, selectedId, isOpen } = checklistState;
+  const { dailyLogs, selectedId, isOpen } = dailyLogState;
   const navigate = useNavigate();
 
   return (
@@ -37,7 +37,7 @@ const SidebarContentSection = ({
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
-            <CreateChecklistModal />
+            <CreateDailyLogModal />
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
@@ -60,8 +60,8 @@ const SidebarContentSection = ({
               </SidebarMenuButton>
             </SidebarMenuItem>
 
-            <ChecklistCollapsible
-              checklists={checklists}
+            <DailyLogCollapsible
+              dailyLogs={dailyLogs}
               selectedId={selectedId}
               onSelect={onSelect}
               isOpen={isOpen}

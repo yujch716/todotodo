@@ -1,12 +1,12 @@
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useState, useRef, useEffect } from "react";
 import { showCelebration } from "@/lib/effects";
-import type { ChecklistItemType } from "@/types/daily-log.ts";
-import { updateChecklistItemContent } from "@/api/daily-todo.ts";
+import type { DailyTodoType } from "@/types/daily-log.ts";
+import { updateDailyTodoContent } from "@/api/daily-todo.ts";
 import { Card } from "@/components/ui/card.tsx";
 
 interface Props {
-  item: ChecklistItemType;
+  item: DailyTodoType;
   onToggle: (id: string) => void;
   onUpdateContent: (id: string, newContent: string) => void;
   isEditing: boolean;
@@ -14,7 +14,7 @@ interface Props {
   onAddEmptyItem: () => void;
 }
 
-const ChecklistItem = ({
+const DailyTodoItem = ({
   item,
   onToggle,
   onUpdateContent,
@@ -48,7 +48,7 @@ const ChecklistItem = ({
       return;
     }
 
-    await updateChecklistItemContent(item.id, newContent);
+    await updateDailyTodoContent(item.id, newContent);
 
     onUpdateContent(item.id, newContent);
     setEditingItemId(null);
@@ -71,7 +71,7 @@ const ChecklistItem = ({
   };
 
   return (
-    <Card className="w-full p-2" data-checklist-item>
+    <Card className="w-full p-2" data-daily-todo-item>
       <div className="flex items-center gap-2">
         <Checkbox
           checked={item.is_checked}
@@ -105,4 +105,4 @@ const ChecklistItem = ({
   );
 };
 
-export default ChecklistItem;
+export default DailyTodoItem;

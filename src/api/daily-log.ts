@@ -1,8 +1,8 @@
 import { supabase } from "@/lib/supabaseClient";
-import type {DailyLog} from "@/types/daily-log.ts";
+import type { DailyLogType } from "@/types/daily-log.ts";
 import { format } from "date-fns";
 
-export const fetchChecklists = async (): Promise<DailyLog[]> => {
+export const getDailyLogs = async (): Promise<DailyLogType[]> => {
   const { data, error } = await supabase
     .from("daily_log")
     .select(
@@ -11,7 +11,7 @@ export const fetchChecklists = async (): Promise<DailyLog[]> => {
       daily_todo (*)
     `,
     )
-    .order("created_at", { ascending: false });
+    .order("date", { ascending: false });
 
   if (error) throw new Error(error.message);
 
@@ -30,9 +30,9 @@ export const fetchChecklists = async (): Promise<DailyLog[]> => {
   });
 };
 
-export const fetchChecklistById = async (
+export const getDailyLogById = async (
   dailyLogId: string,
-): Promise<DailyLog> => {
+): Promise<DailyLogType> => {
   const { data, error } = await supabase
     .from("daily_log")
     .select(
@@ -62,10 +62,24 @@ export const fetchChecklistById = async (
   };
 };
 
-export const fetchChecklistByDate = async (
+export const getDailyLogByDate = async (date: Date): Promise<DailyLogType | null> => {
+  const { data, error } = await supabase
+    .from("daily_log")
+    .select(`*`)
+    .eq("date", format(date, "yyyy-MM-dd"))
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    throw new Error(error.message);
+  }
+
+  return data ?? null;
+}
+
+export const getDailyLogsByDate = async (
   start: Date,
   end: Date,
-): Promise<DailyLog[]> => {
+): Promise<DailyLogType[]> => {
   const { data, error } = await supabase
     .from("daily_log")
     .select(
@@ -79,22 +93,22 @@ export const fetchChecklistByDate = async (
 
   if (error) throw new Error(error.message);
 
-  return (data ?? []).map((checklist) => {
-    const items = checklist.daily_todo || [];
+  return (data ?? []).map((dailyLog) => {
+    const items = dailyLog.daily_todo || [];
     const totalCount = items.length;
     const checkedCount = items.filter(
       (item: { is_checked: boolean }) => item.is_checked,
     ).length;
 
     return {
-      ...checklist,
+      ...dailyLog,
       totalCount,
       checkedCount,
     };
   });
 };
 
-export const createChecklist = async (title: string, date: Date) => {
+export const createDailyLog = async (date: Date) => {
   const {
     data: { user },
     error: userError,
@@ -108,7 +122,6 @@ export const createChecklist = async (title: string, date: Date) => {
 
   const { error } = await supabase.from("daily_log").insert([
     {
-      title,
       date: formattedDate,
       user_id: user.id,
     },
@@ -117,22 +130,7 @@ export const createChecklist = async (title: string, date: Date) => {
   if (error) throw new Error(error.message);
 };
 
-export const updateChecklistTitle = async (
-  dailyLogId: string,
-  title: string,
-) => {
-  const { error } = await supabase
-    .from("daily_log")
-    .update({ title })
-    .eq("id", dailyLogId);
-
-  if (error) throw new Error(error.message);
-};
-
-export const updateChecklistMemo = async (
-  dailyLogId: string,
-  memo: string,
-) => {
+export const updateDailyLogMemo = async (dailyLogId: string, memo: string) => {
   const { error } = await supabase
     .from("daily_log")
     .update({ memo })
@@ -141,7 +139,7 @@ export const updateChecklistMemo = async (
   if (error) throw new Error(error.message);
 };
 
-export const deleteChecklistById = async (dailyLogId: string) => {
+export const deleteDailyLogById = async (dailyLogId: string) => {
   const { error } = await supabase
     .from("daily_log")
     .delete()

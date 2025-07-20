@@ -6,7 +6,7 @@ interface CalendarState {
   resetCalendarRefresh: () => void;
 }
 
-export const useChecklistCalendarStore = create<CalendarState>((set) => ({
+export const useCalendarStore = create<CalendarState>((set) => ({
   refreshCalendar: false,
   triggerCalendarRefresh: () => set({ refreshCalendar: true }),
   resetCalendarRefresh: () => set({ refreshCalendar: false }),
