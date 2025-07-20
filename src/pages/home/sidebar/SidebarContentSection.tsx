@@ -10,7 +10,7 @@ import { Calendar } from "lucide-react";
 import CreateChecklistModal from "@/pages/checklist/CreateChecklistModal.tsx";
 import ChecklistCollapsible from "@/pages/home/sidebar/ChecklistCollapsible.tsx";
 import { useNavigate } from "react-router-dom";
-import type { ChecklistType } from "@/types/checklist.ts";
+import type { ChecklistType } from "@/types/daily-log.ts";
 
 interface ChecklistState {
   checklists: ChecklistType[];

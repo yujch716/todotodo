@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash.debounce";
-import { updateChecklistMemo } from "@/api/checklist.ts";
+import { updateChecklistMemo } from "@/api/daily-log.ts";
 
 interface Props {
   checklistId: string;

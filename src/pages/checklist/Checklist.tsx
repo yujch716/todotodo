@@ -2,12 +2,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import ChecklistPanel from "@/pages/checklist/ChecklistPanel.tsx";
 import MemoPanel from "@/pages/checklist/MemoPanel.tsx";
 import { useCallback, useEffect, useState } from "react";
-import type { ChecklistItemType } from "@/types/checklist.ts";
+import type { ChecklistItemType } from "@/types/daily-log.ts";
 import {
   deleteChecklistById,
   fetchChecklistById,
   updateChecklistTitle,
-} from "@/api/checklist.ts";
+} from "@/api/daily-log.ts";
 import { Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress.tsx";
 import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";

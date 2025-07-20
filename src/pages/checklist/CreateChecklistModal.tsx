@@ -21,7 +21,7 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils.ts";
 import { CalendarIcon, Plus } from "lucide-react";
-import { createChecklist } from "@/api/checklist.ts";
+import { createChecklist } from "@/api/daily-log.ts";
 import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
 import { useChecklistCalendarStore } from "@/store/checklistCalendarStore.ts";
 

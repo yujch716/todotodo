@@ -1,9 +1,9 @@
 import { DayPicker } from "react-day-picker";
-import { fetchChecklistByDate } from "@/api/checklist.ts";
+import { fetchChecklistByDate } from "@/api/daily-log.ts";
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils.ts";
 import { Card } from "@/components/ui/card.tsx";
-import type { ChecklistType } from "@/types/checklist.ts";
+import type { ChecklistType } from "@/types/daily-log.ts";
 import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
 import { format, isSameDay } from "date-fns";
 import { useNavigate } from "react-router-dom";

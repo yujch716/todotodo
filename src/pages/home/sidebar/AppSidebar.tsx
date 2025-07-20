@@ -8,8 +8,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
 import { useEffect, useState } from "react";
-import type { ChecklistType } from "@/types/checklist.ts";
-import { fetchChecklists } from "@/api/checklist.ts";
+import type { ChecklistType } from "@/types/daily-log.ts";
+import { fetchChecklists } from "@/api/daily-log.ts";
 import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
 import SidebarFooterSection from "@/pages/home/sidebar/SidebarFooterSection.tsx";
 import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";

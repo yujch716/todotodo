@@ -1,13 +1,13 @@
 import ChecklistItem from "./ChecklistItem.tsx";
 import { useState } from "react";
 import EmptyChecklist from "@/pages/checklist/EmptyChecklist.tsx";
-import type { ChecklistItemType } from "@/types/checklist.ts";
+import type { ChecklistItemType } from "@/types/daily-log.ts";
 import {
   createChecklistItem,
   deleteChecklistItem,
   toggleChecklistItem,
   updateChecklistItemContent,
-} from "@/api/checklistItem.ts";
+} from "@/api/daily-todo.ts";
 import { useChecklistSidebarStore } from "@/store/checklistSidebarStore.ts";
 import { useChecklistDetailStore } from "@/store/checklistDetailStore.ts";
 

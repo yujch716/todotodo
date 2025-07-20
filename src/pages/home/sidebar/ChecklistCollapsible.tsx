@@ -10,7 +10,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar.tsx";
 import { ChevronDown, ChevronRight, List } from "lucide-react";
-import type { ChecklistType } from "@/types/checklist.ts";
+import type { ChecklistType } from "@/types/daily-log.ts";
 import { ChecklistStatusIcon } from "@/components/ChecklistStatusIcon.tsx";
 
 interface Props {

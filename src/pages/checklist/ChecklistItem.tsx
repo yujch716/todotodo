@@ -1,8 +1,8 @@
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useState, useRef, useEffect } from "react";
 import { showCelebration } from "@/lib/effects";
-import type { ChecklistItemType } from "@/types/checklist.ts";
-import { updateChecklistItemContent } from "@/api/checklistItem.ts";
+import type { ChecklistItemType } from "@/types/daily-log.ts";
+import { updateChecklistItemContent } from "@/api/daily-todo.ts";
 import { Card } from "@/components/ui/card.tsx";
 
 interface Props {
