@@ -108,26 +108,27 @@ export const getDailyLogsByDate = async (
   });
 };
 
-export const createDailyLog = async (date: Date) => {
+export const createDailyLog = async (date: Date): Promise<DailyLogType> => {
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
   if (userError || !user) {
-    console.error("유저 정보를 가져오지 못했어요:", userError);
-    return;
+    throw new Error("인증된 유저가 없습니다.");
   }
 
   const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
 
-  const { error } = await supabase.from("daily_log").insert([
+  const { error, data } = await supabase.from("daily_log").insert([
     {
       date: formattedDate,
       user_id: user.id,
     },
-  ]);
+  ]).select().single();
 
   if (error) throw new Error(error.message);
+
+  return data;
 };
 
 export const updateDailyLogMemo = async (dailyLogId: string, memo: string) => {

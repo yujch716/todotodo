@@ -23,10 +23,13 @@ import { CalendarIcon, Plus } from "lucide-react";
 import {createDailyLog, getDailyLogByDate} from "@/api/daily-log.ts";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import { useCalendarStore } from "@/store/calendarStore.ts";
+import {useNavigate} from "react-router-dom";
 
 const CreateDailyLogModal = () => {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const navigate = useNavigate();
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
@@ -41,15 +44,18 @@ const CreateDailyLogModal = () => {
     const dailyLog = await getDailyLogByDate(date);
     if (dailyLog) {
       alert('이미 존재해서 안됨');
+      return;
     }
 
-    await createDailyLog(date);
+    const newDailyLog = await createDailyLog(date);
 
     triggerSidebarRefresh();
     triggerCalendarRefresh();
 
     setDate(undefined);
     setOpen(false);
+
+    navigate(`/daily?id=${newDailyLog.id}`);
   };
 
   return (
@@ -75,7 +81,7 @@ const CreateDailyLogModal = () => {
                   variant={"outline"}
                   className={cn(!date && "text-muted-foreground")}
                 >
-                  {date ? format(date, "yyyy-MM-dd") : "날짜 선택"}
+                  {date ? format(date, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd")}
                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
               </PopoverTrigger>
