@@ -46,15 +46,10 @@ const DailyLog = () => {
     if (!dailyLogId) return;
     setIsAlertOpen(false);
 
-    try {
-      await deleteDailyLogById(dailyLogId);
-      triggerSidebarRefresh();
+    await deleteDailyLogById(dailyLogId);
 
-      navigate("/calendar");
-    } catch (error) {
-      console.error("삭제 실패:", error);
-      alert("삭제에 실패했습니다.");
-    }
+    triggerSidebarRefresh();
+    navigate("/calendar");
   };
 
   if (!dailyLogId) return <EmptyDailyLog />;
