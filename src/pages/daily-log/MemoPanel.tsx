@@ -5,19 +5,14 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import Color from "@tiptap/extension-color";
-import {
-  Bold,
-  Italic,
-  Strikethrough,
-  Underline as UnderlineIcon,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  PaintBucket,
-} from "lucide-react";
+import { PaintBucket, List, ListOrdered } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash.debounce";
 import { updateDailyLogMemo } from "@/api/daily-log.ts";
+import FontFamilySelect from "@/components/tiptap/FontFamilySelect.tsx";
+import HeadingSelect from "@/components/tiptap/HeadingSelect.tsx";
+import TextAlignButtons from "@/components/tiptap/TextAlignButtons.tsx";
+import TextStyleButtons from "@/components/tiptap/TextStyleButtons.tsx";
 
 interface Props {
   dailyLogId: string;
@@ -28,6 +23,7 @@ interface Props {
 const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
   const [textColor, setTextColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("Arial");
+  const [heading, setHeading] = useState("paragraph");
 
   const memoRef = useRef("");
   const hasUnsavedChanges = useRef(false);
@@ -60,10 +56,14 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
       Underline,
       TextStyle,
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
+      TextAlign.configure({ types: ["heading", "paragraph", "listItem"] }),
       FontFamily.configure({ types: ["textStyle"] }),
       Color.configure({ types: ["textStyle"] }),
     ],
@@ -90,7 +90,15 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
 
   useEffect(() => {
     if (!editor) return;
-    editor.commands.setContent(memo);
+    if (editor.getHTML() !== memo) {
+      const { from, to } = editor.state.selection;
+
+      editor.commands.setContent(memo, false);
+
+      setTimeout(() => {
+        editor.commands.setTextSelection({ from, to });
+      }, 0);
+    }
   }, [memo, editor]);
 
   useEffect(() => {
@@ -115,69 +123,37 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
   return (
     <div className="flex flex-col h-full border rounded-lg overflow-hidden">
       <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2 shrink-0">
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive("bold") ? "text-blue-500" : ""}
-        >
-          <Bold size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive("italic") ? "text-blue-500" : ""}
-        >
-          <Italic size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={editor.isActive("strike") ? "text-blue-500" : ""}
-        >
-          <Strikethrough size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={editor.isActive("underline") ? "text-blue-500" : ""}
-        >
-          <UnderlineIcon size={18} />
-        </button>
+        <TextStyleButtons editor={editor} />
+        <div className="border-l mx-2" />
+
+        <HeadingSelect
+          heading={heading}
+          setHeading={setHeading}
+          editor={editor}
+        />
+
+        <FontFamilySelect
+          fontFamily={fontFamily}
+          handleFontFamilyChange={handleFontFamilyChange}
+        />
+        <div className="border-l mx-2" />
+
+        <TextAlignButtons editor={editor} />
         <div className="border-l mx-2" />
 
         <button
-          onClick={() => editor.chain().focus().setTextAlign("left").run()}
-          className={
-            editor.isActive({ textAlign: "left" }) ? "text-blue-500" : ""
-          }
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={editor.isActive("bulletList") ? "text-blue-500" : ""}
         >
-          <AlignLeft size={18} />
+          <List size={18} />
         </button>
         <button
-          onClick={() => editor.chain().focus().setTextAlign("center").run()}
-          className={
-            editor.isActive({ textAlign: "center" }) ? "text-blue-500" : ""
-          }
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={editor.isActive("orderedList") ? "text-blue-500" : ""}
         >
-          <AlignCenter size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setTextAlign("right").run()}
-          className={
-            editor.isActive({ textAlign: "right" }) ? "text-blue-500" : ""
-          }
-        >
-          <AlignRight size={18} />
+          <ListOrdered size={18} />
         </button>
         <div className="border-l mx-2" />
-
-        <select
-          value={fontFamily}
-          onChange={(e) => handleFontFamilyChange(e.target.value)}
-          className="p-1"
-        >
-          <option value="Arial">Arial</option>
-          <option value="Courier New">Courier New</option>
-          <option value="Georgia">Georgia</option>
-          <option value="Times New Roman">Times New Roman</option>
-          <option value="Verdana">Verdana</option>
-        </select>
 
         <div className="flex items-center gap-1">
           <label className="cursor-pointer">
@@ -195,7 +171,7 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
       <div className="flex-grow overflow-y-auto bg-white p-4">
         <EditorContent
           editor={editor}
-          className="tiptap h-full [&>div]:min-h-full [&>p]:min-h-full"
+          className="tiptap prose h-full [&>div]:min-h-full [&>p]:min-h-full [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:my-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:my-2 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:my-1"
           style={{
             outline: "none",
             boxShadow: "none",
