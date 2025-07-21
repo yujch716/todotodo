@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import type { DailyLogType } from "@/types/daily-log.ts";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 export const getDailyLogs = async (): Promise<DailyLogType[]> => {
   const { data, error } = await supabase
@@ -62,7 +63,9 @@ export const getDailyLogById = async (
   };
 };
 
-export const getDailyLogByDate = async (date: Date): Promise<DailyLogType | null> => {
+export const getDailyLogByDate = async (
+  date: Date,
+): Promise<DailyLogType | null> => {
   const { data, error } = await supabase
     .from("daily_log")
     .select(`*`)
@@ -70,11 +73,11 @@ export const getDailyLogByDate = async (date: Date): Promise<DailyLogType | null
     .single();
 
   if (error && error.code !== "PGRST116") {
-    throw new Error(error.message);
+    toast.error("이미 존재하는 일정입니다.");
   }
 
   return data ?? null;
-}
+};
 
 export const getDailyLogsByDate = async (
   start: Date,
@@ -119,14 +122,18 @@ export const createDailyLog = async (date: Date): Promise<DailyLogType> => {
 
   const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
 
-  const { error, data } = await supabase.from("daily_log").insert([
-    {
-      date: formattedDate,
-      user_id: user.id,
-    },
-  ]).select().single();
+  const { error, data } = await supabase
+    .from("daily_log")
+    .insert([
+      {
+        date: formattedDate,
+        user_id: user.id,
+      },
+    ])
+    .select()
+    .single();
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("생성에 실패했습니다.");
 
   return data;
 };
@@ -137,7 +144,7 @@ export const updateDailyLogMemo = async (dailyLogId: string, memo: string) => {
     .update({ memo })
     .eq("id", dailyLogId);
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("수정에 실패했습니다.");
 };
 
 export const deleteDailyLogById = async (dailyLogId: string) => {
@@ -146,5 +153,5 @@ export const deleteDailyLogById = async (dailyLogId: string) => {
     .delete()
     .eq("id", dailyLogId);
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("삭제에 실패했습니다.");
 };
