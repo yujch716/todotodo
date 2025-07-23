@@ -9,6 +9,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash.debounce";
 import { updateDailyLogMemo } from "@/api/daily-log.ts";
 import TiptapToolbar from "@/components/tiptap/TiptapToolbar.tsx";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import {NotebookPen} from "lucide-react";
 
 interface Props {
   dailyLogId: string;
@@ -117,28 +119,39 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
   if (!editor) return null;
 
   return (
-    <div className="flex flex-col h-full border rounded-lg overflow-hidden">
-      <TiptapToolbar
-        editor={editor}
-        heading={heading}
-        setHeading={setHeading}
-        fontFamily={fontFamily}
-        handleFontFamilyChange={handleFontFamilyChange}
-        textColor={textColor}
-        handleColorChange={handleColorChange}
-      />
+    <>
+      <Card className="flex flex-col h-full overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><NotebookPen />Memo</CardTitle>
+          <CardDescription></CardDescription>
+        </CardHeader>
+        <CardContent className="flex-grow flex flex-col overflow-hidden">
+          <div className="flex flex-col h-full border rounded-lg overflow-hidden">
+            <TiptapToolbar
+              editor={editor}
+              heading={heading}
+              setHeading={setHeading}
+              fontFamily={fontFamily}
+              handleFontFamilyChange={handleFontFamilyChange}
+              textColor={textColor}
+              handleColorChange={handleColorChange}
+            />
 
-      <div className="flex-grow overflow-y-auto bg-white p-4">
-        <EditorContent
-          editor={editor}
-          className="tiptap prose h-full [&>div]:min-h-full [&>p]:min-h-full [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:my-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:my-2 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:my-1"
-          style={{
-            outline: "none",
-            boxShadow: "none",
-          }}
-        />
-      </div>
-    </div>
+            <div className="flex-grow overflow-y-auto bg-white p-4">
+              <EditorContent
+                editor={editor}
+                className="tiptap prose h-full [&>div]:min-h-full [&>p]:min-h-full [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:my-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:my-2 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:my-1"
+                style={{
+                  outline: "none",
+                  boxShadow: "none",
+                }}
+              />
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter></CardFooter>
+      </Card>
+    </>
   );
 };
 
