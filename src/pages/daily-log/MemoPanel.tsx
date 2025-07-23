@@ -5,14 +5,10 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import FontFamily from "@tiptap/extension-font-family";
 import Color from "@tiptap/extension-color";
-import { PaintBucket, List, ListOrdered } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash.debounce";
 import { updateDailyLogMemo } from "@/api/daily-log.ts";
-import FontFamilySelect from "@/components/tiptap/FontFamilySelect.tsx";
-import HeadingSelect from "@/components/tiptap/HeadingSelect.tsx";
-import TextAlignButtons from "@/components/tiptap/TextAlignButtons.tsx";
-import TextStyleButtons from "@/components/tiptap/TextStyleButtons.tsx";
+import TiptapToolbar from "@/components/tiptap/TiptapToolbar.tsx";
 
 interface Props {
   dailyLogId: string;
@@ -122,51 +118,15 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
 
   return (
     <div className="flex flex-col h-full border rounded-lg overflow-hidden">
-      <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2 shrink-0">
-        <TextStyleButtons editor={editor} />
-        <div className="border-l mx-2" />
-
-        <HeadingSelect
-          heading={heading}
-          setHeading={setHeading}
-          editor={editor}
-        />
-
-        <FontFamilySelect
-          fontFamily={fontFamily}
-          handleFontFamilyChange={handleFontFamilyChange}
-        />
-        <div className="border-l mx-2" />
-
-        <TextAlignButtons editor={editor} />
-        <div className="border-l mx-2" />
-
-        <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive("bulletList") ? "text-blue-500" : ""}
-        >
-          <List size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive("orderedList") ? "text-blue-500" : ""}
-        >
-          <ListOrdered size={18} />
-        </button>
-        <div className="border-l mx-2" />
-
-        <div className="flex items-center gap-1">
-          <label className="cursor-pointer">
-            <PaintBucket size={18} fill={textColor} />
-            <input
-              type="color"
-              value={textColor}
-              onChange={handleColorChange}
-              className="sr-only"
-            />
-          </label>
-        </div>
-      </div>
+      <TiptapToolbar
+        editor={editor}
+        heading={heading}
+        setHeading={setHeading}
+        fontFamily={fontFamily}
+        handleFontFamilyChange={handleFontFamilyChange}
+        textColor={textColor}
+        handleColorChange={handleColorChange}
+      />
 
       <div className="flex-grow overflow-y-auto bg-white p-4">
         <EditorContent
