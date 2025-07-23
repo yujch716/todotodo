@@ -13,6 +13,15 @@ import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { Progress } from "@/components/ui/progress.tsx";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card.tsx";
+import { SquareCheckBig } from "lucide-react";
 
 interface Props {
   dailyLogId: string;
@@ -150,34 +159,43 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
 
   return (
     <>
-      <div
-        className="space-y-3"
-        onClick={handlePanelClick}
-        style={{ minHeight: "100%" }}
-      >
-        <div className="flex items-center gap-2 flex-grow">
-          <DailyLogStatusIcon
-            checkedCount={checkedCount}
-            totalCount={totalCount}
-            iconClassName="w-6 h-6"
-          />
-          <div className="w-2/3">
-            <Progress value={progressValue} className="border-2" />
-          </div>
-        </div>
+      <Card onClick={handlePanelClick}>
+        <CardHeader>
+          <CardTitle>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2">
+                <SquareCheckBig /> To do
+              </div>
 
-        {items.map((item) => (
-          <DailyTodoItem
-            key={item.id}
-            item={item}
-            onToggle={onToggleItem}
-            onUpdateContent={onUpdateItemContent}
-            isEditing={editingItemId === item.id}
-            setEditingItemId={setEditingItemId}
-            onAddEmptyItem={createEmptyItem}
-          />
-        ))}
-      </div>
+              <div className="flex items-center gap-2 w-2/3 justify-end">
+                <Progress value={progressValue} className="w-full border-2" />
+                <DailyLogStatusIcon
+                  checkedCount={checkedCount}
+                  totalCount={totalCount}
+                  iconClassName="w-6 h-6"
+                />
+              </div>
+            </div>
+          </CardTitle>
+          <CardDescription></CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {items.map((item) => (
+              <DailyTodoItem
+                key={item.id}
+                item={item}
+                onToggle={onToggleItem}
+                onUpdateContent={onUpdateItemContent}
+                isEditing={editingItemId === item.id}
+                setEditingItemId={setEditingItemId}
+                onAddEmptyItem={createEmptyItem}
+              />
+            ))}
+          </div>
+        </CardContent>
+        <CardFooter></CardFooter>
+      </Card>
     </>
   );
 };

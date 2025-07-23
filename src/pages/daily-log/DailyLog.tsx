@@ -66,7 +66,7 @@ const DailyLog = () => {
 
           <div className="w-1/2 flex items-center gap-2">
             <div
-              className="flex justify-end cursor-pointer hover:text-red-500"
+              className="ml-auto cursor-pointer hover:text-red-500"
               onClick={handleDelete}
             >
               <Trash2 />
