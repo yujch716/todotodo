@@ -9,8 +9,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash.debounce";
 import { updateDailyLogMemo } from "@/api/daily-log.ts";
 import TiptapToolbar from "@/components/tiptap/TiptapToolbar.tsx";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {NotebookPen} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card.tsx";
+import { NotebookPen } from "lucide-react";
 
 interface Props {
   dailyLogId: string;
@@ -122,7 +129,10 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
     <>
       <Card className="flex flex-col h-full overflow-hidden">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><NotebookPen />Memo</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <NotebookPen />
+            Memo
+          </CardTitle>
           <CardDescription></CardDescription>
         </CardHeader>
         <CardContent className="flex-grow flex flex-col overflow-hidden">

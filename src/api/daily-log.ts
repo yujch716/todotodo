@@ -83,6 +83,14 @@ export const getDailyLogsByDate = async (
   start: Date,
   end: Date,
 ): Promise<DailyLogType[]> => {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError || !user) {
+    throw new Error("인증된 유저가 없습니다.");
+  }
+
   const { data, error } = await supabase
     .from("daily_log")
     .select(
@@ -91,6 +99,7 @@ export const getDailyLogsByDate = async (
       daily_todo (*)
     `,
     )
+    .eq("user_id", user.id)
     .gte("date", start.toISOString())
     .lte("date", end.toISOString());
 
