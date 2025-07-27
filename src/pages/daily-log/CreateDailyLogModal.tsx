@@ -75,7 +75,7 @@ const CreateDailyLogModal = () => {
 
         <div className="grid gap-4">
           <div className="grid gap-3">
-            <Label htmlFor="username-1">날짜</Label>
+            <Label htmlFor="date">날짜</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
