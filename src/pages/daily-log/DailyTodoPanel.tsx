@@ -51,9 +51,9 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
 
     const dailyTodo = await getDailyTodoByDailyLogId(dailyLogId);
 
-    setItems(dailyTodo.items);
-    setTotalCount(dailyTodo.totalCount);
-    setCheckedCount(dailyTodo.checkedCount);
+    setItems(dailyTodo.items ?? []);
+    setTotalCount(dailyTodo.totalCount ?? 0);
+    setCheckedCount(dailyTodo.checkedCount ?? 0);
   }, [dailyLogId]);
 
   useEffect(() => {
