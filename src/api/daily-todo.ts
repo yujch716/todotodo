@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabaseClient.ts";
+import { toast } from "sonner";
 
 export const getDailyTodoByDailyLogId = async (dailyLogId: string) => {
   const { data, error } = await supabase
@@ -7,7 +8,7 @@ export const getDailyTodoByDailyLogId = async (dailyLogId: string) => {
     .eq("daily_log_id", dailyLogId)
     .order("created_at", { ascending: true });
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("조회에 실패했습니다.");
 
   const totalCount = data?.length;
   const checkedCount = data?.filter(
@@ -28,7 +29,7 @@ export const createDailyTodo = async (dailyLogId: string) => {
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("생성에 실패했습니다.");
 
   return data;
 };
@@ -39,7 +40,7 @@ export const updateDailyTodoContent = async (id: string, content: string) => {
     .update({ content })
     .eq("id", id);
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("수정에 실패했습니다.");
 };
 
 export const toggleDailyTodo = async (id: string, isChecked: boolean) => {
@@ -48,11 +49,11 @@ export const toggleDailyTodo = async (id: string, isChecked: boolean) => {
     .update({ is_checked: isChecked })
     .eq("id", id);
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("수정에 실패했습니다.");
 };
 
 export const deleteDailyTodo = async (id: string) => {
   const { error } = await supabase.from("daily_todo").delete().eq("id", id);
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("삭제에 실패했습니다.");
 };

@@ -1,22 +1,24 @@
-import { DayPicker } from "react-day-picker";
-import { getDailyLogsByDate } from "@/api/daily-log.ts";
+import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { cn } from "@/lib/utils.ts";
+import type { DailyLogType } from "@/types/daily-log.ts";
+import type { CalendarEventType } from "@/types/calendar-event.ts";
+import { useCalendarStore } from "@/store/calendarStore.ts";
+import { getDailyLogsByDate } from "@/api/daily-log.ts";
+import { getCalendarEvents } from "@/api/calendar-event.ts";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import type { DailyLogType } from "@/types/daily-log.ts";
-import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { addMonths, format, isSameDay, isSameMonth, subMonths } from "date-fns";
-import { useNavigate } from "react-router-dom";
-import { useCalendarStore } from "@/store/calendarStore.ts";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import CreateCalendarEventModal from "@/pages/calendar/CreateCalendarEventModal.tsx";
-import { getCalendarEvents } from "@/api/calendar-event.ts";
-import type { CalendarEventType } from "@/types/calendar-event.ts";
+import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { DayPicker } from "react-day-picker";
+import { cn } from "@/lib/utils.ts";
+import CreateEventModal from "@/pages/calendar/CreateEventModal.tsx";
+import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import EventDetailModal from "@/pages/calendar/EventDetailModal.tsx";
 
 const Calendar = () => {
   const navigate = useNavigate();
@@ -24,6 +26,12 @@ const Calendar = () => {
   const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
   const [events, setEvents] = useState<CalendarEventType[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDateForModal, setSelectedDateForModal] = useState<Date | null>(
+    null,
+  );
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   const refreshCalendar = useCalendarStore((state) => state.refreshCalendar);
   const resetCalendarRefresh = useCalendarStore(
@@ -48,6 +56,11 @@ const Calendar = () => {
     setEvents(calendarEvents);
     setDailyLogs(dailyLogs);
   }, [currentMonth]);
+
+  const onDayClick = (date: Date) => {
+    setSelectedDateForModal(date);
+    setModalOpen(true);
+  };
 
   useEffect(() => {
     loadDailyLogs();
@@ -151,9 +164,14 @@ const Calendar = () => {
                       >
                         {date.getDate()}
                       </span>
-                      <div className="invisible group-hover:visible">
-                        <CreateCalendarEventModal selectedDate={date} />
-                      </div>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="invisible group-hover:visible w-6 h-6 flex items-center justify-center"
+                        onClick={() => onDayClick(date)}
+                      >
+                        <CalendarPlus />
+                      </Button>
                     </div>
                     <div>
                       {events.length > 0 && (
@@ -163,6 +181,14 @@ const Calendar = () => {
                               <Card
                                 key={i}
                                 className="p-1 mb-1 hover:bg-slate-50 min-h-[30px] flex items-center"
+                                style={{
+                                  backgroundColor:
+                                    item.category?.color || undefined,
+                                }}
+                                onClick={() => {
+                                  setSelectedEventId(item.id);
+                                  setModalOpen(true);
+                                }}
                               >
                                 {item.title}
                               </Card>
@@ -190,10 +216,28 @@ const Calendar = () => {
               },
             }}
           />
+
+          {selectedDateForModal && (
+            <CreateEventModal
+              selectedDate={selectedDateForModal}
+              open={modalOpen}
+              onOpenChange={setModalOpen}
+            />
+          )}
+
+          {selectedEventId && (
+            <EventDetailModal
+              eventId={selectedEventId}
+              open={modalOpen}
+              onOpenChange={(open) => {
+                setModalOpen(open);
+                if (!open) setSelectedEventId(null);
+              }}
+            />
+          )}
         </CardContent>
       </Card>
     </div>
   );
 };
-
 export default Calendar;
