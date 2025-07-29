@@ -17,7 +17,12 @@ export const getCalendarEvents = async (
 
   const { data, error } = await supabase
     .from("calendar_event")
-    .select(`*`)
+    .select(
+      `
+    *,
+    category:calendar_category (*)
+  `,
+    )
     .eq("user_id", user.id)
     .gte("start_at", start.toISOString())
     .lte("start_at", end.toISOString());
@@ -27,14 +32,31 @@ export const getCalendarEvents = async (
   return data ?? [];
 };
 
+export const getCalendarEventById = async (
+  calendarEventId: string,
+): Promise<CalendarEventType> => {
+  const { data, error } = await supabase
+    .from("calendar_event")
+    .select(
+      `
+    *`,
+    )
+    .eq("id", calendarEventId)
+    .single();
+
+  if (error) toast.error("조회에 실패했습니다.");
+
+  return data;
+};
+
 export const createCalendarEvent = async (
   title: string,
   description: string,
   is_all_day: boolean,
   start_at: Date,
   end_at: Date,
-  calendar_color_id: number | null,
-) => {
+  category_id: string | null,
+): Promise<CalendarEventType> => {
   const {
     data: { user },
     error: userError,
@@ -53,7 +75,7 @@ export const createCalendarEvent = async (
         start_at: format(start_at, "yyyy-MM-dd"),
         end_at: format(end_at, "yyyy-MM-dd"),
         is_all_day,
-        calendar_color_id: calendar_color_id ?? null,
+        category_id: category_id ?? null,
       },
     ])
     .select()

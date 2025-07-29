@@ -1,0 +1,27 @@
+import Calendar from "@/pages/calendar/Calendar.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import CalendarCategoryManager from "@/pages/calendar/CalendarCategoryManager.tsx";
+
+const CalendarPage = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Calendar />
+
+      <Button
+        onClick={() => setOpen(true)}
+        className="fixed top-1/2 right-0 -translate-y-1/2 bg-primary text-white p-4 rounded-l-full shadow-lg hover:bg-primary/90 z-50"
+        aria-label="Open Sheet"
+      >
+        <Plus className="w-6 h-6" />
+      </Button>
+
+      <CalendarCategoryManager open={open} onOpenChange={setOpen} />
+    </>
+  );
+};
+
+export default CalendarPage;

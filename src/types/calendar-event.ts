@@ -1,3 +1,5 @@
+import type { CalendarCategory } from "@/types/calendar-category.ts";
+
 export interface CalendarEventType {
   id: string;
   title: string;
@@ -5,5 +7,6 @@ export interface CalendarEventType {
   is_all_day: boolean;
   start_at: Date;
   end_at: Date;
-  calendar_color_id: number | null;
+  category_id?: number;
+  category?: CalendarCategory;
 }

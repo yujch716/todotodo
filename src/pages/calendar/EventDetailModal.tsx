@@ -6,9 +6,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog.tsx";
-import { CalendarIcon, CalendarPlus, Clock, Tag } from "lucide-react";
+import { CalendarIcon, Clock, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
@@ -30,20 +29,31 @@ import {
   SelectValue,
 } from "@/components/ui/select.tsx";
 import { toast } from "sonner";
-import { createCalendarEvent } from "@/api/calendar-event";
+import {
+  createCalendarEvent,
+  getCalendarEventById,
+} from "@/api/calendar-event";
 import { useCalendarStore } from "@/store/calendarStore.ts";
+import { getCalendarCategory } from "@/api/calendar-category.ts";
+import type { CalendarCategory } from "@/types/calendar-category.ts";
 
 interface ScheduleModalProps {
-  selectedDate: Date;
+  eventId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-const CreateCalendarEventModal = ({ selectedDate }: ScheduleModalProps) => {
-  const [open, setOpen] = useState(false);
+const EventDetailModal = ({
+  eventId,
+  open,
+  onOpenChange,
+}: ScheduleModalProps) => {
+  const [categories, setCategories] = useState<CalendarCategory[]>([]);
 
   const [isAllDay, setIsAllDay] = useState(true);
 
-  const [startDate, setStartDate] = useState<Date | undefined>(selectedDate);
-  const [endDate, setEndDate] = useState<Date | undefined>(selectedDate);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
   const [startTime, setStartTime] = useState("10:00");
   const [endTime, setEndTime] = useState("11:00");
@@ -56,11 +66,23 @@ const CreateCalendarEventModal = ({ selectedDate }: ScheduleModalProps) => {
     (state) => state.triggerCalendarRefresh,
   );
 
-  const categoryOptions = [
-    { value: "meeting", label: "회의" },
-    { value: "business_trip", label: "외근" },
-    { value: "vacation", label: "휴가" },
-  ];
+  const fetchEventDetail = async (id: string) => {
+    const data = await getCalendarEventById(id);
+
+    if (data) {
+      setTitle(data.title);
+      setDescription(data.description);
+      setIsAllDay(data.is_all_day);
+      setStartDate(new Date(data.start_at));
+      setEndDate(new Date(data.end_at));
+      setCategory(data.category?.id.toString() ?? null);
+    }
+  };
+
+  const fetchCategories = async () => {
+    const data = await getCalendarCategory();
+    setCategories(data);
+  };
 
   const handleSubmit = async () => {
     if (!title || !startDate || !endDate) {
@@ -88,32 +110,37 @@ const CreateCalendarEventModal = ({ selectedDate }: ScheduleModalProps) => {
           0,
         );
 
-    await createCalendarEvent(title, description, isAllDay, start, end, null);
+    await createCalendarEvent(
+      title,
+      description,
+      isAllDay,
+      start,
+      end,
+      category,
+    );
 
     triggerCalendarRefresh();
 
     setTitle("");
     setDescription("");
-    setOpen(false);
   };
 
   useEffect(() => {
-    setStartDate(selectedDate);
-    setEndDate(selectedDate);
-  }, [selectedDate]);
+    if (eventId) {
+      fetchEventDetail(eventId);
+    }
+  }, [eventId]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger>
-          <Button variant="outline" size="icon" className="size-6">
-            <CalendarPlus />
-          </Button>
-        </DialogTrigger>
-
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="w-full max-w-md sm:mx-auto z-50">
           <DialogHeader>
-            <DialogTitle>일정 추가</DialogTitle>
+            <DialogTitle>일정</DialogTitle>
             <DialogDescription />
           </DialogHeader>
 
@@ -222,9 +249,15 @@ const CreateCalendarEventModal = ({ selectedDate }: ScheduleModalProps) => {
                   <SelectValue placeholder="구분 선택" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categoryOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-4 h-4 rounded-full border border-muted"
+                          style={{ backgroundColor: cat.color }}
+                        />
+                        <span>{cat.name}</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -253,4 +286,4 @@ const CreateCalendarEventModal = ({ selectedDate }: ScheduleModalProps) => {
     </>
   );
 };
-export default CreateCalendarEventModal;
+export default EventDetailModal;
