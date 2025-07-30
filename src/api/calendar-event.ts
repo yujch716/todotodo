@@ -39,7 +39,9 @@ export const getCalendarEventById = async (
     .from("calendar_event")
     .select(
       `
-    *`,
+    *,
+    category:calendar_category (*)
+  `,
     )
     .eq("id", calendarEventId)
     .single();
@@ -84,4 +86,37 @@ export const createCalendarEvent = async (
   if (error) toast.error("생성에 실패했습니다.");
 
   return data;
+};
+
+export const updateCalendarEvent = async (
+  id: string,
+  title: string,
+  description: string,
+  is_all_day: boolean,
+  start_at: Date,
+  end_at: Date,
+  category_id: string | null,
+) => {
+  const { error } = await supabase
+    .from("calendar_event")
+    .update({
+      title,
+      description,
+      start_at: format(start_at, "yyyy-MM-dd"),
+      end_at: format(end_at, "yyyy-MM-dd"),
+      is_all_day,
+      category_id: category_id ?? null,
+    })
+    .eq("id", id);
+
+  if (error) toast.error("수정에 실패했습니다.");
+};
+
+export const deleteCalendarEventById = async (calendarEventId: string) => {
+  const { error } = await supabase
+    .from("calendar_event")
+    .delete()
+    .eq("id", calendarEventId);
+
+  if (error) toast.error("삭제에 실패했습니다.");
 };

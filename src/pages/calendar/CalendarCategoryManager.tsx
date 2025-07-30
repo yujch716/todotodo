@@ -13,13 +13,13 @@ import {
   getCalendarCategory,
   updateCalendarCategory,
 } from "@/api/calendar-category.ts";
-import { Label } from "@/components/ui/label.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
-import { Pencil, Plus, Save, X } from "lucide-react";
+import { Pencil, Plus, Save, Tag, X } from "lucide-react";
 import ColorPicker from "@/components/ColorPicker.tsx";
 import { Card } from "@/components/ui/card.tsx";
+import { useCalendarCategoryStore } from "@/store/calendarCategoryStore.ts";
 
 interface Props {
   open: boolean;
@@ -35,6 +35,10 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("#fca5a5");
 
+  const triggerCalendarCategoryRefresh = useCalendarCategoryStore(
+    (state) => state.triggerCalendarCategoryRefresh,
+  );
+
   const fetchCategories = async () => {
     const data = await getCalendarCategory();
     setCategories(data);
@@ -42,10 +46,15 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
 
   const handleCreate = async () => {
     if (!name.trim()) return;
+    const finalColor = color === "#000000" ? "#fca5a5" : color;
 
-    await createCalendarCategory(name, color);
+    await createCalendarCategory(name, finalColor);
+
+    triggerCalendarCategoryRefresh();
+
     setName("");
     setColor("#000000");
+
     await fetchCategories();
   };
 
@@ -55,14 +64,20 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
 
     await updateCalendarCategory(editingId, editName, editColor);
 
+    triggerCalendarCategoryRefresh();
+
     setEditingId(null);
     setEditName("");
     setEditColor("#fca5a5");
+
     await fetchCategories();
   };
 
   const handleDelete = async (id: string) => {
     await deleteCalendarCategory(id);
+
+    triggerCalendarCategoryRefresh();
+
     await fetchCategories();
   };
 
@@ -73,18 +88,24 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
   };
 
   useEffect(() => {
-    if (open) fetchCategories();
+    if (!open) {
+      setEditingId(null);
+      setEditName("");
+      setEditColor("#fca5a5");
+    } else {
+      fetchCategories();
+    }
   }, [open]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>캘린더 카테고리 관리</SheetTitle>
+          <SheetTitle>Calendar Category</SheetTitle>
           <SheetDescription></SheetDescription>
         </SheetHeader>
 
-        <div className="flex items-center space-x-2 my-6">
+        <Card className="flex items-center space-x-2 p-4 my-6">
           <ColorPicker
             value={color}
             onChange={(newColor) => {
@@ -100,10 +121,13 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
           <Button onClick={handleCreate} className="h-10">
             <Plus className="w-4 h-4" />
           </Button>
-        </div>
+        </Card>
 
-        <ScrollArea className="h-[500px] rounded-md border p-4">
-          <Label>카테고리</Label>
+        <ScrollArea className="h-[500px] rounded-md border p-4 bg-white">
+          <h2 className="flex items-center gap-2 my-3">
+            {" "}
+            <Tag /> Category{" "}
+          </h2>
           <div className="h-4" />
           {categories.map((category) => (
             <Card key={category.id} className="w-full p-2 mb-2 shadow-sm">
@@ -126,7 +150,9 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
                       className="w-6 h-6 rounded-full"
                       style={{ backgroundColor: category.color }}
                     />
-                    <span>{category.name}</span>
+                    <span className="overflow-hidden whitespace-nowrap text-ellipsis block max-w-[150px]">
+                      {category.name}
+                    </span>
                     <div className="ml-auto flex items-center">
                       <Button
                         variant="ghost"
