@@ -153,7 +153,7 @@ const Calendar = () => {
                     onBlur={onBlur}
                     tabIndex={0}
                   >
-                    <div className="flex pb-2 justify-between items-center">
+                    <div className="flex pb-1 justify-between items-center">
                       <span
                         className={cn(
                           "text-xs",
