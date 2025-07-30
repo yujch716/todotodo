@@ -6,16 +6,16 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 
 const presetColors = [
-  "#fca5a5",
-  "#fdba74",
-  "#fde047",
-  "#86efac",
-  "#67e8f9",
-  "#93c5fd",
-  "#c4b5fd",
-  "#f9a8d4",
-  "#d8b4fe",
-  "#cbd5e1",
+  "#fecaca", // red-200
+  "#fed7aa", // orange-200
+  "#fef08a", // yellow-200
+  "#bbf7d0", // green-200
+  "#a5f3fc", // sky-200
+  "#bfdbfe", // blue-200
+  "#ddd6fe", // violet-200
+  "#fbcfe8", // pink-200
+  "#e9d5ff", // purple-200
+  "#e2e8f0", // slate-200
 ];
 
 const ColorPicker = ({

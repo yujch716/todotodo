@@ -20,6 +20,7 @@ import { Pencil, Plus, Save, Tag, X } from "lucide-react";
 import ColorPicker from "@/components/ColorPicker.tsx";
 import { Card } from "@/components/ui/card.tsx";
 import { useCalendarCategoryStore } from "@/store/calendarCategoryStore.ts";
+import {useCalendarStore} from "@/store/calendarStore.ts";
 
 interface Props {
   open: boolean;
@@ -29,14 +30,18 @@ interface Props {
 const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
   const [categories, setCategories] = useState<CalendarCategory[]>([]);
   const [name, setName] = useState("");
-  const [color, setColor] = useState("#fca5a5");
+  const [color, setColor] = useState("#fecaca");
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
-  const [editColor, setEditColor] = useState("#fca5a5");
+  const [editColor, setEditColor] = useState("#fecaca");
 
   const triggerCalendarCategoryRefresh = useCalendarCategoryStore(
     (state) => state.triggerCalendarCategoryRefresh,
+  );
+
+  const triggerCalendarRefresh = useCalendarStore(
+    (state) => state.triggerCalendarRefresh,
   );
 
   const fetchCategories = async () => {
@@ -46,11 +51,12 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
 
   const handleCreate = async () => {
     if (!name.trim()) return;
-    const finalColor = color === "#000000" ? "#fca5a5" : color;
+    const finalColor = color === "#000000" ? "#fecaca" : color;
 
     await createCalendarCategory(name, finalColor);
 
     triggerCalendarCategoryRefresh();
+    triggerCalendarRefresh();
 
     setName("");
     setColor("#000000");
@@ -65,10 +71,11 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
     await updateCalendarCategory(editingId, editName, editColor);
 
     triggerCalendarCategoryRefresh();
+    triggerCalendarRefresh();
 
     setEditingId(null);
     setEditName("");
-    setEditColor("#fca5a5");
+    setEditColor("#fecaca");
 
     await fetchCategories();
   };
@@ -91,7 +98,6 @@ const CalendarCategoryManager = ({ open, onOpenChange }: Props) => {
     if (!open) {
       setEditingId(null);
       setEditName("");
-      setEditColor("#fca5a5");
     } else {
       fetchCategories();
     }
