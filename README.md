@@ -1,7 +1,7 @@
-# 🔫 todotodo
+# todotodo
 
 ## Description
-칭찬 리액션 체크리스트
+다이어리
 
 🔗 Service : 
 ``
