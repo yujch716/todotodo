@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import type { DailyLogType } from "@/types/daily-log.ts";
 import type { CalendarEventType } from "@/types/calendar-event.ts";
@@ -16,18 +15,18 @@ import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils.ts";
 import CreateEventModal from "@/pages/calendar/CreateEventModal.tsx";
-import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import EventDetailModal from "@/pages/calendar/EventDetailModal.tsx";
+import EventCard from "./EventCard";
+import DailyLogCard from "@/pages/calendar/DailyLogCard.tsx";
 
 const Calendar = () => {
-  const navigate = useNavigate();
-
   const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
   const [events, setEvents] = useState<CalendarEventType[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [eventDetailModalOpen, setEventDetailModalOpen] = useState(false);
   const [selectedDateForModal, setSelectedDateForModal] = useState<Date | null>(
     null,
   );
@@ -59,7 +58,7 @@ const Calendar = () => {
 
   const onDayClick = (date: Date) => {
     setSelectedDateForModal(date);
-    setModalOpen(true);
+    setCreateModalOpen(true);
   };
 
   useEffect(() => {
@@ -175,41 +174,21 @@ const Calendar = () => {
                     </div>
                     <div>
                       {events.length > 0 && (
-                        <ul className="text-[11px] leading-tight">
-                          {events.map((item, i) => {
-                            return (
-                              <Card
-                                key={i}
-                                className="p-1 mb-1 hover:bg-slate-50 min-h-[30px] flex items-center"
-                                style={{
-                                  backgroundColor:
-                                    item.category?.color || undefined,
+                        <ul>
+                          {events.map((item) => (
+                            <li key={item.id}>
+                              <EventCard
+                                event={item}
+                                onClick={(id) => {
+                                  setSelectedEventId(id);
+                                  setEventDetailModalOpen(true);
                                 }}
-                                onClick={() => {
-                                  setSelectedEventId(item.id);
-                                  setModalOpen(true);
-                                }}
-                              >
-                                {item.title}
-                              </Card>
-                            );
-                          })}
+                              />
+                            </li>
+                          ))}
                         </ul>
                       )}
-                      {dailyLog && (
-                        <Card
-                          className="p-1 mb-1 hover:bg-slate-50 min-h-[30px] flex items-center"
-                          onClick={() => navigate(`/daily?id=${dailyLog.id}`)}
-                        >
-                          <div className="flex items-center space-x-2 whitespace-nowrap">
-                            <DailyLogStatusIcon
-                              checkedCount={dailyLog.checkedCount}
-                              totalCount={dailyLog.totalCount}
-                            />
-                            <span>Daily</span>
-                          </div>
-                        </Card>
-                      )}
+                      {dailyLog && <DailyLogCard dailyLog={dailyLog} />}
                     </div>
                   </div>
                 );
@@ -220,17 +199,17 @@ const Calendar = () => {
           {selectedDateForModal && (
             <CreateEventModal
               selectedDate={selectedDateForModal}
-              open={modalOpen}
-              onOpenChange={setModalOpen}
+              open={createModalOpen}
+              onOpenChange={setCreateModalOpen}
             />
           )}
 
           {selectedEventId && (
             <EventDetailModal
               eventId={selectedEventId}
-              open={modalOpen}
+              open={eventDetailModalOpen}
               onOpenChange={(open) => {
-                setModalOpen(open);
+                setEventDetailModalOpen(open);
                 if (!open) setSelectedEventId(null);
               }}
             />

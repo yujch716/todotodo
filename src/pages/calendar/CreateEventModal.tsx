@@ -33,6 +33,7 @@ import { createCalendarEvent } from "@/api/calendar-event";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import { getCalendarCategory } from "@/api/calendar-category.ts";
 import type { CalendarCategory } from "@/types/calendar-category.ts";
+import { useCalendarCategoryStore } from "@/store/calendarCategoryStore.ts";
 
 interface ScheduleModalProps {
   selectedDate: Date;
@@ -61,6 +62,13 @@ const CreateEventModal = ({
 
   const triggerCalendarRefresh = useCalendarStore(
     (state) => state.triggerCalendarRefresh,
+  );
+
+  const refreshCalendarCategory = useCalendarCategoryStore(
+    (state) => state.refreshCalendarCategory,
+  );
+  const resetCalendarCategoryRefresh = useCalendarCategoryStore(
+    (state) => state.resetCalendarCategoryRefresh,
   );
 
   const fetchCategories = async () => {
@@ -107,6 +115,7 @@ const CreateEventModal = ({
 
     setTitle("");
     setDescription("");
+    onOpenChange(false);
   };
 
   useEffect(() => {
@@ -117,6 +126,13 @@ const CreateEventModal = ({
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (refreshCalendarCategory) {
+      fetchCategories();
+      resetCalendarCategoryRefresh();
+    }
+  }, [fetchCategories, resetCalendarCategoryRefresh]);
 
   return (
     <>

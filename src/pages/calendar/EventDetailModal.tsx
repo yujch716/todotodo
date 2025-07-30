@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog.tsx";
-import { CalendarIcon, Clock, Tag } from "lucide-react";
+import { CalendarIcon, Clock, Pencil, Tag, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
@@ -30,8 +30,9 @@ import {
 } from "@/components/ui/select.tsx";
 import { toast } from "sonner";
 import {
-  createCalendarEvent,
+  deleteCalendarEventById,
   getCalendarEventById,
+  updateCalendarEvent,
 } from "@/api/calendar-event";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import { getCalendarCategory } from "@/api/calendar-category.ts";
@@ -48,6 +49,8 @@ const EventDetailModal = ({
   open,
   onOpenChange,
 }: ScheduleModalProps) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const [categories, setCategories] = useState<CalendarCategory[]>([]);
 
   const [isAllDay, setIsAllDay] = useState(true);
@@ -60,7 +63,7 @@ const EventDetailModal = ({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState<string | null>(null);
+  const [category, setCategory] = useState<CalendarCategory | null>(null);
 
   const triggerCalendarRefresh = useCalendarStore(
     (state) => state.triggerCalendarRefresh,
@@ -75,7 +78,7 @@ const EventDetailModal = ({
       setIsAllDay(data.is_all_day);
       setStartDate(new Date(data.start_at));
       setEndDate(new Date(data.end_at));
-      setCategory(data.category?.id.toString() ?? null);
+      setCategory(data.category ?? null);
     }
   };
 
@@ -110,19 +113,28 @@ const EventDetailModal = ({
           0,
         );
 
-    await createCalendarEvent(
+    await updateCalendarEvent(
+      eventId,
       title,
       description,
       isAllDay,
       start,
       end,
-      category,
+      category?.id ?? null,
     );
 
     triggerCalendarRefresh();
 
-    setTitle("");
-    setDescription("");
+    setIsEditMode(false);
+  };
+
+  const handleDelete = async (eventId: string) => {
+    await deleteCalendarEventById(eventId);
+
+    triggerCalendarRefresh();
+
+    setIsEditMode(false);
+    onOpenChange(false);
   };
 
   useEffect(() => {
@@ -139,148 +151,231 @@ const EventDetailModal = ({
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="w-full max-w-md sm:mx-auto z-50">
-          <DialogHeader>
-            <DialogTitle>일정</DialogTitle>
-            <DialogDescription />
-          </DialogHeader>
+          {isEditMode ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>일정</DialogTitle>
+                <DialogDescription />
+              </DialogHeader>
 
-          <div className="grid gap-4">
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="제목"
-            />
-
-            <div className="flex items-center space-x-2 mt-2">
-              <Checkbox
-                id="is-all-day"
-                checked={isAllDay}
-                onCheckedChange={() => setIsAllDay(!isAllDay)}
-              />
-              <Label htmlFor="is-all-day">하루종일</Label>
-            </div>
-
-            <div className="flex items-center gap-2 flex-wrap">
-              <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-
-              {isAllDay ? (
-                <>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="justify-start">
-                        {startDate ? format(startDate, "yyyy-MM-dd") : "시작일"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={startDate}
-                        onSelect={(date) => {
-                          setStartDate(date);
-                          setEndDate(date);
-                        }}
-                        captionLayout="dropdown"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <span className="mx-1 select-none">-</span>{" "}
-                  {/* 날짜 사이 하이픈 */}
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="justify-start">
-                        {endDate ? format(endDate, "yyyy-MM-dd") : "종료일"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={endDate}
-                        onSelect={setEndDate}
-                        captionLayout="dropdown"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </>
-              ) : (
-                <>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="justify-start">
-                        {startDate ? format(startDate, "yyyy-MM-dd") : "시작일"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={startDate}
-                        onSelect={setStartDate}
-                        captionLayout="dropdown"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </>
-              )}
-            </div>
-
-            {!isAllDay && (
-              <div className="flex items-center gap-2 flex-nowrap">
-                <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <div className="grid gap-4">
                 <Input
-                  type="time"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  className="[&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="제목"
                 />
-                <span className="mx-1 select-none">-</span>
-                <Input
-                  type="time"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  className="[&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                />
+
+                <div className="flex items-center space-x-2 mt-2">
+                  <Checkbox
+                    id="is-all-day"
+                    checked={isAllDay}
+                    onCheckedChange={() => setIsAllDay(!isAllDay)}
+                  />
+                  <Label htmlFor="is-all-day">하루종일</Label>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+
+                  {isAllDay ? (
+                    <>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="justify-start">
+                            {startDate
+                              ? format(startDate, "yyyy-MM-dd")
+                              : "시작일"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={startDate}
+                            onSelect={(date) => {
+                              setStartDate(date);
+                              setEndDate(date);
+                            }}
+                            captionLayout="dropdown"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <span className="mx-1 select-none">-</span>{" "}
+                      {/* 날짜 사이 하이픈 */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="justify-start">
+                            {endDate ? format(endDate, "yyyy-MM-dd") : "종료일"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={endDate}
+                            onSelect={setEndDate}
+                            captionLayout="dropdown"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </>
+                  ) : (
+                    <>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="justify-start">
+                            {startDate
+                              ? format(startDate, "yyyy-MM-dd")
+                              : "시작일"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={startDate}
+                            onSelect={setStartDate}
+                            captionLayout="dropdown"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </>
+                  )}
+                </div>
+
+                {!isAllDay && (
+                  <div className="flex items-center gap-2 flex-nowrap">
+                    <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <Input
+                      type="time"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      className="[&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                    />
+                    <span className="mx-1 select-none">-</span>
+                    <Input
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      className="[&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                    />
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-muted-foreground" />
+                  <Select
+                    value={category?.id}
+                    onValueChange={(id) => {
+                      const selected = categories.find((cat) => cat.id === id);
+                      setCategory(selected ?? null);
+                    }}
+                  >
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue placeholder="구분 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-4 h-4 rounded-full border border-muted"
+                              style={{ backgroundColor: cat.color }}
+                            />
+                            <span>{cat.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid gap-1">
+                  <Textarea
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="설명 (선택)"
+                    rows={4}
+                  />
+                </div>
               </div>
-            )}
 
-            <div className="flex items-center gap-2">
-              <Tag className="w-4 h-4 text-muted-foreground" />
-              <Select value={category ?? undefined} onValueChange={setCategory}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="구분 선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-4 h-4 rounded-full border border-muted"
-                          style={{ backgroundColor: cat.color }}
-                        />
-                        <span>{cat.name}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button onClick={handleSubmit}>Save</Button>
+              </DialogFooter>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center">
+                  일정
+                  <div className="ml-auto flex items-center">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setIsEditMode(true)}
+                    >
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(eventId)}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
+                </DialogTitle>
+                <DialogDescription />
+              </DialogHeader>
+              <div className="grid gap-4">
+                <h1 className="text-2xl font-bold">{title}</h1>
 
-            <div className="grid gap-1">
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="설명 (선택)"
-                rows={4}
-              />
-            </div>
-          </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  {isAllDay ? (
+                    <>
+                      {startDate ? format(startDate, "yyyy-MM-dd") : "시작일"}
+                      <span className="mx-1 select-none">-</span>{" "}
+                      {endDate ? format(endDate, "yyyy-MM-dd") : "종료일"}
+                    </>
+                  ) : (
+                    <>
+                      {startDate ? format(startDate, "yyyy-MM-dd") : "시작일"}
+                      {startTime}
+                      <span className="mx-1 select-none">-</span> {endTime}
+                    </>
+                  )}
+                </div>
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button onClick={handleSubmit}>Save</Button>
-          </DialogFooter>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Tag className="w-4 h-4 text-muted-foreground" />
+                  {category ? (
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-4 h-4 rounded-full border border-muted"
+                        style={{ backgroundColor: category.color }}
+                      />
+                      <span>{category.name}</span>
+                    </div>
+                  ) : (
+                    "-"
+                  )}
+                </div>
+
+                <div className="grid gap-1">
+                  <Textarea
+                    id="description"
+                    value={description}
+                    rows={4}
+                    readOnly
+                  />
+                </div>
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </>

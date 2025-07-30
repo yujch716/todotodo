@@ -62,5 +62,6 @@ export const deleteCalendarCategory = async (id: string) => {
     .from("calendar_category")
     .delete()
     .eq("id", id);
+
   if (error) toast.error("삭제에 실패했습니다.");
 };
