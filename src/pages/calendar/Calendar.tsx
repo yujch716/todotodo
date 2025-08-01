@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { addMonths, format, isSameDay, isSameMonth, subMonths } from "date-fns";
+import {addDays, addMonths, endOfDay, format, isSameDay, isSameMonth, startOfDay, subDays, subMonths} from "date-fns";
 import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils.ts";
@@ -38,15 +38,15 @@ const Calendar = () => {
   );
 
   const loadDailyLogs = useCallback(async () => {
-    const start = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth(),
-      1,
+    const start = startOfDay(
+      subDays(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1), 7),
     );
-    const end = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth() + 1,
-      0,
+
+    const end = endOfDay(
+      addDays(
+        new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0),
+        7,
+      ),
     );
 
     const dailyLogs = await getDailyLogsByDate(start, end);
@@ -122,7 +122,7 @@ const Calendar = () => {
               head_cell:
                 "font-medium text-center text-sm bg-slate-200 py-2 font-bold",
               row: "",
-              cell: "h-[100px] md:h-[120px] lg:h-[140px] text-sm p-0 relative border-2 border-slate-200",
+              cell: "h-[80px] md:h-[100px] lg:h-[130px] text-sm p-0 relative border-2 border-slate-200",
               day: "h-full w-full p-1 font-normal flex flex-col items-center justify-start text-sm",
               day_selected: "bg-primary text-white hover:bg-primary/90",
               day_outside: "text-gray-400",
@@ -153,7 +153,7 @@ const Calendar = () => {
                     onBlur={onBlur}
                     tabIndex={0}
                   >
-                    <div className="flex pb-1 justify-between items-center">
+                    <div className="flex justify-between items-center">
                       <span
                         className={cn(
                           "text-xs",

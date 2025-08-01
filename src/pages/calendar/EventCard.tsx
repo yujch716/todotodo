@@ -9,12 +9,12 @@ interface EventCardProps {
 const EventCard = ({ event, onClick }: EventCardProps) => {
   return (
     <Card
-      className="p-1 mb-1  min-h-[30px] flex items-center cursor-pointer"
+      className="p-1 mb-1 min-h-[30px] flex items-center cursor-pointer"
       style={{ backgroundColor: event.category?.color || undefined }}
       onClick={() => onClick(event.id)}
     >
       <span
-        className="overflow-hidden whitespace-nowrap text-ellipsis block"
+        className="overflow-hidden whitespace-nowrap text-ellipsis block text-xs leading-tight"
         style={{ maxWidth: "100%" }}
       >
         {event.title}
