@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog.tsx";
 import { CalendarIcon, Clock, Tag } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
@@ -71,10 +71,10 @@ const CreateEventModal = ({
     (state) => state.resetCalendarCategoryRefresh,
   );
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     const data = await getCalendarCategory();
     setCategories(data);
-  };
+  }, []);
 
   const handleSubmit = async () => {
     if (!title || !startDate || !endDate) {
@@ -125,14 +125,14 @@ const CreateEventModal = ({
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   useEffect(() => {
     if (refreshCalendarCategory) {
       fetchCategories();
       resetCalendarCategoryRefresh();
     }
-  }, [fetchCategories, resetCalendarCategoryRefresh]);
+  }, [refreshCalendarCategory, fetchCategories, resetCalendarCategoryRefresh]);
 
   return (
     <>
