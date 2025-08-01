@@ -13,7 +13,7 @@ import { ChevronDown, ChevronRight, List } from "lucide-react";
 import type { DailyLogType } from "@/types/daily-log.ts";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { format } from "date-fns";
-import {ScrollArea} from "@/components/ui/scroll-area.tsx";
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 
 interface Props {
   dailyLogs: DailyLogType[];
