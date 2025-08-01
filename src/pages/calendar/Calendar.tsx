@@ -26,9 +26,7 @@ import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils.ts";
 import CreateEventModal from "@/pages/calendar/CreateEventModal.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import EventDetailModal from "@/pages/calendar/EventDetailModal.tsx";
-import EventCard from "./EventCard";
-import DailyLogCard from "@/pages/calendar/DailyLogCard.tsx";
+import CalendarDayCell from "@/pages/calendar/CalendarDayCell.tsx";
 
 const Calendar = () => {
   const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
@@ -36,11 +34,9 @@ const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [eventDetailModalOpen, setEventDetailModalOpen] = useState(false);
   const [selectedDateForModal, setSelectedDateForModal] = useState<Date | null>(
     null,
   );
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   const refreshCalendar = useCalendarStore((state) => state.refreshCalendar);
   const resetCalendarRefresh = useCalendarStore(
@@ -186,22 +182,7 @@ const Calendar = () => {
                       </Button>
                     </div>
                     <div>
-                      {events.length > 0 && (
-                        <ul>
-                          {events.map((item) => (
-                            <li key={item.id}>
-                              <EventCard
-                                event={item}
-                                onClick={(id) => {
-                                  setSelectedEventId(id);
-                                  setEventDetailModalOpen(true);
-                                }}
-                              />
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                      {dailyLog && <DailyLogCard dailyLog={dailyLog} />}
+                      <CalendarDayCell events={events} dailyLog={dailyLog} />
                     </div>
                   </div>
                 );
@@ -214,17 +195,6 @@ const Calendar = () => {
               selectedDate={selectedDateForModal}
               open={createModalOpen}
               onOpenChange={setCreateModalOpen}
-            />
-          )}
-
-          {selectedEventId && (
-            <EventDetailModal
-              eventId={selectedEventId}
-              open={eventDetailModalOpen}
-              onOpenChange={(open) => {
-                setEventDetailModalOpen(open);
-                if (!open) setSelectedEventId(null);
-              }}
             />
           )}
         </CardContent>
