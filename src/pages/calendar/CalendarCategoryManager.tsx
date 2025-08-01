@@ -20,7 +20,7 @@ import { Pencil, Plus, Save, Tag, X } from "lucide-react";
 import ColorPicker from "@/components/ColorPicker.tsx";
 import { Card } from "@/components/ui/card.tsx";
 import { useCalendarCategoryStore } from "@/store/calendarCategoryStore.ts";
-import {useCalendarStore} from "@/store/calendarStore.ts";
+import { useCalendarStore } from "@/store/calendarStore.ts";
 
 interface Props {
   open: boolean;

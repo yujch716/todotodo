@@ -10,7 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import {addDays, addMonths, endOfDay, format, isSameDay, isSameMonth, startOfDay, subDays, subMonths} from "date-fns";
+import {
+  addDays,
+  addMonths,
+  endOfDay,
+  format,
+  isSameDay,
+  isSameMonth,
+  startOfDay,
+  subDays,
+  subMonths,
+} from "date-fns";
 import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils.ts";
@@ -39,7 +49,10 @@ const Calendar = () => {
 
   const loadDailyLogs = useCallback(async () => {
     const start = startOfDay(
-      subDays(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1), 7),
+      subDays(
+        new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1),
+        7,
+      ),
     );
 
     const end = endOfDay(
