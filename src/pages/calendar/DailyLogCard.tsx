@@ -12,7 +12,7 @@ const DailyLogCard = ({ dailyLog }: DailyLogCardProps) => {
 
   return (
     <Card
-      className="p-1 mb-1 hover:bg-slate-50 min-h-[30px] flex items-center cursor-pointer"
+      className="p-1 hover:bg-slate-50 min-h-[30px] flex items-center cursor-pointer"
       onClick={() => navigate(`/daily?id=${dailyLog.id}`)}
     >
       <div className="flex items-center space-x-2 min-w-0">

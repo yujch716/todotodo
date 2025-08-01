@@ -17,11 +17,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { SquareCheckBig } from "lucide-react";
+import { SquareCheckBig, SquarePlus } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
+import { cn } from "@/lib/utils.ts";
 
 interface Props {
   dailyLogId: string;
@@ -123,29 +124,13 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
 
     if (items.some((item) => item.content.trim() === "")) return;
 
-    const newItem = await createDailyTodo(dailyLogId);
+    const newItem = await createDailyTodo(dailyLogId, "");
 
     triggerDailyLogRefresh();
     triggerSidebarRefresh();
 
     setItems((prev) => [...prev, newItem]);
     setEditingItemId(newItem.id);
-  };
-
-  const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    if (
-      target.closest("input") ||
-      target.closest("textarea") ||
-      target.closest("textarea") ||
-      target.closest("[data-daily-todo-item]")
-    ) {
-      return;
-    }
-
-    createEmptyItem();
-
-    triggerSidebarRefresh();
   };
 
   const progressValue = totalCount > 0 ? (checkedCount / totalCount) * 100 : 0;
@@ -159,7 +144,7 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
 
   return (
     <>
-      <Card onClick={handlePanelClick}>
+      <Card className="group">
         <CardHeader>
           <CardTitle>
             <div className="flex items-center justify-between w-full">
@@ -193,8 +178,22 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
               />
             ))}
           </div>
+          <div className="flex justify-center mt-3">
+            <Button
+              variant="outline"
+              size="icon"
+              className={cn(
+                "transition-opacity duration-200 w-6 h-6 mt-3 p-4",
+                items.length === 0
+                  ? "visible"
+                  : "invisible group-hover:visible",
+              )}
+              onClick={createEmptyItem}
+            >
+              <SquarePlus className="text-slate-700" />
+            </Button>
+          </div>
         </CardContent>
-        <CardFooter></CardFooter>
       </Card>
     </>
   );

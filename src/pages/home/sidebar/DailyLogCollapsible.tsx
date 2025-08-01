@@ -13,6 +13,7 @@ import { ChevronDown, ChevronRight, List } from "lucide-react";
 import type { DailyLogType } from "@/types/daily-log.ts";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { format } from "date-fns";
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 
 interface Props {
   dailyLogs: DailyLogType[];
@@ -55,25 +56,27 @@ const DailyLogCollapsible = ({
         </SidebarMenuItem>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <SidebarMenuSub className="border-l-2 border-sky-200">
-          {dailyLogs.map((item) => (
-            <SidebarMenuSubItem
-              key={item.id}
-              className={`truncate flex flex-col justify-start py-1 px-1 rounded-md text-sm transition-colors ${
-                item.id === selectedId ? "bg-sky-200" : "hover:bg-sky-200"
-              }`}
-              onClick={() => handleSelectDailyLog(item.id)}
-            >
-              <div className="flex items-center gap-1">
-                <DailyLogStatusIcon
-                  checkedCount={item.checkedCount}
-                  totalCount={item.totalCount}
-                />
-                <span>{format(new Date(item.date), "yyyy년 MM월 dd일")}</span>
-              </div>
-            </SidebarMenuSubItem>
-          ))}
-        </SidebarMenuSub>
+        <ScrollArea className="max-h-64 overflow-y-auto">
+          <SidebarMenuSub className="border-l-2 border-sky-200">
+            {dailyLogs.map((item) => (
+              <SidebarMenuSubItem
+                key={item.id}
+                className={`truncate flex flex-col justify-start p-1 rounded-md text-sm transition-colors ${
+                  item.id === selectedId ? "bg-sky-200" : "hover:bg-sky-200"
+                }`}
+                onClick={() => handleSelectDailyLog(item.id)}
+              >
+                <div className="flex items-center gap-1">
+                  <DailyLogStatusIcon
+                    checkedCount={item.checkedCount}
+                    totalCount={item.totalCount}
+                  />
+                  <span>{format(new Date(item.date), "yyyy년 MM월 dd일")}</span>
+                </div>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </ScrollArea>
       </CollapsibleContent>
     </Collapsible>
   );

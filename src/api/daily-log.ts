@@ -66,15 +66,11 @@ export const getDailyLogById = async (
 export const getDailyLogByDate = async (
   date: Date,
 ): Promise<DailyLogType | null> => {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("daily_log")
     .select(`*`)
     .eq("date", format(date, "yyyy-MM-dd"))
-    .single();
-
-  if (error && error.code !== "PGRST116") {
-    toast.error("이미 존재하는 일정입니다.");
-  }
+    .maybeSingle();
 
   return data ?? null;
 };
