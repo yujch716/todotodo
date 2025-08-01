@@ -4,6 +4,17 @@ import { showCelebration } from "@/lib/effects";
 import type { DailyTodoType } from "@/types/daily-log.ts";
 import { updateDailyTodoContent } from "@/api/daily-todo.ts";
 import { Card } from "@/components/ui/card.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu.tsx";
+import { MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
+import CopyDailyTodoModal from "@/pages/daily-log/CopyDailyTodoModal.tsx";
+import MoveDailyTodoModal from "@/pages/daily-log/MoveDailyTodoModal.tsx";
 
 interface Props {
   item: DailyTodoType;
@@ -23,6 +34,9 @@ const DailyTodoItem = ({
   onAddEmptyItem,
 }: Props) => {
   const [content, setContent] = useState(item.content);
+
+  const [openCopyModal, setOpenCopyModal] = useState(false);
+  const [openMoveModal, setOpenMoveModal] = useState(false);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -70,37 +84,84 @@ const DailyTodoItem = ({
     }
   };
 
+  const handleOpenCopyModal = () => {
+    setOpenCopyModal(true);
+  };
+
+  const handleOpenMoveModal = () => {
+    setOpenMoveModal(true);
+  };
+
   return (
-    <Card className="w-full p-2 shadow-sm hover:bg-slate-50" data-daily-todo-item>
-      <div className="flex items-center gap-2">
-        <Checkbox
-          checked={item.is_checked}
-          onCheckedChange={handleToggle}
-          className=" shrink-0"
-        />
-        <div className="flex-grow">
-          {isEditing ? (
-            <input
-              ref={inputRef}
-              type="text"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              onBlur={handleSaveContent}
-              onKeyDown={handleKeyDown}
-              className="w-full border-b border-gray-300 focus:outline-none text-sm leading-6"
-            />
-          ) : (
-            <span
-              onClick={() => setEditingItemId(item.id)}
-              className={`inline-block w-full text-sm leading-6 cursor-text ${
-                item.is_checked ? "line-through text-gray-400" : ""
-              }`}
-            >
-              {item.content || "\u00A0"}
-            </span>
-          )}
+    <Card className="w-full p-2 shadow-sm hover:shadow-md">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 flex-grow">
+          <Checkbox
+            checked={item.is_checked}
+            onCheckedChange={handleToggle}
+            className=" shrink-0"
+          />
+          <div className="flex-grow">
+            {isEditing ? (
+              <input
+                ref={inputRef}
+                type="text"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                onBlur={handleSaveContent}
+                onKeyDown={handleKeyDown}
+                className="w-full border-b border-gray-300 focus:outline-none text-sm leading-6"
+              />
+            ) : (
+              <span
+                onClick={() => setEditingItemId(item.id)}
+                className={`w-full text-sm leading-6 cursor-text ${
+                  item.is_checked ? "line-through text-gray-400" : ""
+                }`}
+              >
+                {item.content || "\u00A0"}
+              </span>
+            )}
+          </div>
         </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="right" align="center">
+            <DropdownMenuItem onClick={handleOpenCopyModal}>
+              Copy
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleOpenMoveModal}>
+              Move
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-red-600"
+              onClick={() => onUpdateContent(item.id, "")}
+            >
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
+      {openCopyModal && (
+        <CopyDailyTodoModal
+          content={item.content}
+          onClose={() => setOpenCopyModal(false)}
+        />
+      )}
+      {openMoveModal && (
+        <MoveDailyTodoModal
+          id={item.id}
+          content={item.content}
+          onClose={() => setOpenMoveModal(false)}
+        />
+      )}
     </Card>
   );
 };

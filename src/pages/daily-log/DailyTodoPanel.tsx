@@ -124,7 +124,7 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
 
     if (items.some((item) => item.content.trim() === "")) return;
 
-    const newItem = await createDailyTodo(dailyLogId);
+    const newItem = await createDailyTodo(dailyLogId, "");
 
     triggerDailyLogRefresh();
     triggerSidebarRefresh();

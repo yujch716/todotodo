@@ -22,10 +22,10 @@ export const getDailyTodoByDailyLogId = async (dailyLogId: string) => {
   };
 };
 
-export const createDailyTodo = async (dailyLogId: string) => {
+export const createDailyTodo = async (dailyLogId: string, content: string) => {
   const { data, error } = await supabase
     .from("daily_todo")
-    .insert({ daily_log_id: dailyLogId, content: "", is_checked: false })
+    .insert({ daily_log_id: dailyLogId, content, is_checked: false })
     .select()
     .single();
 
