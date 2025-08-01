@@ -71,7 +71,7 @@ const DailyTodoItem = ({
   };
 
   return (
-    <Card className="w-full p-2 shadow-sm" data-daily-todo-item>
+    <Card className="w-full p-2 shadow-sm hover:bg-slate-50" data-daily-todo-item>
       <div className="flex items-center gap-2">
         <Checkbox
           checked={item.is_checked}

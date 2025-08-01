@@ -180,17 +180,17 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
           </div>
           <div className="flex justify-center mt-3">
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               className={cn(
-                "transition-opacity duration-200",
+                "transition-opacity duration-200 w-6 h-6 mt-3 p-4",
                 items.length === 0
                   ? "visible"
                   : "invisible group-hover:visible",
               )}
               onClick={createEmptyItem}
             >
-              <SquarePlus />
+              <SquarePlus className="text-slate-700" />
             </Button>
           </div>
         </CardContent>
