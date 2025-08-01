@@ -7,7 +7,12 @@ import { Trash2 } from "lucide-react";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import EmptyDailyLog from "@/pages/daily-log/EmptyDailyLog.tsx";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs.tsx";
 
 const DailyLog = () => {
   const navigate = useNavigate();
