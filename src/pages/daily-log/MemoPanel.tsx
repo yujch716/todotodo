@@ -127,7 +127,7 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
 
   return (
     <>
-      <Card className="flex flex-col h-screen overflow-hidden">
+      <Card className="flex flex-col h-full overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <NotebookPen />
@@ -150,7 +150,7 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
             <div className="flex-grow overflow-y-auto bg-white p-4">
               <EditorContent
                 editor={editor}
-                className="tiptap prose overflow-y-auto [&>div]:min-h-full [&>p]:min-h-full [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:my-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:my-2 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:my-1"
+                className="tiptap prose h-full overflow-y-auto [&>div]:min-h-full [&>p]:min-h-full [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:my-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:my-2 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:my-1"
                 style={{
                   outline: "none",
                   boxShadow: "none",
