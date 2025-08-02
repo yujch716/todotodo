@@ -6,6 +6,13 @@ import HeadingSelect from "./HeadingSelect";
 import FontFamilySelect from "./FontFamilySelect";
 import TextAlignButtons from "./TextAlignButtons";
 import ListButtons from "./ListButtons";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
 
 interface Props {
   editor: Editor;
@@ -28,37 +35,50 @@ const TiptapToolbar = ({
 }: Props) => {
   return (
     <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2 shrink-0">
-      <TextStyleButtons editor={editor} />
-      <div className="border-l mx-2" />
+      <Accordion type="single" className="w-full" collapsible>
+        <AccordionItem value="item-1" className="w-full border-none">
+          <div className="flex items-center w-full gap-2">
+            <TextStyleButtons editor={editor} />
+            <Separator orientation="vertical" className="h-10 mx-2" />
 
-      <HeadingSelect
-        heading={heading}
-        setHeading={setHeading}
-        editor={editor}
-      />
-      <FontFamilySelect
-        fontFamily={fontFamily}
-        handleFontFamilyChange={handleFontFamilyChange}
-      />
-      <div className="border-l mx-2" />
+            <div className="flex items-center gap-1">
+              <label className="cursor-pointer">
+                <PaintBucket size={18} fill={textColor} />
+                <input
+                  type="color"
+                  value={textColor}
+                  onChange={handleColorChange}
+                  className="sr-only"
+                />
+              </label>
+            </div>
 
-      <TextAlignButtons editor={editor} />
-      <div className="border-l mx-2" />
+            <div className="ml-auto">
+              <AccordionTrigger className="p-1 w-8 h-8 flex items-center justify-center" />
+            </div>
+          </div>
 
-      <ListButtons editor={editor} />
-      <div className="border-l mx-2" />
+          <AccordionContent className="flex flex-wrap gap-2 pt-2">
+            <HeadingSelect
+              heading={heading}
+              setHeading={setHeading}
+              editor={editor}
+            />
+            <Separator orientation="vertical" className="h-10 mx-2" />
 
-      <div className="flex items-center gap-1">
-        <label className="cursor-pointer">
-          <PaintBucket size={18} fill={textColor} />
-          <input
-            type="color"
-            value={textColor}
-            onChange={handleColorChange}
-            className="sr-only"
-          />
-        </label>
-      </div>
+            <FontFamilySelect
+              fontFamily={fontFamily}
+              handleFontFamilyChange={handleFontFamilyChange}
+            />
+            <Separator orientation="vertical" className="h-10 mx-2" />
+
+            <TextAlignButtons editor={editor} />
+            <Separator orientation="vertical" className="h-10 mx-2" />
+
+            <ListButtons editor={editor} />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };
