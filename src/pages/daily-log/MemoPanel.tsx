@@ -26,8 +26,6 @@ interface Props {
 }
 
 const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
-  const [isFocused, setIsFocused] = useState(false);
-
   const [textColor, setTextColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [heading, setHeading] = useState("paragraph");
@@ -54,6 +52,12 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
       updateMemo(newMemo);
     }, 1000),
   );
+
+  useEffect(() => {
+    debouncedUpdateMemo.current = debounce((newMemo: string) => {
+      updateMemo(newMemo);
+    }, 1000);
+  }, [updateMemo]);
 
   const editor = useEditor({
     extensions: [
@@ -90,12 +94,6 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
   };
 
   useEffect(() => {
-    debouncedUpdateMemo.current = debounce((newMemo: string) => {
-      updateMemo(newMemo);
-    }, 1000);
-  }, [updateMemo]);
-
-  useEffect(() => {
     if (!editor) return;
     if (editor.getHTML() !== memo) {
       const { from, to } = editor.state.selection;
@@ -107,21 +105,6 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
       }, 0);
     }
   }, [memo, editor]);
-
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleFocus = () => setIsFocused(true);
-    const handleBlur = () => setIsFocused(false);
-
-    editor.on("focus", handleFocus);
-    editor.on("blur", handleBlur);
-
-    return () => {
-      editor.off("focus", handleFocus);
-      editor.off("blur", handleBlur);
-    };
-  }, [editor]);
 
   useEffect(() => {
     const handleBlur = () => {
@@ -154,17 +137,15 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
         </CardHeader>
         <CardContent className="flex-grow flex flex-col overflow-hidden">
           <div className="flex flex-col h-full border rounded-lg overflow-hidden">
-            {isFocused && (
-              <TiptapToolbar
-                editor={editor}
-                heading={heading}
-                setHeading={setHeading}
-                fontFamily={fontFamily}
-                handleFontFamilyChange={handleFontFamilyChange}
-                textColor={textColor}
-                handleColorChange={handleColorChange}
-              />
-            )}
+            <TiptapToolbar
+              editor={editor}
+              heading={heading}
+              setHeading={setHeading}
+              fontFamily={fontFamily}
+              handleFontFamilyChange={handleFontFamilyChange}
+              textColor={textColor}
+              handleColorChange={handleColorChange}
+            />
 
             <div className="flex-grow overflow-y-auto bg-white p-4">
               <EditorContent
