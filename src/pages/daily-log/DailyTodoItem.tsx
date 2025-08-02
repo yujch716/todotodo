@@ -93,7 +93,10 @@ const DailyTodoItem = ({
   };
 
   return (
-    <Card className="w-full p-2 shadow-sm hover:shadow-md">
+    <Card
+      className="w-full p-2 shadow-sm hover:shadow-md"
+      onClick={() => setEditingItemId(item.id)}
+    >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 flex-grow">
           <Checkbox
@@ -114,7 +117,6 @@ const DailyTodoItem = ({
               />
             ) : (
               <span
-                onClick={() => setEditingItemId(item.id)}
                 className={`w-full text-sm leading-6 cursor-text ${
                   item.is_checked ? "line-through text-gray-400" : ""
                 }`}
