@@ -34,14 +34,14 @@ const TiptapToolbar = ({
   handleColorChange,
 }: Props) => {
   return (
-    <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-2 shrink-0">
+    <div className="flex flex-wrap gap-2 border-b rounded-t-lg bg-slate-100 p-1 shrink-0">
       <Accordion type="single" className="w-full" collapsible>
         <AccordionItem value="item-1" className="w-full border-none">
           <div className="flex items-center w-full gap-2">
             <TextStyleButtons editor={editor} />
             <Separator orientation="vertical" className="h-10 mx-2" />
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center hover:bg-slate-50 rounded-md p-2">
               <label className="cursor-pointer">
                 <PaintBucket size={18} fill={textColor} />
                 <input
@@ -53,12 +53,12 @@ const TiptapToolbar = ({
               </label>
             </div>
 
-            <div className="ml-auto">
+            <div className="ml-auto hover:bg-slate-50 rounded-md">
               <AccordionTrigger className="p-1 w-8 h-8 flex items-center justify-center" />
             </div>
           </div>
 
-          <AccordionContent className="flex flex-wrap gap-2 pt-2">
+          <AccordionContent className="flex flex-wrap gap-2 pt-2 pb-0">
             <HeadingSelect
               heading={heading}
               setHeading={setHeading}

@@ -40,28 +40,28 @@ const HeadingSelect: React.FC<HeadingSelectProps> = ({
       </SelectTrigger>
       <SelectContent>
         <SelectItem
-          value="paragraph"
-          className="flex items-center gap-2 whitespace-nowrap"
-        >
-          <Type size={18} />
-        </SelectItem>
-        <SelectItem
           value="1"
           className="flex items-center gap-2 whitespace-nowrap"
         >
-          <Heading1 size={18} />
+          <Heading1 className="w-5 h-5" strokeWidth={3} />
         </SelectItem>
         <SelectItem
           value="2"
           className="flex items-center gap-2 whitespace-nowrap"
         >
-          <Heading2 size={18} />
+          <Heading2 className="w-4 h-4" strokeWidth={3} />
         </SelectItem>
         <SelectItem
           value="3"
           className="flex items-center gap-2 whitespace-nowrap"
         >
-          <Heading3 size={18} />
+          <Heading3 className="w-3.5 h-3.5" strokeWidth={3} />
+        </SelectItem>
+        <SelectItem
+          value="paragraph"
+          className="flex items-center gap-2 whitespace-nowrap"
+        >
+          <Type className="w-3 h-3" />
         </SelectItem>
       </SelectContent>
     </Select>

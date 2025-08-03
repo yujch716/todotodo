@@ -51,6 +51,24 @@ export const getCalendarEventById = async (
   return data;
 };
 
+export const getCalendarEventByDate = async (
+  date: Date,
+): Promise<CalendarEventType[]> => {
+  const { data, error } = await supabase
+    .from("calendar_event")
+    .select(
+      `
+    *,
+    category:calendar_category (*)
+  `,
+    )
+    .eq("start_date", date);
+
+  if (error) toast.error("조회에 실패했습니다.");
+
+  return data ?? [];
+};
+
 export const createCalendarEvent = async (
   title: string,
   description: string,
