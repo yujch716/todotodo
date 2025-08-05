@@ -338,14 +338,14 @@ const EventDetailModal = ({
                   {isAllDay ? (
                     <>
                       {startDate ? format(startDate, "yyyy-MM-dd") : "시작일"}
-                      <span className="mx-1 select-none">-</span>{" "}
+                      <span className="mx-0.5 select-none">-</span>{" "}
                       {endDate ? format(endDate, "yyyy-MM-dd") : "종료일"}
                     </>
                   ) : (
                     <>
                       {startDate ? format(startDate, "yyyy-MM-dd") : "시작일"}
-                      {startTime}
-                      <span className="mx-1 select-none">-</span> {endTime}
+                      <span className="mx-0.5" />
+                      {startTime} - {endTime}
                     </>
                   )}
                 </div>

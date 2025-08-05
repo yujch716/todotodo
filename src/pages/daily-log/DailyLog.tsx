@@ -13,6 +13,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs.tsx";
+import DailyNoticeCard from "@/pages/daily-log/DailyNoticeCard.tsx";
 
 const DailyLog = () => {
   const navigate = useNavigate();
@@ -94,6 +95,8 @@ const DailyLog = () => {
             </div>
           </div>
         </header>
+
+        {date && <DailyNoticeCard dailyLogDate={date} />}
 
         <div className="flex flex-grow overflow-hidden gap-8">
           {isSmall ? (
