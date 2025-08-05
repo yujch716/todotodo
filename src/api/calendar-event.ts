@@ -62,7 +62,7 @@ export const getCalendarEventByDate = async (
     category:calendar_category (*)
   `,
     )
-    .eq("start_date", date);
+    .eq("start_at", date);
 
   if (error) toast.error("조회에 실패했습니다.");
 
