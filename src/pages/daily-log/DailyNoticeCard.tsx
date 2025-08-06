@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card.tsx";
 import { getCalendarEventByDate } from "@/api/calendar-event.ts";
 import { useCallback, useEffect, useState } from "react";
 import type { CalendarEventType } from "@/types/calendar-event.ts";
-import { Bell, CalendarIcon } from "lucide-react";
+import { CalendarIcon, Lightbulb } from "lucide-react";
 import { format } from "date-fns";
 import EventDetailModal from "@/pages/calendar/EventDetailModal.tsx";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
@@ -46,11 +46,9 @@ export const DailyNoticeCard = ({ dailyLogDate }: Props) => {
   return (
     <>
       <Card className="w-full p-3 mb-4 bg-transparent">
-        <div className="flex items-center gap-2 mb-2">
-          <Bell /> <h1 className="text-xl font-bold">Notice</h1>
-        </div>
         <ScrollArea className="w-full">
-          <div className="flex flex-row gap-3 min-w-max pb-2">
+          <div className="flex flex-row gap-3 min-w-max items-center p-1">
+            <Lightbulb />
             {schedules.map(
               ({ id, title, is_all_day, start_at, end_at, category }) => (
                 <Card
@@ -58,9 +56,9 @@ export const DailyNoticeCard = ({ dailyLogDate }: Props) => {
                   className="p-3 w-[270px] cursor-pointer shadow-sm hover:shadow-md"
                   onClick={() => openModal(id)}
                 >
-                  <div className="flex flex-row items-center justify-between mb-2">
+                  <div className="flex flex-row items-center justify-between pb-2">
                     <h1
-                      className="flex-grow overflow-hidden whitespace-nowrap text-ellipsis leading-tight text-lg font-bold"
+                      className="flex-grow overflow-hidden whitespace-nowrap text-ellipsis leading-tight text-base font-bold"
                       style={{ minWidth: 0 }}
                     >
                       {title}
@@ -73,7 +71,7 @@ export const DailyNoticeCard = ({ dailyLogDate }: Props) => {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap text-sm">
                     <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                     {is_all_day ? (
                       <>
