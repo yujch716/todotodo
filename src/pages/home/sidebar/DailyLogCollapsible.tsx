@@ -9,7 +9,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar.tsx";
-import { ChevronDown, ChevronRight, List } from "lucide-react";
+import { BookText, ChevronDown, ChevronRight } from "lucide-react";
 import type { DailyLogType } from "@/types/daily-log.ts";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { format } from "date-fns";
@@ -43,7 +43,7 @@ const DailyLogCollapsible = ({
       <CollapsibleTrigger asChild>
         <SidebarMenuItem>
           <SidebarMenuButton className="flex items-center gap-2 hover:bg-sky-200">
-            <List className="w-4 h-4" />
+            <BookText className="w-4 h-4" />
             <span>Daily</span>
             <span className="ml-auto">
               {isOpen ? (
