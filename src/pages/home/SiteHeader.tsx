@@ -9,7 +9,7 @@ const SiteHeader = () => {
 
   const getTitle = () => {
     if (location.pathname.startsWith("/daily")) return "Daily";
-    if (location.pathname.startsWith("/calendar")) return "CalendarPage";
+    if (location.pathname.startsWith("/calendar")) return "Calendar";
   };
 
   return (
