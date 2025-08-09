@@ -226,6 +226,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emoji-mart/react@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@emoji-mart/react@npm:1.1.1"
+  peerDependencies:
+    emoji-mart: ^5.2
+    react: ^16.8 || ^17 || ^18
+  checksum: 10c0/88a9c8c24bbc5695f0ed2458734c9982c965a16db1999bc731c7cce77f9bf228f1871e899744f9a3f9fdd36a11db7ad6c0e049d710cb91c66c69a2cd4d2ee40a
+  languageName: node
+  linkType: hard
+
 "@esbuild/aix-ppc64@npm:0.25.5":
   version: 0.25.5
   resolution: "@esbuild/aix-ppc64@npm:0.25.5"
@@ -5508,6 +5518,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "todotodo@workspace:."
   dependencies:
+    "@emoji-mart/react": "npm:^1.1.1"
     "@eslint/js": "npm:^9.25.0"
     "@floating-ui/react": "npm:^0.27.8"
     "@radix-ui/react-accordion": "npm:^1.2.11"
