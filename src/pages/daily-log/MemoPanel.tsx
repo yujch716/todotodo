@@ -13,7 +13,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
@@ -160,7 +159,6 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
             </div>
           </div>
         </CardContent>
-        <CardFooter></CardFooter>
       </Card>
     </>
   );
