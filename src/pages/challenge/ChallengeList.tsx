@@ -65,7 +65,7 @@ const ChallengeList = () => {
 
   return (
     <>
-      <div className="m-3 flex items-center justify-between">
+      <div className="m-4 flex items-center justify-between">
         <Checkbox
           checked={allChecked}
           onCheckedChange={(checked) => handleAllCheck(!!checked)}
@@ -78,7 +78,7 @@ const ChallengeList = () => {
         </div>
       </div>
       <Separator />
-      <ScrollArea className="flex flex-col h-full max-h-full p-3">
+      <ScrollArea className="flex flex-col h-full max-h-full p-4">
         {challenges.map((challenge) => (
           <div key={challenge.id} className="flex items-center group">
             <div
