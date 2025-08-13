@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/tabs.tsx";
 import DailyNoticeCard from "@/pages/daily-log/DailyNoticeCard.tsx";
 
-const DailyLog = () => {
+const DailyLogPage = () => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -145,4 +145,4 @@ const DailyLog = () => {
   );
 };
 
-export default DailyLog;
+export default DailyLogPage;
