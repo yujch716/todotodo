@@ -20,5 +20,6 @@ export interface ChallengeLog {
   user_id: string;
   date: Date;
   memo: string;
+  value: number;
   created_at: Date;
 }

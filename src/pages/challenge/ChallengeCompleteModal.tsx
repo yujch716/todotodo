@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { createChallengeLog } from "@/api/challenge-log.ts";
 import { useState } from "react";
+import { useChallengeStore } from "@/store/challengeStore.ts";
 
 interface ModalProps {
   open: boolean;
@@ -28,8 +29,14 @@ const ChallengeCompleteModal = ({
 }: ModalProps) => {
   const [memo, setMemo] = useState("");
 
+  const triggerChallengeRefresh = useChallengeStore(
+    (state) => state.triggerChallengeRefresh,
+  );
+
   const handleSubmit = async () => {
     await createChallengeLog(challengeId, date, memo, null);
+
+    triggerChallengeRefresh();
 
     setMemo("");
     onOpenChange(false);

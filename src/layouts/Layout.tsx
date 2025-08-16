@@ -22,7 +22,7 @@ const Layout = () => {
             <header className="flex-shrink-0">
               <SiteHeader />
             </header>
-            <main className="flex flex-col flex-1 overflow-auto p-6">
+            <main className="flex flex-col flex-1 w-full overflow-auto p-6">
               <Outlet />
             </main>
           </SidebarInset>

@@ -71,9 +71,11 @@ const ChallengeList = () => {
           onCheckedChange={(checked) => handleAllCheck(!!checked)}
         />
         <div className="flex flex-row items-center gap-3">
-          <div className="ml-auto cursor-pointer hover:text-red-600">
-            <Trash2 />
-          </div>
+          {selectedChallenges.length > 0 && (
+            <div className="ml-auto cursor-pointer hover:text-red-600">
+              <Trash2 />
+            </div>
+          )}
           <CreateChallengeModal />
         </div>
       </div>

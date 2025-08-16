@@ -13,6 +13,9 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
 import ChallengeCompleteModal from "@/pages/challenge/ChallengeCompleteModal.tsx";
 import { useState } from "react";
 import ChallengeLogCard from "@/pages/challenge/ChallengeLogCard.tsx";
+import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
+import { deleteChallengeLogById } from "@/api/challenge-log.ts";
+import { useChallengeStore } from "@/store/challengeStore.ts";
 
 interface HabitProps {
   challenge: Challenge;
@@ -20,6 +23,7 @@ interface HabitProps {
 
 interface HeatmapDay {
   date: Date | null;
+  logId: string | null;
   completed: boolean;
 }
 
@@ -27,13 +31,15 @@ const Habit = ({ challenge }: HabitProps) => {
   const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   const logs: ChallengeLog[] = challenge.challenge_log || [];
 
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [openCompleteModal, setOpenCompleteModal] = useState(false);
+  const [isLogDeleteAlertOpen, setIsLogDeleteAlertOpen] = useState(false);
 
-  const handleOpenModal = (date: Date) => {
-    setSelectedDate(date);
-    setOpenModal(true);
-  };
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [seletedLogId, setSeletedLogId] = useState<string | null>(null);
+
+  const triggerChallengeRefresh = useChallengeStore(
+    (state) => state.triggerChallengeRefresh,
+  );
 
   const generateHeatmapData = ({
     startDate,
@@ -46,7 +52,6 @@ const Habit = ({ challenge }: HabitProps) => {
     logs: ChallengeLog[];
     repeatDays: string[];
   }) => {
-    const logDates = logs.map((l) => startOfDay(new Date(l.date))); // 시간 제거
     const repeatDaysInt = repeatDays.map((d) => WEEKDAYS.indexOf(d));
 
     let firstValidDate = startOfDay(
@@ -69,11 +74,14 @@ const Habit = ({ challenge }: HabitProps) => {
         const inRange =
           currentDate >= startOfDay(startDate) &&
           currentDate <= startOfDay(endDate);
+        const matchedLog = logs.find((l) =>
+          isSameDay(startOfDay(new Date(l.date)), currentDate),
+        );
+
         days.push({
           date: inRange ? new Date(currentDate) : null,
-          completed: inRange
-            ? logDates.some((ld) => isSameDay(ld, currentDate))
-            : false,
+          logId: matchedLog ? matchedLog.id : null,
+          completed: !!matchedLog,
         });
       }
       currentDate = addDays(currentDate, 1);
@@ -103,10 +111,31 @@ const Habit = ({ challenge }: HabitProps) => {
   const completedDays = logs.length;
   const progressValue = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
 
+  const handleOpenCompleteModal = (date: Date) => {
+    setSelectedDate(date);
+    setOpenCompleteModal(true);
+  };
+
+  const handleLogDelete = async () => {
+    if (!seletedLogId) return;
+
+    setIsLogDeleteAlertOpen(true);
+  };
+
+  const handleConfirmLogDelete = async () => {
+    if (!seletedLogId) return;
+    setIsLogDeleteAlertOpen(false);
+
+    await deleteChallengeLogById(seletedLogId);
+    setSeletedLogId(null);
+
+    triggerChallengeRefresh();
+  };
+
   return (
     <>
       <div className="w-full h-full flex flex-col">
-        <div className="py-5 flex-none">
+        <div className="pb-5 flex-none">
           <Progress value={progressValue} className="w-full border-2" />
         </div>
 
@@ -141,7 +170,14 @@ const Habit = ({ challenge }: HabitProps) => {
                                   ? "bg-sky-200"
                                   : "hover:bg-slate-100 hover:border-slate-300",
                               )}
-                              onClick={() => handleOpenModal(day.date!)}
+                              onClick={() => {
+                                if (day.completed && day.logId) {
+                                  setSeletedLogId(day.logId);
+                                  handleLogDelete();
+                                } else {
+                                  handleOpenCompleteModal(day.date!);
+                                }
+                              }}
                             />
                           </TooltipTrigger>
                           <TooltipContent className="bg-slate-100">
@@ -161,16 +197,22 @@ const Habit = ({ challenge }: HabitProps) => {
           </div>
         </Card>
 
-        <ChallengeLogCard logs={logs} />
+        <ChallengeLogCard type={challenge.type} logs={logs} />
 
         {selectedDate && (
           <ChallengeCompleteModal
-            open={openModal}
-            onOpenChange={setOpenModal}
+            open={openCompleteModal}
+            onOpenChange={setOpenCompleteModal}
             challengeId={challenge.id}
             date={selectedDate}
           />
         )}
+        <AlertConfirmModal
+          open={isLogDeleteAlertOpen}
+          message="이 수행을 취소하시겠습니까?"
+          onConfirm={handleConfirmLogDelete}
+          onCancel={() => setIsLogDeleteAlertOpen(false)}
+        />
       </div>
     </>
   );

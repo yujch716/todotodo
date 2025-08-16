@@ -29,6 +29,7 @@ export const getChallengeById = async (
     .from("challenge")
     .select(`*, challenge_log(*)`)
     .eq("id", challengeId)
+    .order("date", { foreignTable: "challenge_log", ascending: false })
     .single();
 
   if (error) toast.error("조회에 실패했습니다.");
@@ -73,4 +74,10 @@ export const createChallenge = async (
   if (error) toast.error("생성에 실패했습니다.");
 
   return data;
+};
+
+export const deleteChallengeById = async (id: string) => {
+  const { error } = await supabase.from("challenge").delete().eq("id", id);
+
+  if (error) toast.error("삭제에 실패했습니다.");
 };

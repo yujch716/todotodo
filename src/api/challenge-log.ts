@@ -32,3 +32,9 @@ export const createChallengeLog = async (
 
   return data;
 };
+
+export const deleteChallengeLogById = async (id: string) => {
+  const { error } = await supabase.from("challenge_log").delete().eq("id", id);
+
+  if (error) toast.error("삭제에 실패했습니다.");
+};
