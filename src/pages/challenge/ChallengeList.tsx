@@ -117,13 +117,15 @@ const ChallengeList = () => {
                   {format(challenge.created_at, "yyyy.MM.dd")}
                 </span>
               </div>
-              <div className="ml-auto">
-                <DailyLogStatusIcon
-                  checkedCount={challenge.is_completed ? 1 : 0}
-                  totalCount={1}
-                  iconClassName="w-5 h-5"
-                />
-              </div>
+              {challenge.is_completed && (
+                <div className="ml-auto">
+                  <DailyLogStatusIcon
+                    checkedCount={1}
+                    totalCount={1}
+                    iconClassName="w-5 h-5"
+                  />
+                </div>
+              )}
             </Card>
           </div>
         ))}

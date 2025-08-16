@@ -35,13 +35,13 @@ import EmojiPicker from "emoji-picker-react";
 import { useChallengeStore } from "@/store/challengeStore.ts";
 
 const days = [
+  { label: "일", value: "sun" },
   { label: "월", value: "mon" },
   { label: "화", value: "tue" },
   { label: "수", value: "wed" },
   { label: "목", value: "thu" },
   { label: "금", value: "fri" },
   { label: "토", value: "sat" },
-  { label: "일", value: "sun" },
 ];
 
 const CreateChallengeModal = () => {
@@ -84,10 +84,13 @@ const CreateChallengeModal = () => {
       return;
     }
 
-    const repeat_type =
-      activeTab === "habit" ? (isEveryDay ? "daily" : "weekly") : null;
     const repeat_days =
-      activeTab === "habit" && !isEveryDay ? repeatDays : null;
+      activeTab === "habit"
+        ? isEveryDay
+          ? days.map((d) => d.value)
+          : repeatDays
+        : null;
+
     const target_value =
       activeTab === "progress" ? (targetValue ?? null) : null;
 
@@ -97,7 +100,6 @@ const CreateChallengeModal = () => {
       activeTab,
       dateRange.from,
       dateRange.to,
-      repeat_type,
       repeat_days,
       target_value,
     );

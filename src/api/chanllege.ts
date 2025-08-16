@@ -27,7 +27,7 @@ export const getChallengeById = async (
 ): Promise<Challenge> => {
   const { data, error } = await supabase
     .from("challenge")
-    .select("*")
+    .select(`*, challenge_log(*)`)
     .eq("id", challengeId)
     .single();
 
@@ -42,7 +42,6 @@ export const createChallenge = async (
   type: "progress" | "habit",
   start_date: Date,
   end_date: Date,
-  repeat_type: "daily" | "weekly" | null,
   repeat_days: string[] | null,
   target_value: number | null,
 ): Promise<Challenge> => {
@@ -64,7 +63,6 @@ export const createChallenge = async (
         type,
         start_date: format(start_date, "yyyy-MM-dd"),
         end_date: format(end_date, "yyyy-MM-dd"),
-        repeat_type,
         repeat_days,
         target_value,
       },
