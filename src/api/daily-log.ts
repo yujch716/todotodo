@@ -153,10 +153,7 @@ export const updateDailyLogMemo = async (dailyLogId: string, memo: string) => {
 };
 
 export const deleteDailyLogById = async (id: string) => {
-  const { error } = await supabase
-    .from("daily_log")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("daily_log").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");
 };
