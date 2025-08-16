@@ -45,9 +45,9 @@ export const DailyNoticeCard = ({ dailyLogDate }: Props) => {
 
   return (
     <>
-      <Card className="w-full p-3 mb-4 bg-transparent">
-        <ScrollArea className="w-full">
-          <div className="flex flex-row gap-3 min-w-max items-center p-1">
+      <Card className="flex w-full p-3 mb-4 bg-transparent">
+        <ScrollArea className="w-full overflow-x-auto p-2">
+          <div className="flex flex-row gap-3 items-center">
             <Lightbulb />
             {schedules.map(
               ({ id, title, is_all_day, start_at, end_at, category }) => (
@@ -65,7 +65,7 @@ export const DailyNoticeCard = ({ dailyLogDate }: Props) => {
                     </h1>
                     {category?.color && (
                       <div
-                        className="w-5 h-5 rounded-full ml-2 flex-shrink-0"
+                        className="w-5 h-5 rounded-full flex-shrink-0"
                         style={{ backgroundColor: category.color }}
                       />
                     )}

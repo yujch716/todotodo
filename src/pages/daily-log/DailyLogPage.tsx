@@ -78,7 +78,7 @@ const DailyLogPage = () => {
 
   return (
     <>
-      <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex flex-col h-full w-full overflow-hidden">
         <header className="flex gap-8 mb-5 items-center">
           <div className="w-1/2">
             <div className="text-sm text-gray-500 mb-1">
@@ -96,7 +96,9 @@ const DailyLogPage = () => {
           </div>
         </header>
 
-        {date && <DailyNoticeCard dailyLogDate={date} />}
+        {date && (
+          <DailyNoticeCard dailyLogDate={date} />
+        )}
 
         <div className="flex flex-grow overflow-hidden gap-8">
           {isSmall ? (
