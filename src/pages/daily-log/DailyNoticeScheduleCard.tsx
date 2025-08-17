@@ -1,16 +1,18 @@
-import {CalendarIcon} from "lucide-react";
-import {format} from "date-fns";
-import {Card} from "@/components/ui/card.tsx";
-import type {CalendarEventType} from "@/types/calendar-event.ts";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { Card } from "@/components/ui/card.tsx";
+import type { CalendarEventType } from "@/types/calendar-event.ts";
 import EventDetailModal from "@/pages/calendar/EventDetailModal.tsx";
-import {useState} from "react";
+import { useState } from "react";
 
-interface DailyNoticeEventCardProps {
+interface DailyNoticeScheduleCardProps {
   schedule: CalendarEventType;
 }
 
-const DailyNoticeEventCard = ({ schedule }: DailyNoticeEventCardProps) => {
-  const {id, title, is_all_day, start_at, end_at, category} = schedule;
+const DailyNoticeScheduleCard = ({
+  schedule,
+}: DailyNoticeScheduleCardProps) => {
+  const { id, title, is_all_day, start_at, end_at, category } = schedule;
 
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -71,5 +73,5 @@ const DailyNoticeEventCard = ({ schedule }: DailyNoticeEventCardProps) => {
       )}
     </>
   );
-}
-export default DailyNoticeEventCard;
+};
+export default DailyNoticeScheduleCard;

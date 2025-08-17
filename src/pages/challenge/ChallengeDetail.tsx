@@ -1,19 +1,19 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { deleteChallengeById, getChallengeById } from "@/api/chanllege.ts";
 import { useCallback, useEffect, useState } from "react";
-import { CalendarIcon, Smile, Trash2 } from "lucide-react";
-import Habit from "@/pages/challenge/Habit.tsx";
-import type { Challenge } from "@/types/challenge.ts";
+import { Smile, Trash2 } from "lucide-react";
+import DailyChallengeCard from "@/pages/challenge/DailyChallengeCard.tsx";
+import type { Challenge, ChallengeLog } from "@/types/challenge.ts";
 import { useChallengeStore } from "@/store/challengeStore.ts";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
-import { formatDate } from "date-fns";
+import ChallengeLogCard from "@/pages/challenge/ChallengeLogCard.tsx";
+import GoalChallengeCard from "@/pages/challenge/GoalChallengeCard.tsx";
 
 const ChallengeDetail = () => {
   const navigate = useNavigate();
@@ -24,12 +24,11 @@ const ChallengeDetail = () => {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const [challengeLogs, setChallengeLogs] = useState<ChallengeLog[]>([]);
 
   const [title, setTitle] = useState("");
   const [emoji, setEmoji] = useState("");
   const [type, setType] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
 
   const refreshChallenge = useChallengeStore((state) => state.refreshChallenge);
   const resetChallengeRefresh = useChallengeStore(
@@ -49,8 +48,8 @@ const ChallengeDetail = () => {
     setTitle(challenge.title);
     setEmoji(challenge.emoji);
     setType(challenge.type);
-    setStartDate(challenge.start_date);
-    setEndDate(challenge.end_date);
+
+    setChallengeLogs(challenge.challenge_log ?? []);
   }, [challengeId]);
 
   useEffect(() => {
@@ -62,7 +61,7 @@ const ChallengeDetail = () => {
       loadChallenge();
       resetChallengeRefresh();
     }
-  }, [refreshChallenge, resetChallengeRefresh]);
+  }, [refreshChallenge, resetChallengeRefresh, loadChallenge]);
 
   const handleDelete = async () => {
     setIsAlertOpen(true);
@@ -104,14 +103,17 @@ const ChallengeDetail = () => {
               </div>
             </div>
           </CardTitle>
-          <CardDescription className="pt-2 text-lg text-muted-foreground flex flex-row gap-2">
-            <CalendarIcon />
-            {formatDate(startDate!, "yyyy.MM.dd")} -{" "}
-            {formatDate(endDate!, "yyyy.MM.dd")}
-          </CardDescription>
         </CardHeader>
-        <CardContent className="flex-grow flex flex-col h-full w-full overflow-hidden">
-          {type === "habit" ? <Habit challenge={challenge} /> : <></>}
+        <CardContent className="flex-grow flex flex-col h-full w-full overflow-hidden gap-6">
+          {type === "daily" ? (
+            <DailyChallengeCard challenge={challenge} />
+          ) : (
+            <>
+              <GoalChallengeCard challenge={challenge} />
+            </>
+          )}
+
+          <ChallengeLogCard type={challenge.type} logs={challengeLogs} />
         </CardContent>
       </Card>
 

@@ -13,19 +13,26 @@ import { Button } from "@/components/ui/button.tsx";
 import { createChallengeLog } from "@/api/challenge-log.ts";
 import { useState } from "react";
 import { useChallengeStore } from "@/store/challengeStore.ts";
+import { format } from "date-fns";
+import { updateChallengeCompleted } from "@/api/chanllege.ts";
+import { showCelebration } from "@/lib/effects";
 
 interface ModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   challengeId: string;
   date: Date;
+  totalDays: number;
+  completedDays: number;
 }
 
-const ChallengeCompleteModal = ({
+const CompleteChallengeModal = ({
   open,
   onOpenChange,
   challengeId,
   date,
+  totalDays,
+  completedDays,
 }: ModalProps) => {
   const [memo, setMemo] = useState("");
 
@@ -34,7 +41,16 @@ const ChallengeCompleteModal = ({
   );
 
   const handleSubmit = async () => {
-    await createChallengeLog(challengeId, date, memo, null);
+    await createChallengeLog({
+      challenge_id: challengeId,
+      date: format(date, "yyyy-MM-dd"),
+      memo,
+    });
+
+    if (completedDays + 1 === totalDays) {
+      await updateChallengeCompleted(challengeId, { is_completed: true });
+      showCelebration();
+    }
 
     triggerChallengeRefresh();
 
@@ -52,10 +68,13 @@ const ChallengeCompleteModal = ({
 
         <div className="grid gap-4">
           <div className="grid gap-3">
-            <Label htmlFor="date">기록</Label>
+            <Label htmlFor="date">
+              기록 <span className="text-slate-400">(선택사항)</span>
+            </Label>
             <Input
               id="memo"
               value={memo}
+              placeholder={"-"}
               onChange={(e) => setMemo(e.target.value)}
             ></Input>
           </div>
@@ -65,10 +84,15 @@ const ChallengeCompleteModal = ({
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={handleSubmit}>Save</Button>
+          <Button
+            onClick={handleSubmit}
+            className="bg-slate-600 hover:bg-slate-500"
+          >
+            Save
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
-export default ChallengeCompleteModal;
+export default CompleteChallengeModal;

@@ -1,13 +1,8 @@
 import { supabase } from "@/lib/supabaseClient.ts";
-import { format } from "date-fns";
 import { toast } from "sonner";
+import type { CreateChallengeLogDto } from "@/types/challenge.ts";
 
-export const createChallengeLog = async (
-  challengeId: string,
-  date: Date,
-  memo: string | null,
-  value: number | null,
-) => {
+export const createChallengeLog = async (input: CreateChallengeLogDto) => {
   const {
     data: { user },
     error: userError,
@@ -20,10 +15,7 @@ export const createChallengeLog = async (
     .from("challenge_log")
     .insert({
       user_id: user.id,
-      challenge_id: challengeId,
-      date: format(date, "yyyy-MM-dd"),
-      memo,
-      value,
+      ...input,
     })
     .select()
     .single();

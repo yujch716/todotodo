@@ -303,7 +303,12 @@ const EventDetailModal = ({
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button onClick={handleSubmit} className="bg-slate-600 hover:bg-slate-500">Save</Button>
+                <Button
+                  onClick={handleSubmit}
+                  className="bg-slate-600 hover:bg-slate-500"
+                >
+                  Save
+                </Button>
               </DialogFooter>
             </>
           ) : (

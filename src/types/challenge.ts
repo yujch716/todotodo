@@ -3,7 +3,7 @@ export interface Challenge {
   user_id: string;
   title: string;
   emoji: string;
-  type: "progress" | "habit";
+  type: "daily" | "goal";
   start_date: Date;
   end_date: Date;
   repeat_days: string[] | null;
@@ -14,6 +14,20 @@ export interface Challenge {
   challenge_log?: ChallengeLog[];
 }
 
+export interface CreateChallengeDto {
+  emoji: string;
+  title: string;
+  type: "daily" | "goal";
+  start_date?: Date | null;
+  end_date?: Date | null;
+  repeat_days?: string[] | null;
+  target_value?: number | null;
+}
+
+export interface UpdateChallengeCompleteDto {
+  is_completed: boolean;
+}
+
 export interface ChallengeLog {
   id: string;
   challenge_id: string;
@@ -22,4 +36,11 @@ export interface ChallengeLog {
   memo: string;
   value: number;
   created_at: Date;
+}
+
+export interface CreateChallengeLogDto {
+  challenge_id: string;
+  date: string;
+  memo?: string | null;
+  value?: number | null;
 }

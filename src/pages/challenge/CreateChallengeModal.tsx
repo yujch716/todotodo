@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import { createChallenge } from "@/api/chanllege.ts";
 import EmojiPicker from "emoji-picker-react";
 import { useChallengeStore } from "@/store/challengeStore.ts";
+import { useNavigate } from "react-router-dom";
 
 const days = [
   { label: "일", value: "sun" },
@@ -45,8 +46,10 @@ const days = [
 ];
 
 const CreateChallengeModal = () => {
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"habit" | "progress">("habit");
+  const [activeTab, setActiveTab] = useState<"daily" | "goal">("daily");
 
   const [emoji, setEmoji] = useState("✨");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -57,7 +60,7 @@ const CreateChallengeModal = () => {
   });
   const [isEveryDay, setIsEveryDay] = useState(true);
   const [repeatDays, setRepeatDays] = useState<string[]>([]);
-  const [targetValue, setTargetValue] = useState<number | undefined>();
+  const [targetValue, setTargetValue] = useState<string>("100");
 
   const triggerChallengeRefresh = useChallengeStore(
     (state) => state.triggerChallengeRefresh,
@@ -68,41 +71,39 @@ const CreateChallengeModal = () => {
       toast.error("제목을 입력하세요.");
       return;
     }
-    if (!dateRange?.from || !dateRange?.to) {
+    if (activeTab === "daily" && (!dateRange?.from || !dateRange?.to)) {
       toast.error("기간을 선택하세요.");
       return;
     }
-    if (
-      activeTab === "progress" &&
-      (targetValue === undefined || targetValue <= 0)
-    ) {
+    if (activeTab === "goal" && targetValue === undefined) {
       toast.error("목표 수치를 1 이상 입력하세요.");
       return;
     }
-    if (activeTab === "habit" && !isEveryDay && repeatDays.length === 0) {
+    if (activeTab === "daily" && !isEveryDay && repeatDays.length === 0) {
       toast.error("반복 요일을 선택하세요.");
       return;
     }
 
     const repeat_days =
-      activeTab === "habit"
+      activeTab === "daily"
         ? isEveryDay
           ? days.map((d) => d.value)
           : repeatDays
         : null;
 
-    const target_value =
-      activeTab === "progress" ? (targetValue ?? null) : null;
-
-    await createChallenge(
+    const challengePayload = {
       emoji,
       title,
-      activeTab,
-      dateRange.from,
-      dateRange.to,
-      repeat_days,
-      target_value,
-    );
+      type: activeTab,
+      ...(activeTab === "daily" && {
+        start_date: dateRange?.from,
+        end_date: dateRange?.to,
+        repeat_days,
+      }),
+      ...(activeTab === "goal" && { target_value: Number(targetValue) }),
+    };
+
+    const newChallenge = await createChallenge(challengePayload);
 
     triggerChallengeRefresh();
 
@@ -113,7 +114,9 @@ const CreateChallengeModal = () => {
     setDateRange({ from: new Date(), to: new Date() });
     setIsEveryDay(true);
     setRepeatDays([]);
-    setTargetValue(undefined);
+    setTargetValue("");
+
+    navigate(`/challenge?id=${newChallenge.id}`);
   };
 
   return (
@@ -130,16 +133,16 @@ const CreateChallengeModal = () => {
         </DialogHeader>
 
         <Tabs
-          defaultValue="habit"
+          defaultValue="daily"
           value={activeTab}
-          onValueChange={(val) => setActiveTab(val as "habit" | "progress")}
+          onValueChange={(val) => setActiveTab(val as "daily" | "goal")}
           className="flex flex-col w-full h-full"
         >
           <TabsList className="flex w-fit">
-            <TabsTrigger value="habit">일일 챌린지</TabsTrigger>
-            <TabsTrigger value="progress">누적 챌린지</TabsTrigger>
+            <TabsTrigger value="daily">일일 챌린지</TabsTrigger>
+            <TabsTrigger value="goal">목표 달성 챌린지</TabsTrigger>
           </TabsList>
-          <TabsContent value="habit">
+          <TabsContent value="daily">
             <div className="grid gap-4 mt-2">
               <div className="flex items-center gap-2 relative">
                 <Button
@@ -223,7 +226,7 @@ const CreateChallengeModal = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="progress">
+          <TabsContent value="goal">
             <div className="grid gap-4 mt-2">
               <div className="flex items-center gap-2 relative">
                 <Button
@@ -259,7 +262,7 @@ const CreateChallengeModal = () => {
                   id="targetValue"
                   type="number"
                   value={targetValue ?? 100}
-                  onChange={(e) => setTargetValue(Number(e.target.value))}
+                  onChange={(e) => setTargetValue(e.target.value)}
                 />
               </div>
             </div>
@@ -270,7 +273,12 @@ const CreateChallengeModal = () => {
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={onSubmit}>Save</Button>
+          <Button
+            onClick={onSubmit}
+            className="bg-slate-600 hover:bg-slate-500"
+          >
+            Save
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

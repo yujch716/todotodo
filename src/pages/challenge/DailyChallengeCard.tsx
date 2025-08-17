@@ -1,6 +1,13 @@
 import { Progress } from "@/components/ui/progress.tsx";
 import { Card } from "@/components/ui/card.tsx";
-import { addDays, format, isSameDay, startOfDay, startOfWeek } from "date-fns";
+import {
+  addDays,
+  format,
+  formatDate,
+  isSameDay,
+  startOfDay,
+  startOfWeek,
+} from "date-fns";
 import { cn } from "@/lib/utils.ts";
 import type { Challenge, ChallengeLog } from "@/types/challenge.ts";
 import {
@@ -15,6 +22,9 @@ import { useState } from "react";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 import { deleteChallengeLogById } from "@/api/challenge-log.ts";
 import { useChallengeStore } from "@/store/challengeStore.ts";
+import { CalendarIcon, PartyPopper } from "lucide-react";
+import { Label } from "@/components/ui/label.tsx";
+import { updateChallengeCompleted } from "@/api/chanllege.ts";
 
 interface ChallengeProps {
   challenge: Challenge;
@@ -29,12 +39,13 @@ interface HeatmapDay {
 const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
   const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   const logs: ChallengeLog[] = challenge.challenge_log || [];
+  const isComplete = challenge.is_completed;
 
   const [openCompleteModal, setOpenCompleteModal] = useState(false);
   const [isLogDeleteAlertOpen, setIsLogDeleteAlertOpen] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [seletedLogId, setSeletedLogId] = useState<string | null>(null);
+  const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
 
   const triggerChallengeRefresh = useChallengeStore(
     (state) => state.triggerChallengeRefresh,
@@ -116,17 +127,20 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
   };
 
   const handleLogDelete = async () => {
-    if (!seletedLogId) return;
+    if (!selectedLogId) return;
 
     setIsLogDeleteAlertOpen(true);
   };
 
   const handleConfirmLogDelete = async () => {
-    if (!seletedLogId) return;
+    if (!selectedLogId) return;
     setIsLogDeleteAlertOpen(false);
 
-    await deleteChallengeLogById(seletedLogId);
-    setSeletedLogId(null);
+    await deleteChallengeLogById(selectedLogId);
+
+    await updateChallengeCompleted(challenge.id, { is_completed: false });
+
+    setSelectedLogId(null);
 
     triggerChallengeRefresh();
   };
@@ -134,11 +148,25 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
   return (
     <>
       <div className="w-full flex flex-col">
-        <div className="pb-5 flex-none">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-lg text-muted-foreground flex flex-row gap-2 items-center">
+            <CalendarIcon className="w-5 h-5" />
+            {formatDate(challenge.start_date!, "yyyy.MM.dd")} -{" "}
+            {formatDate(challenge.end_date!, "yyyy.MM.dd")}
+          </div>
+          <Label
+            className={`flex flex-row transition-opacity duration-200 text-muted-foreground items-center gap-2 ${
+              isComplete ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+          >
+            Complete! <PartyPopper />
+          </Label>
+        </div>
+        <div className="flex-none mt-2 mb-4">
           <Progress value={progressValue} className="w-full border-2" />
         </div>
 
-        <Card className="w-full flex-none">
+        <Card className="w-full flex-none p-4">
           <div className="flex">
             <div className="flex flex-col justify-between pr-2 gap-2 p-4">
               {displayWeekdays.map((d, i) => (
@@ -171,7 +199,7 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
                               )}
                               onClick={() => {
                                 if (day.completed && day.logId) {
-                                  setSeletedLogId(day.logId);
+                                  setSelectedLogId(day.logId);
                                   handleLogDelete();
                                 } else {
                                   handleOpenCompleteModal(day.date!);
@@ -202,8 +230,11 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
             onOpenChange={setOpenCompleteModal}
             challengeId={challenge.id}
             date={selectedDate}
+            totalDays={totalDays}
+            completedDays={completedDays}
           />
         )}
+
         <AlertConfirmModal
           open={isLogDeleteAlertOpen}
           message="이 수행을 취소하시겠습니까?"
