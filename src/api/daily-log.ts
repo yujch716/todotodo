@@ -14,7 +14,7 @@ export const getDailyLogs = async (): Promise<DailyLogType[]> => {
     )
     .order("date", { ascending: false });
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("조회에 실패했습니다.");
 
   return (data ?? []).map((dailyLog) => {
     const items = dailyLog.daily_todo || [];
@@ -49,7 +49,7 @@ export const getDailyLogById = async (
     .order("created_at", { foreignTable: "daily_todo", ascending: true })
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("조회에 실패했습니다.");
 
   const totalCount = data.daily_todo.length;
   const checkedCount = data.daily_todo.filter(
@@ -99,7 +99,7 @@ export const getDailyLogsByDate = async (
     .gte("date", start.toISOString())
     .lte("date", end.toISOString());
 
-  if (error) throw new Error(error.message);
+  if (error) toast.error("조회에 실패했습니다.");
 
   return (data ?? []).map((dailyLog) => {
     const items = dailyLog.daily_todo || [];
@@ -152,11 +152,8 @@ export const updateDailyLogMemo = async (dailyLogId: string, memo: string) => {
   if (error) toast.error("수정에 실패했습니다.");
 };
 
-export const deleteDailyLogById = async (dailyLogId: string) => {
-  const { error } = await supabase
-    .from("daily_log")
-    .delete()
-    .eq("id", dailyLogId);
+export const deleteDailyLogById = async (id: string) => {
+  const { error } = await supabase.from("daily_log").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");
 };

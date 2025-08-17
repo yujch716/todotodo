@@ -13,9 +13,9 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs.tsx";
-import DailyNoticeCard from "@/pages/daily-log/DailyNoticeCard.tsx";
+import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
 
-const DailyLog = () => {
+const DailyLogPage = () => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -78,8 +78,8 @@ const DailyLog = () => {
 
   return (
     <>
-      <div className="flex flex-col h-full overflow-hidden">
-        <header className="flex gap-8 mb-5 items-center">
+      <div className="flex flex-col h-full w-full overflow-hidden">
+        <header className="flex w-full gap-8 mb-5 items-center">
           <div className="w-1/2">
             <div className="text-sm text-gray-500 mb-1">
               {date ? String(date) : null}
@@ -96,7 +96,11 @@ const DailyLog = () => {
           </div>
         </header>
 
-        {date && <DailyNoticeCard dailyLogDate={date} />}
+        {date && (
+          <div className="flex w-full">
+            <DailyNoticePanel dailyLogDate={date} />
+          </div>
+        )}
 
         <div className="flex flex-grow overflow-hidden gap-8">
           {isSmall ? (
@@ -145,4 +149,4 @@ const DailyLog = () => {
   );
 };
 
-export default DailyLog;
+export default DailyLogPage;

@@ -1,7 +1,7 @@
 import AppSidebar from "@/pages/home/sidebar/AppSidebar.tsx";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { useSearchParams } from "react-router-dom";
-import DailyLog from "@/pages/daily-log/DailyLog.tsx";
+import DailyLogPage from "@/pages/daily-log/DailyLogPage.tsx";
 
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,7 +17,7 @@ const HomePage = () => {
         <SidebarTrigger />
         <AppSidebar selectedId={selectedId} onSelect={handleSelectDailyLog} />
         <main className="flex-1">
-          <DailyLog />
+          <DailyLogPage />
         </main>
       </SidebarProvider>
     </div>

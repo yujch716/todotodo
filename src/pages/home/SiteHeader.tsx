@@ -10,6 +10,8 @@ const SiteHeader = () => {
   const getTitle = () => {
     if (location.pathname.startsWith("/daily")) return "Daily";
     if (location.pathname.startsWith("/calendar")) return "Calendar";
+    if (location.pathname.startsWith("/challenge")) return "Challenge";
+    return "Home";
   };
 
   return (
