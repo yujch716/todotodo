@@ -10,14 +10,13 @@ import {
 } from "@/components/ui/tooltip.tsx";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
-import ChallengeCompleteModal from "@/pages/challenge/ChallengeCompleteModal.tsx";
+import CompleteChallengeModal from "@/pages/challenge/CompleteChallengeModal.tsx";
 import { useState } from "react";
-import ChallengeLogCard from "@/pages/challenge/ChallengeLogCard.tsx";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 import { deleteChallengeLogById } from "@/api/challenge-log.ts";
 import { useChallengeStore } from "@/store/challengeStore.ts";
 
-interface HabitProps {
+interface ChallengeProps {
   challenge: Challenge;
 }
 
@@ -27,7 +26,7 @@ interface HeatmapDay {
   completed: boolean;
 }
 
-const Habit = ({ challenge }: HabitProps) => {
+const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
   const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   const logs: ChallengeLog[] = challenge.challenge_log || [];
 
@@ -134,14 +133,14 @@ const Habit = ({ challenge }: HabitProps) => {
 
   return (
     <>
-      <div className="w-full h-full flex flex-col">
+      <div className="w-full flex flex-col">
         <div className="pb-5 flex-none">
           <Progress value={progressValue} className="w-full border-2" />
         </div>
 
-        <Card className="w-full p-4 mb-8 flex-none">
+        <Card className="w-full flex-none">
           <div className="flex">
-            <div className="flex flex-col justify-between pr-2 gap-2">
+            <div className="flex flex-col justify-between pr-2 gap-2 p-4">
               {displayWeekdays.map((d, i) => (
                 <div
                   key={i}
@@ -152,7 +151,7 @@ const Habit = ({ challenge }: HabitProps) => {
               ))}
             </div>
 
-            <ScrollArea className="flex">
+            <ScrollArea className="flex p-4">
               <div className="flex flex-row gap-2 min-w-max">
                 {data.map((week, wi) => (
                   <div
@@ -197,10 +196,8 @@ const Habit = ({ challenge }: HabitProps) => {
           </div>
         </Card>
 
-        <ChallengeLogCard type={challenge.type} logs={logs} />
-
         {selectedDate && (
-          <ChallengeCompleteModal
+          <CompleteChallengeModal
             open={openCompleteModal}
             onOpenChange={setOpenCompleteModal}
             challengeId={challenge.id}
@@ -217,4 +214,4 @@ const Habit = ({ challenge }: HabitProps) => {
     </>
   );
 };
-export default Habit;
+export default DailyChallengeCard;

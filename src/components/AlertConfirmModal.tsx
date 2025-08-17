@@ -35,7 +35,7 @@ const AlertConfirmModal = ({
               Cancel
             </Button>
           </DialogClose>
-          <Button onClick={onConfirm}>OK</Button>
+          <Button onClick={onConfirm} className="bg-slate-600 hover:bg-slate-500">OK</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
