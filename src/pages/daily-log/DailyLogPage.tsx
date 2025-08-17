@@ -13,7 +13,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs.tsx";
-import DailyNoticeCard from "@/pages/daily-log/DailyNoticeCard.tsx";
+import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
@@ -98,7 +98,7 @@ const DailyLogPage = () => {
 
         {date && (
           <div className="flex w-full">
-            <DailyNoticeCard dailyLogDate={date} />
+            <DailyNoticePanel dailyLogDate={date} />
           </div>
         )}
 
