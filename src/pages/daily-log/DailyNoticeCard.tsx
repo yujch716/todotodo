@@ -45,10 +45,10 @@ export const DailyNoticeCard = ({ dailyLogDate }: Props) => {
 
   return (
     <>
-      <Card className="flex w-full p-3 mb-4 bg-transparent">
+      <Card className="flex flex-row w-full p-3 mb-4 bg-transparent items-center">
+        <Lightbulb />
         <ScrollArea className="w-full overflow-x-auto p-2">
-          <div className="flex flex-row gap-3 items-center">
-            <Lightbulb />
+          <div className="flex flex-row gap-3">
             {schedules.map(
               ({ id, title, is_all_day, start_at, end_at, category }) => (
                 <Card
