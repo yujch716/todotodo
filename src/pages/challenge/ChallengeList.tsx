@@ -10,10 +10,14 @@ import { Trash2 } from "lucide-react";
 import CreateChallengeModal from "@/pages/challenge/CreateChallengeModal.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { useChallengeStore } from "@/store/challengeStore.ts";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 
-const ChallengeList = () => {
+interface ChallengeListProps {
+  onCardClick?: (id: string) => void;
+}
+
+const ChallengeList = ({ onCardClick }: ChallengeListProps) => {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [selectedChallenges, setSelectedChallenges] = useState<string[]>([]);
   const [allChecked, setAllChecked] = useState(false);
@@ -26,7 +30,6 @@ const ChallengeList = () => {
   );
 
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const selectedIdFromUrl = searchParams.get("id");
 
   const triggerChallengeRefresh = useChallengeStore(
@@ -56,7 +59,7 @@ const ChallengeList = () => {
   };
 
   const handleCardClick = (id: string) => {
-    navigate(`/challenge?id=${id}`); // URL 변경
+    if (onCardClick) onCardClick(id);
   };
 
   useEffect(() => {

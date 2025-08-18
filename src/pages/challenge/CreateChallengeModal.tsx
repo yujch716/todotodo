@@ -34,11 +34,6 @@ import { createChallenge } from "@/api/chanllege.ts";
 import EmojiPicker from "emoji-picker-react";
 import { useChallengeStore } from "@/store/challengeStore.ts";
 import { useNavigate } from "react-router-dom";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip.tsx";
 
 const days = [
   { label: "일", value: "sun" },
@@ -149,18 +144,18 @@ const CreateChallengeModal = () => {
               <TabsTrigger value="goal">목표 달성 챌린지</TabsTrigger>
             </TabsList>
 
-            <Tooltip>
-              <TooltipTrigger>
+            <Popover>
+              <PopoverTrigger>
                 <CircleHelp className="w-6 h-6 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
+              </PopoverTrigger>
+              <PopoverContent side="top" className="p-3 w-auto">
                 {activeTab === "daily" ? (
                   <p>예시: 🏃‍♂️매주 월,수, 금 운동하기</p>
                 ) : (
                   <p>예시: 📖 250p 책 읽기</p>
                 )}
-              </TooltipContent>
-            </Tooltip>
+              </PopoverContent>
+            </Popover>
           </div>
           <TabsContent value="daily">
             <div className="grid gap-4 mt-2">

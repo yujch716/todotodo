@@ -68,7 +68,7 @@ const DailyLogPage = () => {
       setIsSmall(e.matches);
     };
 
-    setIsSmall(mediaQuery.matches); // 초기값
+    setIsSmall(mediaQuery.matches);
 
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);

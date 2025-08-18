@@ -24,6 +24,15 @@ export interface CreateChallengeDto {
   target_value?: number | null;
 }
 
+export interface UpdateChallengeDto {
+  emoji?: string;
+  title?: string;
+  start_date?: Date;
+  end_date?: Date;
+  repeat_days?: string[];
+  target_value?: number;
+}
+
 export interface UpdateChallengeCompleteDto {
   is_completed: boolean;
 }

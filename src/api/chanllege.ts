@@ -5,6 +5,7 @@ import type {
   Challenge,
   CreateChallengeDto,
   UpdateChallengeCompleteDto,
+  UpdateChallengeDto,
 } from "@/types/challenge.ts";
 
 export const getChallenges = async (): Promise<Challenge[]> => {
@@ -108,6 +109,15 @@ export const createChallenge = async (
   if (error) toast.error("생성에 실패했습니다.");
 
   return data;
+};
+
+export const updateChallenge = async (
+  id: string,
+  input: UpdateChallengeDto,
+) => {
+  const { error } = await supabase.from("challenge").update(input).eq("id", id);
+
+  if (error) toast.error("수정에 실패했습니다.");
 };
 
 export const updateChallengeCompleted = async (
