@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.tsx";
-import { CalendarIcon, FilePlus, Flag } from "lucide-react";
+import { CalendarIcon, FilePlus, Flag, CircleHelp } from "lucide-react";
 import { useState } from "react";
 import {
   Tabs,
@@ -34,6 +34,11 @@ import { createChallenge } from "@/api/chanllege.ts";
 import EmojiPicker from "emoji-picker-react";
 import { useChallengeStore } from "@/store/challengeStore.ts";
 import { useNavigate } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
 
 const days = [
   { label: "일", value: "sun" },
@@ -138,10 +143,25 @@ const CreateChallengeModal = () => {
           onValueChange={(val) => setActiveTab(val as "daily" | "goal")}
           className="flex flex-col w-full h-full"
         >
-          <TabsList className="flex w-fit">
-            <TabsTrigger value="daily">일일 챌린지</TabsTrigger>
-            <TabsTrigger value="goal">목표 달성 챌린지</TabsTrigger>
-          </TabsList>
+          <div className="flex flex-row gap-3 item-center">
+            <TabsList className="flex w-fit">
+              <TabsTrigger value="daily">일일 챌린지</TabsTrigger>
+              <TabsTrigger value="goal">목표 달성 챌린지</TabsTrigger>
+            </TabsList>
+
+            <Tooltip>
+              <TooltipTrigger>
+                <CircleHelp className="w-6 h-6 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                {activeTab === "daily" ? (
+                  <p>예시: 🏃‍♂️매주 월,수, 금 운동하기</p>
+                ) : (
+                  <p>예시: 📖 250p 책 읽기</p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <TabsContent value="daily">
             <div className="grid gap-4 mt-2">
               <div className="flex items-center gap-2 relative">
