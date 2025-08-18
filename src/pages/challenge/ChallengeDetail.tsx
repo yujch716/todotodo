@@ -14,12 +14,19 @@ import { useChallengeStore } from "@/store/challengeStore.ts";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 import ChallengeLogCard from "@/pages/challenge/ChallengeLogCard.tsx";
 import GoalChallengeCard from "@/pages/challenge/GoalChallengeCard.tsx";
+import UpdateChallengeModal from "@/pages/challenge/UpdateChallengeModal.tsx";
 
-const ChallengeDetail = () => {
+interface ChallengeDetailProps {
+  challengeId: string | null;
+}
+
+const ChallengeDetail = ({
+  challengeId: propChallengeId,
+}: ChallengeDetailProps) => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
-  const challengeId = searchParams.get("id");
+  const challengeId = propChallengeId ?? searchParams.get("id");
 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
@@ -94,7 +101,8 @@ const ChallengeDetail = () => {
             <div>
               {emoji} {title}
             </div>
-            <div>
+            <div className="flex flex-row items-center gap-2">
+              <UpdateChallengeModal challenge={challenge} />
               <div
                 className="ml-auto cursor-pointer hover:text-red-600"
                 onClick={handleDelete}
