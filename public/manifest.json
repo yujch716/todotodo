@@ -20,6 +20,12 @@
       "src": "/app-icon-1200px.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "desktop-app-icon-1200px.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
