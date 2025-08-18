@@ -93,6 +93,8 @@ const UpdateChallengeModal = ({ challenge }: UpdateChallengeModalProps) => {
     triggerChallengeRefresh();
 
     toast.info("챌린지가 수정되었습니다.");
+
+    setOpen(false);
   };
 
   useEffect(() => {
