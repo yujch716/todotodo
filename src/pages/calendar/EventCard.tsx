@@ -9,7 +9,7 @@ interface EventCardProps {
 const EventCard = ({ event, onClick }: EventCardProps) => {
   return (
     <Card
-      className="p-1 mb-0.5 h-7 flex items-center cursor-pointer"
+      className="p-1 mb-0.5 h-7 flex items-center cursor-pointer shadow-md"
       style={{ backgroundColor: event.category?.color || undefined }}
       onClick={() => onClick(event.id)}
     >

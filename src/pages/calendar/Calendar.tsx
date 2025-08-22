@@ -203,7 +203,7 @@ const Calendar = () => {
                           {challenges.map((challenge: Challenge) => (
                             <div
                               key={challenge.id}
-                              className="w-5 h-5 flex items-center justify-center rounded-full bg-sky-50 border border-sky-200 text-xs"
+                              className="w-5 h-5 flex items-center justify-center rounded-full bg-sky-50 border border-sky-200 text-xs shadow-md"
                             >
                               {challenge.emoji}
                             </div>
