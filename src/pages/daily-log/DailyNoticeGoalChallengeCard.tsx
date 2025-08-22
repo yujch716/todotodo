@@ -29,7 +29,7 @@ const DailyNoticeGoalChallengeCard = ({
     <div>
       <Card
         key={id}
-        className="p-3 w-[270px] cursor-pointer shadow-sm hover:shadow-md"
+        className="p-3 w-[270px] cursor-pointer shadow-sm hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
         onClick={() => {
           handelMoveChallenge();
         }}

@@ -31,7 +31,9 @@ const DailyNoticeDailyChallengeCard = ({
       <Card
         key={id}
         className={`p-3 w-[270px] cursor-pointer shadow-sm ${
-          isCompleted ? "opacity-50" : "hover:shadow-md"
+          isCompleted
+            ? "opacity-50"
+            : "hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
         }`}
         onClick={() => {
           handelMoveChallenge();

@@ -10,7 +10,6 @@ import { Trash2 } from "lucide-react";
 import CreateChallengeModal from "@/pages/challenge/CreateChallengeModal.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { useChallengeStore } from "@/store/challengeStore.ts";
-import { useSearchParams } from "react-router-dom";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 
 interface ChallengeListProps {
@@ -21,6 +20,7 @@ const ChallengeList = ({ onCardClick }: ChallengeListProps) => {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [selectedChallenges, setSelectedChallenges] = useState<string[]>([]);
   const [allChecked, setAllChecked] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
 
@@ -28,9 +28,6 @@ const ChallengeList = ({ onCardClick }: ChallengeListProps) => {
   const resetChallengeRefresh = useChallengeStore(
     (state) => state.resetChallengeRefresh,
   );
-
-  const [searchParams] = useSearchParams();
-  const selectedIdFromUrl = searchParams.get("id");
 
   const triggerChallengeRefresh = useChallengeStore(
     (state) => state.triggerChallengeRefresh,
@@ -59,6 +56,7 @@ const ChallengeList = ({ onCardClick }: ChallengeListProps) => {
   };
 
   const handleCardClick = (id: string) => {
+    setSelectedId(id);
     if (onCardClick) onCardClick(id);
   };
 
@@ -128,8 +126,8 @@ const ChallengeList = ({ onCardClick }: ChallengeListProps) => {
               <Card
                 className={`
                 flex flex-row w-full items-center p-3 my-1 shadow cursor-pointer flex-1 overflow-hidden
-                hover:bg-slate-100
-                ${selectedIdFromUrl === challenge.id ? "bg-slate-100" : ""}
+                hover:bg-gradient-to-br hover:from-white hover:to-slate-200
+                ${selectedId === challenge.id ? "bg-gradient-to-br from-white to-slate-200" : ""}
               `}
                 onClick={() => handleCardClick(challenge.id)}
               >
