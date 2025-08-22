@@ -11,13 +11,12 @@ import {
 } from "@/components/ui/popover.tsx";
 import { Button } from "@/components/ui/button.tsx";
 
-const CalendarDayCell = ({
-  events,
-  dailyLog,
-}: {
+interface CalendarDayCellProps {
   events: CalendarEventType[];
-  dailyLog: DailyLogType | undefined;
-}) => {
+  dailyLog?: DailyLogType;
+}
+
+const CalendarDayCell = ({ events, dailyLog }: CalendarDayCellProps) => {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [eventDetailModalOpen, setEventDetailModalOpen] = useState(false);
 
@@ -26,11 +25,10 @@ const CalendarDayCell = ({
   const totalCount = eventsCount + dailyLogCount;
 
   const allItems = [
-    ...events.map((e) => ({ type: "event" as const, data: e })),
+    ...events.map((event) => ({ type: "event" as const, data: event })),
     ...(dailyLog ? [{ type: "dailyLog" as const, data: dailyLog }] : []),
   ];
 
-  // 총 2개까지만 보여줌 (3개 이상일 때)
   const previewItems = allItems.slice(0, 2);
 
   const openEventDetail = (id: string) => {

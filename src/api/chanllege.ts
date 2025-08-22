@@ -42,7 +42,7 @@ export const getChallengeById = async (
   return data;
 };
 
-export const getOngoingChallengesByDate = async (
+export const getOngoingDailyChallengesByDate = async (
   date: Date,
 ): Promise<Challenge[]> => {
   const weekdayMap: Record<number, string> = {
@@ -70,7 +70,7 @@ export const getOngoingChallengesByDate = async (
   return data ?? [];
 };
 
-export const getOngoingCGoalChallengesByDate = async (): Promise<
+export const getOngoingGoalChallengesByDate = async (): Promise<
   Challenge[]
 > => {
   const { data, error } = await supabase
@@ -78,6 +78,22 @@ export const getOngoingCGoalChallengesByDate = async (): Promise<
     .select(`*, challenge_log(*)`)
     .eq("type", "goal")
     .eq("is_completed", false);
+
+  if (error) toast.error("조회에 실패했습니다.");
+
+  return data ?? [];
+};
+
+export const getDailyChallengeByRangeDate = async (
+  start: Date,
+  end: Date,
+): Promise<Challenge[]> => {
+  const { data, error } = await supabase
+    .from("challenge")
+    .select(`*, challenge_log(*)`)
+    .eq("type", "daily")
+    .lte("start_date", format(end, "yyyy-MM-dd"))
+    .gte("end_date", format(start, "yyyy-MM-dd"));
 
   if (error) toast.error("조회에 실패했습니다.");
 

@@ -18,8 +18,8 @@ export interface CreateChallengeDto {
   emoji: string;
   title: string;
   type: "daily" | "goal";
-  start_date?: Date | null;
-  end_date?: Date | null;
+  start_date?: string;
+  end_date?: string;
   repeat_days?: string[] | null;
   target_value?: number | null;
 }
@@ -27,8 +27,8 @@ export interface CreateChallengeDto {
 export interface UpdateChallengeDto {
   emoji?: string;
   title?: string;
-  start_date?: Date;
-  end_date?: Date;
+  start_date?: string;
+  end_date?: string;
   repeat_days?: string[];
   target_value?: number;
 }

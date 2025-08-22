@@ -27,10 +27,14 @@ import { cn } from "@/lib/utils.ts";
 import CreateEventModal from "@/pages/calendar/CreateEventModal.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import CalendarDayCell from "@/pages/calendar/CalendarDayCell.tsx";
+import { getDailyChallengeByRangeDate } from "@/api/chanllege.ts";
+import type { Challenge } from "@/types/challenge.ts";
 
 const Calendar = () => {
   const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
   const [events, setEvents] = useState<CalendarEventType[]>([]);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -60,9 +64,11 @@ const Calendar = () => {
 
     const dailyLogs = await getDailyLogsByDate(start, end);
     const calendarEvents = await getCalendarEvents(start, end);
+    const challenges = await getDailyChallengeByRangeDate(start, end);
 
     setEvents(calendarEvents);
     setDailyLogs(dailyLogs);
+    setChallenges(challenges);
   }, [currentMonth]);
 
   const onDayClick = (date: Date) => {
@@ -92,6 +98,24 @@ const Calendar = () => {
       const start = new Date(item.start_at);
       const end = new Date(item.end_at);
       return date >= start && date <= end;
+    });
+  };
+
+  const dayMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+
+  const getChallengeForDate = (date: Date) => {
+    if (!challenges) return [];
+
+    const dayString = dayMap[date.getDay()];
+
+    return challenges.filter((item) => {
+      const start = new Date(item.start_date);
+      const end = new Date(item.end_date);
+
+      if (date < start || date > end) return false;
+
+      if (!item.repeat_days || item.repeat_days.length === 0) return true;
+      return item.repeat_days.includes(dayString);
     });
   };
 
@@ -145,6 +169,7 @@ const Calendar = () => {
                   dayProps;
                 const dailyLog = getDailyLogForDate(date);
                 const events = getEventForDate(date);
+                const challenges = getChallengeForDate(date);
                 const isToday = isSameDay(date, new Date());
                 const isOutside = !isSameMonth(date, currentMonth);
 
@@ -163,15 +188,29 @@ const Calendar = () => {
                     tabIndex={0}
                   >
                     <div className="flex justify-between items-center">
-                      <span
-                        className={cn(
-                          "text-xs",
-                          isToday &&
-                            "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
-                        )}
-                      >
-                        {date.getDate()}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "text-xs",
+                            isToday &&
+                              "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
+                          )}
+                        >
+                          {date.getDate()}
+                        </span>
+
+                        <div className="flex flex-row gap-1">
+                          {challenges.map((challenge: Challenge) => (
+                            <div
+                              key={challenge.id}
+                              className="w-5 h-5 flex items-center justify-center rounded-full bg-sky-50 border border-sky-200 text-xs"
+                            >
+                              {challenge.emoji}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
                       <Button
                         variant="outline"
                         size="icon"

@@ -68,25 +68,27 @@ const UpdateChallengeModal = ({ challenge }: UpdateChallengeModalProps) => {
   );
 
   const onSubmit = async () => {
+    const repeat_days =
+      type === "daily"
+        ? isEveryDay
+          ? days.map((d) => d.value)
+          : repeatDays
+        : null;
+
     const challengePayload: UpdateChallengeDto = {
       emoji,
       title,
       ...(type === "daily" && {
-        start_date: dateRange?.from,
-        end_date: dateRange?.to,
+        start_date: dateRange?.from
+          ? format(dateRange.from, "yyyy-MM-dd")
+          : undefined,
+        end_date: dateRange?.to
+          ? format(dateRange.to, "yyyy-MM-dd")
+          : undefined,
+        repeat_days: repeat_days ?? undefined,
       }),
       ...(type === "goal" && { target_value: Number(targetValue) }),
     };
-
-    if (repeatDays) {
-      const repeat_days =
-        type === "daily"
-          ? isEveryDay
-            ? days.map((d) => d.value)
-            : repeatDays
-          : null;
-      challengePayload.repeat_days = repeat_days ?? undefined;
-    }
 
     await updateChallenge(challenge.id, challengePayload);
 

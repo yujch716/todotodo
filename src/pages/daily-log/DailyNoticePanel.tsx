@@ -9,8 +9,8 @@ import DailyNoticeScheduleCard from "@/pages/daily-log/DailyNoticeScheduleCard.t
 import type { Challenge } from "@/types/challenge.ts";
 import DailyNoticeDailyChallengeCard from "@/pages/daily-log/DailyNoticeDailyChallengeCard.tsx";
 import {
-  getOngoingCGoalChallengesByDate,
-  getOngoingChallengesByDate,
+  getOngoingDailyChallengesByDate,
+  getOngoingGoalChallengesByDate,
 } from "@/api/chanllege.ts";
 import DailyNoticeGoalChallengeCard from "@/pages/daily-log/DailyNoticeGoalChallengeCard.tsx";
 
@@ -34,8 +34,8 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
   }, [dailyLogDate]);
 
   const loadDailyChallenges = useCallback(async () => {
-    const dailyChallenges = await getOngoingChallengesByDate(dailyLogDate);
-    const goalChallenges = await getOngoingCGoalChallengesByDate();
+    const dailyChallenges = await getOngoingDailyChallengesByDate(dailyLogDate);
+    const goalChallenges = await getOngoingGoalChallengesByDate();
 
     setDailyChallenges(dailyChallenges);
     setGoalChallenges(goalChallenges);
