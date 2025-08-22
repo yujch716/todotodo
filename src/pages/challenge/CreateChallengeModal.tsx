@@ -96,8 +96,12 @@ const CreateChallengeModal = () => {
       title,
       type: activeTab,
       ...(activeTab === "daily" && {
-        start_date: dateRange?.from,
-        end_date: dateRange?.to,
+        start_date: dateRange?.from
+          ? format(dateRange.from, "yyyy-MM-dd")
+          : undefined,
+        end_date: dateRange?.to
+          ? format(dateRange.to, "yyyy-MM-dd")
+          : undefined,
         repeat_days,
       }),
       ...(activeTab === "goal" && { target_value: Number(targetValue) }),

@@ -2,32 +2,45 @@ import ChallengeList from "@/pages/challenge/ChallengeList.tsx";
 import ChallengeDetail from "@/pages/challenge/ChallengeDetail.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { useEffect, useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet.tsx";
 
 const ChallengePage = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedChallengeId, setSelectedChallengeId] = useState<string | null>(
     null,
   );
+  const [isMedium, setIsMedium] = useState(false);
   const [isSmall, setIsSmall] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 1000px)");
+    const mediaQueryMedium = window.matchMedia("(max-width: 1100px)");
+    const mediaQuerySmall = window.matchMedia("(max-width: 767px)");
 
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsSmall(e.matches);
+    const handleChange = () => {
+      setIsMedium(mediaQueryMedium.matches);
+      setIsSmall(mediaQuerySmall.matches);
     };
 
-    setIsSmall(mediaQuery.matches);
+    handleChange();
 
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    mediaQueryMedium.addEventListener("change", handleChange);
+    mediaQuerySmall.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQueryMedium.removeEventListener("change", handleChange);
+      mediaQuerySmall.removeEventListener("change", handleChange);
+    };
   }, []);
 
   return (
     <>
       <div className="flex w-full h-full">
-        {isSmall ? (
+        {isMedium || isSmall ? (
           <>
             <ChallengeList
               onCardClick={(id) => {
@@ -40,7 +53,13 @@ const ChallengePage = () => {
               onOpenChange={(open) => setIsSheetOpen(open)}
             >
               <SheetTrigger className="hidden" />
-              <SheetContent style={{ width: "80vw", maxWidth: "none" }}>
+              <SheetContent
+                style={{
+                  width: isSmall ? "100vw" : "80vw",
+                  maxWidth: "none",
+                }}
+              >
+                <SheetTitle />
                 <ChallengeDetail challengeId={selectedChallengeId} />
               </SheetContent>
             </Sheet>
