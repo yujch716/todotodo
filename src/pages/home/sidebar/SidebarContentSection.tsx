@@ -74,7 +74,7 @@ const SidebarContentSection = ({
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton
-                onClick={() => navigate("/goal", { replace: true })}
+                onClick={() => navigate("/challenge-groups", { replace: true })}
                 className="flex items-center gap-2 hover:bg-sky-200"
               >
                 <Flag className="w-4 h-4" />

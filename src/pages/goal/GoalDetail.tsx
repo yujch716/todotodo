@@ -22,7 +22,7 @@ const GoalDetail = () => {
           </div>
         </header>
 
-        <div className="flex flex-grow overflow-hidden gap-6">
+        <div className="flex flex-grow overflow-hidden gap-8">
           <div className="w-1/3 h-full flex flex-col">
             <GoalStatusPanel status={GoalItemStatus.notStarted} />
           </div>

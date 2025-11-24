@@ -9,8 +9,8 @@ import Layout from "@/layouts/Layout.tsx";
 import AuthRedirect from "@/pages/auth/AuthRedirect.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import ChallengePage from "@/pages/challenge/ChallengePage.tsx";
-import GoalPage from "@/pages/goal/GoalPage.tsx";
 import GoalDetail from "@/pages/goal/GoalDetail.tsx";
+import ChallengeGroupPage from "@/pages/challenge/ChallengeGroupPage.tsx";
 
 function App() {
   return (
@@ -33,8 +33,8 @@ function App() {
           <Route path="/daily" element={<DailyLogPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/challenge" element={<ChallengePage />} />
-          <Route path="/goal" element={<GoalPage />} />
-          <Route path="/goal/:id" element={<GoalDetail />} />
+          <Route path="/challenge-groups" element={<ChallengeGroupPage />} />
+          <Route path="/challenge-groups/:id" element={<GoalDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>

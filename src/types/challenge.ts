@@ -53,3 +53,10 @@ export interface CreateChallengeLogDto {
   memo?: string | null;
   value?: number | null;
 }
+
+export interface ChallengeGroup {
+  id: string;
+  user_id: string;
+  name: string;
+  challenges: Challenge[];
+}
