@@ -1,29 +1,29 @@
-import type { Challenge } from "@/types/challenge.ts";
+import type { Goal } from "@/types/goal1.ts";
 import { Card } from "@/components/ui/card.tsx";
 import { CalendarIcon } from "lucide-react";
 import { format, isSameDay } from "date-fns";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { useNavigate } from "react-router-dom";
 
-interface DailyNoticeDailyChallengeProps {
-  challenge: Challenge;
+interface DailyNoticeDailyGoalProps {
+  goal: Goal;
   date: Date;
 }
 
-const DailyNoticeDailyChallengeCard = ({
-  challenge,
+const DailyNoticeDailyGoalCard = ({
+  goal,
   date,
-}: DailyNoticeDailyChallengeProps) => {
+}: DailyNoticeDailyGoalProps) => {
   const navigate = useNavigate();
 
-  const { id, emoji, title, start_date, end_date, challenge_log } = challenge;
+  const { id, emoji, title, start_date, end_date, goal_log } = goal;
 
-  const isCompleted = challenge_log?.some((log) =>
+  const isCompleted = goal_log?.some((log) =>
     log.date ? isSameDay(new Date(log.date), date) : false,
   );
 
-  const handelMoveChallenge = () => {
-    navigate(`/challenge?id=${id}`);
+  const handelMoveGoal = () => {
+    navigate(`/goal?id=${id}`);
   };
 
   return (
@@ -36,7 +36,7 @@ const DailyNoticeDailyChallengeCard = ({
             : "hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
         }`}
         onClick={() => {
-          handelMoveChallenge();
+          handelMoveGoal();
         }}
       >
         <div className="flex flex-row items-center gap-2 pb-2">
@@ -66,4 +66,4 @@ const DailyNoticeDailyChallengeCard = ({
     </div>
   );
 };
-export default DailyNoticeDailyChallengeCard;
+export default DailyNoticeDailyGoalCard;

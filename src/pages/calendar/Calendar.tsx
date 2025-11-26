@@ -27,13 +27,13 @@ import { cn } from "@/lib/utils.ts";
 import CreateEventModal from "@/pages/calendar/CreateEventModal.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import CalendarDayCell from "@/pages/calendar/CalendarDayCell.tsx";
-import { getDailyChallengeByRangeDate } from "@/api/chanllege.ts";
-import type { Challenge } from "@/types/challenge.ts";
+import { getDailyGoalByRangeDate } from "@/api/goal.ts";
+import type { Goal } from "@/types/goal.ts";
 
 const Calendar = () => {
   const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
   const [events, setEvents] = useState<CalendarEventType[]>([]);
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -64,11 +64,11 @@ const Calendar = () => {
 
     const dailyLogs = await getDailyLogsByDate(start, end);
     const calendarEvents = await getCalendarEvents(start, end);
-    const challenges = await getDailyChallengeByRangeDate(start, end);
+    const goals = await getDailyGoalByRangeDate(start, end);
 
     setEvents(calendarEvents);
     setDailyLogs(dailyLogs);
-    setChallenges(challenges);
+    setGoals(goals);
   }, [currentMonth]);
 
   const onDayClick = (date: Date) => {
@@ -103,12 +103,12 @@ const Calendar = () => {
 
   const dayMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
-  const getChallengeForDate = (date: Date) => {
-    if (!challenges) return [];
+  const getGoalForDate = (date: Date) => {
+    if (!goals) return [];
 
     const dayString = dayMap[date.getDay()];
 
-    return challenges.filter((item) => {
+    return goals.filter((item) => {
       const start = new Date(item.start_date);
       const end = new Date(item.end_date);
 
@@ -169,7 +169,7 @@ const Calendar = () => {
                   dayProps;
                 const dailyLog = getDailyLogForDate(date);
                 const events = getEventForDate(date);
-                const challenges = getChallengeForDate(date);
+                const goals = getGoalForDate(date);
                 const isToday = isSameDay(date, new Date());
                 const isOutside = !isSameMonth(date, currentMonth);
 
@@ -200,12 +200,12 @@ const Calendar = () => {
                         </span>
 
                         <div className="flex flex-row gap-1">
-                          {challenges.map((challenge: Challenge) => (
+                          {goals.map((goal: Goal) => (
                             <div
-                              key={challenge.id}
+                              key={goal.id}
                               className="w-5 h-5 flex items-center justify-center rounded-full bg-sky-50 border border-sky-200 text-xs shadow-md"
                             >
-                              {challenge.emoji}
+                              {goal.emoji}
                             </div>
                           ))}
                         </div>

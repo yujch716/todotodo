@@ -7,26 +7,26 @@ import {
   CardHeader,
 } from "@/components/ui/card.tsx";
 import { useNavigate } from "react-router-dom";
-import {getChallengeGroups} from "@/api/challenge-group.ts";
-import type {ChallengeGroup} from "@/types/challenge.ts";
+import {getGoalGroups} from "@/api/goal-group.ts";
+import type {GoalGroup} from "@/types/goal.ts";
 import {useEffect, useState} from "react";
 
-const ChallengeGroupPage = () => {
+const GoalGroupPage = () => {
   const navigate = useNavigate();
 
-  const [challengeGroups, setChallengeGroups] = useState<ChallengeGroup[]>([]);
+  const [goalGroups, setGoalGroups] = useState<GoalGroup[]>([]);
 
-  const loadChallengeGroups = async () => {
-    const challengeGroups = await getChallengeGroups();
-    setChallengeGroups(challengeGroups);
+  const loadGoalGroups = async () => {
+    const goalGroups = await getGoalGroups();
+    setGoalGroups(goalGroups);
   };
 
   useEffect(() => {
-    loadChallengeGroups();
+    loadGoalGroups();
   }, []);
 
   const handleMoveGoal = (id: string) => {
-    navigate(`/challenge-groups/${id}`);
+    navigate(`/goal-groups/${id}`);
   };
 
   return (
@@ -42,7 +42,7 @@ const ChallengeGroupPage = () => {
         <div className="flex flex-grow overflow-hidden">
           <ScrollArea className="h-full max-h-full w-full">
             <div className="flex flex-wrap gap-4">
-              {challengeGroups.map((group) => (
+              {goalGroups.map((group) => (
                 <Card
                   key={group.id}
                   className="w-[200px] h-[200px] hover:bg-gradient-to-br hover:bg-slate-50 cursor-pointer"
@@ -73,4 +73,4 @@ const ChallengeGroupPage = () => {
     </>
   );
 };
-export default ChallengeGroupPage;
+export default GoalGroupPage;

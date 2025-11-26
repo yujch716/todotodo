@@ -1,8 +1,8 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
-import type { CreateChallengeLogDto } from "@/types/challenge.ts";
+import type { CreateGoalLogDto } from "@/types/goal1.ts";
 
-export const createChallengeLog = async (input: CreateChallengeLogDto) => {
+export const createGoalLog = async (input: CreateGoalLogDto) => {
   const {
     data: { user },
     error: userError,
@@ -12,7 +12,7 @@ export const createChallengeLog = async (input: CreateChallengeLogDto) => {
   }
 
   const { data, error } = await supabase
-    .from("challenge_log")
+    .from("goal_log")
     .insert({
       user_id: user.id,
       ...input,
@@ -25,8 +25,8 @@ export const createChallengeLog = async (input: CreateChallengeLogDto) => {
   return data;
 };
 
-export const deleteChallengeLogById = async (id: string) => {
-  const { error } = await supabase.from("challenge_log").delete().eq("id", id);
+export const deleteGoalLogById = async (id: string) => {
+  const { error } = await supabase.from("goal_log").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");
 };

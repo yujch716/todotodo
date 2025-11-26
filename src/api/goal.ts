@@ -2,13 +2,13 @@ import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import { format, getDay } from "date-fns";
 import type {
-  Challenge,
-  CreateChallengeDto,
-  UpdateChallengeCompleteDto,
-  UpdateChallengeDto,
-} from "@/types/challenge.ts";
+  Goal,
+  CreateGoalDto,
+  UpdateGoalCompleteDto,
+  UpdateGoalDto,
+} from "@/types/goal.ts";
 
-export const getChallenges = async (): Promise<Challenge[]> => {
+export const getGoals = async (): Promise<Goal[]> => {
   const {
     data: { user },
     error: userError,
@@ -18,7 +18,7 @@ export const getChallenges = async (): Promise<Challenge[]> => {
   }
 
   const { data, error } = await supabase
-    .from("challenge")
+    .from("goal")
     .select("*")
     .eq("user_id", user.id);
 
@@ -27,14 +27,14 @@ export const getChallenges = async (): Promise<Challenge[]> => {
   return data ?? [];
 };
 
-export const getChallengeById = async (
-  challengeId: string,
-): Promise<Challenge> => {
+export const getGoalById = async (
+  goalId: string,
+): Promise<Goal> => {
   const { data, error } = await supabase
-    .from("challenge")
-    .select(`*, challenge_log(*)`)
-    .eq("id", challengeId)
-    .order("created_at", { foreignTable: "challenge_log", ascending: false })
+    .from("goal")
+    .select(`*, goal_log(*)`)
+    .eq("id", goalId)
+    .order("created_at", { foreignTable: "goal_log", ascending: false })
     .single();
 
   if (error) toast.error("조회에 실패했습니다.");
@@ -42,9 +42,9 @@ export const getChallengeById = async (
   return data;
 };
 
-export const getOngoingDailyChallengesByDate = async (
+export const getOngoingDailyGoalsByDate = async (
   date: Date,
-): Promise<Challenge[]> => {
+): Promise<Goal[]> => {
   const weekdayMap: Record<number, string> = {
     0: "sun",
     1: "mon",
@@ -58,8 +58,8 @@ export const getOngoingDailyChallengesByDate = async (
   const dayString = weekdayMap[getDay(date)];
 
   const { data, error } = await supabase
-    .from("challenge")
-    .select(`*, challenge_log(*)`)
+    .from("goal")
+    .select(`*, goal_log(*)`)
     .eq("type", "daily")
     .lte("start_date", format(date, "yyyy-MM-dd"))
     .gte("end_date", format(date, "yyyy-MM-dd"))
@@ -70,12 +70,12 @@ export const getOngoingDailyChallengesByDate = async (
   return data ?? [];
 };
 
-export const getOngoingGoalChallengesByDate = async (): Promise<
-  Challenge[]
+export const getOngoingGoalGoalsByDate = async (): Promise<
+  Goal[]
 > => {
   const { data, error } = await supabase
-    .from("challenge")
-    .select(`*, challenge_log(*)`)
+    .from("goal")
+    .select(`*, goal_log(*)`)
     .eq("type", "goal")
     .eq("is_completed", false);
 
@@ -84,13 +84,13 @@ export const getOngoingGoalChallengesByDate = async (): Promise<
   return data ?? [];
 };
 
-export const getDailyChallengeByRangeDate = async (
+export const getDailyGoalByRangeDate = async (
   start: Date,
   end: Date,
-): Promise<Challenge[]> => {
+): Promise<Goal[]> => {
   const { data, error } = await supabase
-    .from("challenge")
-    .select(`*, challenge_log(*)`)
+    .from("goal")
+    .select(`*, goal_log(*)`)
     .eq("type", "daily")
     .lte("start_date", format(end, "yyyy-MM-dd"))
     .gte("end_date", format(start, "yyyy-MM-dd"));
@@ -100,9 +100,9 @@ export const getDailyChallengeByRangeDate = async (
   return data ?? [];
 };
 
-export const createChallenge = async (
-  input: CreateChallengeDto,
-): Promise<Challenge> => {
+export const createGoal = async (
+  input: CreateGoalDto,
+): Promise<Goal> => {
   const {
     data: { user },
     error: userError,
@@ -112,7 +112,7 @@ export const createChallenge = async (
   }
 
   const { error, data } = await supabase
-    .from("challenge")
+    .from("goal")
     .insert([
       {
         user_id: user.id,
@@ -127,32 +127,32 @@ export const createChallenge = async (
   return data;
 };
 
-export const updateChallenge = async (
+export const updateGoal = async (
   id: string,
-  input: UpdateChallengeDto,
+  input: UpdateGoalDto,
 ) => {
-  const { error } = await supabase.from("challenge").update(input).eq("id", id);
+  const { error } = await supabase.from("goal").update(input).eq("id", id);
 
   if (error) toast.error("수정에 실패했습니다.");
 };
 
-export const updateChallengeCompleted = async (
+export const updateGoalCompleted = async (
   id: string,
-  input: UpdateChallengeCompleteDto,
+  input: UpdateGoalCompleteDto,
 ) => {
-  const { error } = await supabase.from("challenge").update(input).eq("id", id);
+  const { error } = await supabase.from("goal").update(input).eq("id", id);
 
   if (error) toast.error("변경에 실패했습니다.");
 };
 
-export const deleteChallengeById = async (id: string) => {
-  const { error } = await supabase.from("challenge").delete().eq("id", id);
+export const deleteGoalById = async (id: string) => {
+  const { error } = await supabase.from("goal").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");
 };
 
-export const deleteChallengeByIds = async (ids: string[]) => {
-  const { error } = await supabase.from("challenge").delete().in("id", ids);
+export const deleteGoalByIds = async (ids: string[]) => {
+  const { error } = await supabase.from("goal").delete().in("id", ids);
 
   if (error) toast.error("삭제에 실패했습니다.");
 };

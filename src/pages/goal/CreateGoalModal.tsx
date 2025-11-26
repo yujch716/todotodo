@@ -30,9 +30,9 @@ import type { DateRange } from "react-day-picker";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { toast } from "sonner";
-import { createChallenge } from "@/api/chanllege.ts";
+import { createGoal } from "@/api/goal.ts";
 import EmojiPicker from "emoji-picker-react";
-import { useChallengeStore } from "@/store/challengeStore.ts";
+import { useGoalStore } from "@/store/goalStore.ts";
 import { useNavigate } from "react-router-dom";
 
 const days = [
@@ -45,7 +45,7 @@ const days = [
   { label: "토", value: "sat" },
 ];
 
-const CreateChallengeModal = () => {
+const CreateGoalModal = () => {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -62,8 +62,8 @@ const CreateChallengeModal = () => {
   const [repeatDays, setRepeatDays] = useState<string[]>([]);
   const [targetValue, setTargetValue] = useState<string>("100");
 
-  const triggerChallengeRefresh = useChallengeStore(
-    (state) => state.triggerChallengeRefresh,
+  const triggerGoalRefresh = useGoalStore(
+    (state) => state.triggerGoalRefresh,
   );
 
   const onSubmit = async () => {
@@ -91,7 +91,7 @@ const CreateChallengeModal = () => {
           : repeatDays
         : null;
 
-    const challengePayload = {
+    const goalPayload = {
       emoji,
       title,
       type: activeTab,
@@ -107,9 +107,9 @@ const CreateChallengeModal = () => {
       ...(activeTab === "goal" && { target_value: Number(targetValue) }),
     };
 
-    const newChallenge = await createChallenge(challengePayload);
+    const newGoal = await createGoal(goalPayload);
 
-    triggerChallengeRefresh();
+    triggerGoalRefresh();
 
     toast.info("챌린지가 생성되었습니다.");
 
@@ -120,7 +120,7 @@ const CreateChallengeModal = () => {
     setRepeatDays([]);
     setTargetValue("");
 
-    navigate(`/challenge?id=${newChallenge.id}`);
+    navigate(`/goal?id=${newGoal.id}`);
   };
 
   return (
@@ -303,4 +303,4 @@ const CreateChallengeModal = () => {
     </Dialog>
   );
 };
-export default CreateChallengeModal;
+export default CreateGoalModal;

@@ -1,5 +1,4 @@
-import ChallengeList from "@/pages/challenge/ChallengeList.tsx";
-import ChallengeDetail from "@/pages/challenge/ChallengeDetail.tsx";
+import GoalList from "@/pages/goal/GoalList.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { useEffect, useState } from "react";
 import {
@@ -8,10 +7,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet.tsx";
+import GoalDetail from "@/pages/goal/GoalDetail.tsx";
 
-const ChallengePage = () => {
+const GoalPage = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [selectedChallengeId, setSelectedChallengeId] = useState<string | null>(
+  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(
     null,
   );
   const [isMedium, setIsMedium] = useState(false);
@@ -42,9 +42,9 @@ const ChallengePage = () => {
       <div className="flex w-full h-full">
         {isMedium || isSmall ? (
           <>
-            <ChallengeList
+            <GoalList
               onCardClick={(id) => {
-                setSelectedChallengeId(id);
+                setSelectedGoalId(id);
                 setIsSheetOpen(true);
               }}
             />
@@ -60,18 +60,18 @@ const ChallengePage = () => {
                 }}
               >
                 <SheetTitle />
-                <ChallengeDetail challengeId={selectedChallengeId} />
+                <GoalDetail goalId={selectedGoalId} />
               </SheetContent>
             </Sheet>
           </>
         ) : (
           <>
             <div className="w-2/5 h-full flex flex-col">
-              <ChallengeList onCardClick={(id) => setSelectedChallengeId(id)} />
+              <GoalList onCardClick={(id) => setSelectedGoalId(id)} />
             </div>
             <Separator orientation="vertical" />
             <div className="w-3/5 px-4 h-full flex flex-col">
-              <ChallengeDetail challengeId={selectedChallengeId} />
+              <GoalDetail goalId={selectedGoalId} />
             </div>
           </>
         )}
@@ -79,4 +79,4 @@ const ChallengePage = () => {
     </>
   );
 };
-export default ChallengePage;
+export default GoalPage;

@@ -1,11 +1,11 @@
-import type { GoalItemStatusType } from "@/types/goal.ts";
+import type { GoalItemStatusType } from "@/types/goal1.ts";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CreateChallengeModal from "@/pages/challenge/CreateChallengeModal.tsx";
+import CreateGoalModal from "@/pages/goal/CreateGoalModal.tsx";
 import {DailyLogStatusIcon} from "@/components/DailyLogStatusIcon.tsx";
 
 interface Props {
@@ -58,7 +58,7 @@ const GoalStatusPanel = ({ status }: Props) => {
             />
             <h2 className="text-sm font-semibold">{statusMap[status].title}</h2>
           </div>
-          <CreateChallengeModal />
+          <CreateGoalModal />
         </div>
         <div className="flex flex-col p-4 gap-4 overflow-y-auto">
           {cards.map((card) => (

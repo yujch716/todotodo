@@ -1,7 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card.tsx";
-import type { ChallengeLog } from "@/types/challenge.ts";
+import type { GoalLog } from "@/types/goal.ts";
 import {
   Table,
   TableBody,
@@ -12,25 +12,25 @@ import {
 } from "@/components/ui/table.tsx";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
-import { deleteChallengeLogById } from "@/api/challenge-log.ts";
-import { useChallengeStore } from "@/store/challengeStore.ts";
-import { updateChallengeCompleted } from "@/api/chanllege.ts";
+import { deleteGoalLogById } from "@/api/goal-log.ts";
+import { useGoalStore } from "@/store/goalStore.ts";
+import { updateGoalCompleted } from "@/api/goal.ts";
 
-interface ChallengeLogCardProps {
+interface GoalLogCardProps {
   type: "daily" | "goal";
-  logs: ChallengeLog[];
+  logs: GoalLog[];
 }
 
-const ChallengeLogCard = ({ type, logs }: ChallengeLogCardProps) => {
-  const triggerChallengeRefresh = useChallengeStore(
-    (state) => state.triggerChallengeRefresh,
+const GoalLogCard = ({ type, logs }: GoalLogCardProps) => {
+  const triggerGoalRefresh = useGoalStore(
+    (state) => state.triggerGoalRefresh,
   );
 
-  const handleDelete = async (logId: string, challengeId: string) => {
-    await deleteChallengeLogById(logId);
-    await updateChallengeCompleted(challengeId, { is_completed: false });
+  const handleDelete = async (logId: string, goalId: string) => {
+    await deleteGoalLogById(logId);
+    await updateGoalCompleted(goalId, { is_completed: false });
 
-    triggerChallengeRefresh();
+    triggerGoalRefresh();
   };
 
   return (
@@ -75,7 +75,7 @@ const ChallengeLogCard = ({ type, logs }: ChallengeLogCardProps) => {
                       variant="ghost"
                       size="sm"
                       className="w-6 h-6"
-                      onClick={() => handleDelete(log.id, log.challenge_id)}
+                      onClick={() => handleDelete(log.id, log.goal_id)}
                     >
                       <X className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Button>
@@ -89,4 +89,4 @@ const ChallengeLogCard = ({ type, logs }: ChallengeLogCardProps) => {
     </Card>
   );
 };
-export default ChallengeLogCard;
+export default GoalLogCard;

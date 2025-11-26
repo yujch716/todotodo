@@ -9,7 +9,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { cn } from "@/lib/utils.ts";
-import type { Challenge, ChallengeLog } from "@/types/challenge.ts";
+import type { Goal, GoalLog } from "@/types/goal.ts";
 import {
   Tooltip,
   TooltipContent,
@@ -17,17 +17,17 @@ import {
 } from "@/components/ui/tooltip.tsx";
 import { TooltipArrow } from "@radix-ui/react-tooltip";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
-import CompleteChallengeModal from "@/pages/challenge/CompleteChallengeModal.tsx";
+import CompleteGoalModal from "@/pages/goal/CompleteGoalModal.tsx";
 import { useState } from "react";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
-import { deleteChallengeLogById } from "@/api/challenge-log.ts";
-import { useChallengeStore } from "@/store/challengeStore.ts";
+import { deleteGoalLogById } from "@/api/goal-log.ts";
+import { useGoalStore } from "@/store/goalStore.ts";
 import { CalendarIcon, PartyPopper } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
-import { updateChallengeCompleted } from "@/api/chanllege.ts";
+import { updateGoalCompleted } from "@/api/goal.ts";
 
-interface ChallengeProps {
-  challenge: Challenge;
+interface GoalProps {
+  goal: Goal;
 }
 
 interface HeatmapDay {
@@ -36,10 +36,10 @@ interface HeatmapDay {
   completed: boolean;
 }
 
-const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
+const DailyGoalCard = ({ goal }: GoalProps) => {
   const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-  const logs: ChallengeLog[] = challenge.challenge_log || [];
-  const isComplete = challenge.is_completed;
+  const logs: GoalLog[] = goal.goal_log || [];
+  const isComplete = goal.is_completed;
 
   const [openCompleteModal, setOpenCompleteModal] = useState(false);
   const [isLogDeleteAlertOpen, setIsLogDeleteAlertOpen] = useState(false);
@@ -47,8 +47,8 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
 
-  const triggerChallengeRefresh = useChallengeStore(
-    (state) => state.triggerChallengeRefresh,
+  const triggerGoalRefresh = useGoalStore(
+    (state) => state.triggerGoalRefresh,
   );
 
   const generateHeatmapData = ({
@@ -59,7 +59,7 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
   }: {
     startDate: Date;
     endDate: Date;
-    logs: ChallengeLog[];
+    logs: GoalLog[];
     repeatDays: string[];
   }) => {
     const repeatDaysInt = repeatDays.map((d) => WEEKDAYS.indexOf(d));
@@ -106,15 +106,15 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
   };
 
   const data = generateHeatmapData({
-    startDate: new Date(challenge.start_date),
-    endDate: new Date(challenge.end_date),
+    startDate: new Date(goal.start_date),
+    endDate: new Date(goal.end_date),
     logs,
-    repeatDays: challenge.repeat_days || [],
+    repeatDays: goal.repeat_days || [],
   });
 
   const displayWeekdays =
-    challenge.repeat_days && challenge.repeat_days.length
-      ? challenge.repeat_days.map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+    goal.repeat_days && goal.repeat_days.length
+      ? goal.repeat_days.map((d) => d.charAt(0).toUpperCase() + d.slice(1))
       : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const totalDays = data.flat().filter((day) => day.date !== null).length;
@@ -136,13 +136,13 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
     if (!selectedLogId) return;
     setIsLogDeleteAlertOpen(false);
 
-    await deleteChallengeLogById(selectedLogId);
+    await deleteGoalLogById(selectedLogId);
 
-    await updateChallengeCompleted(challenge.id, { is_completed: false });
+    await updateGoalCompleted(goal.id, { is_completed: false });
 
     setSelectedLogId(null);
 
-    triggerChallengeRefresh();
+    triggerGoalRefresh();
   };
 
   return (
@@ -151,8 +151,8 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
         <div className="flex w-full items-center justify-between">
           <div className="text-lg text-muted-foreground flex flex-row gap-2 items-center">
             <CalendarIcon className="w-5 h-5" />
-            {formatDate(challenge.start_date!, "yyyy.MM.dd")} -{" "}
-            {formatDate(challenge.end_date!, "yyyy.MM.dd")}
+            {formatDate(goal.start_date!, "yyyy.MM.dd")} -{" "}
+            {formatDate(goal.end_date!, "yyyy.MM.dd")}
           </div>
           <Label
             className={`flex flex-row transition-opacity duration-200 text-muted-foreground items-center gap-2 ${
@@ -225,10 +225,10 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
         </Card>
 
         {selectedDate && (
-          <CompleteChallengeModal
+          <CompleteGoalModal
             open={openCompleteModal}
             onOpenChange={setOpenCompleteModal}
-            challengeId={challenge.id}
+            goalId={goal.id}
             date={selectedDate}
             totalDays={totalDays}
             completedDays={completedDays}
@@ -245,4 +245,4 @@ const DailyChallengeCard = ({ challenge }: ChallengeProps) => {
     </>
   );
 };
-export default DailyChallengeCard;
+export default DailyGoalCard;
