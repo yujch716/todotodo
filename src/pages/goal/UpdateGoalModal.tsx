@@ -55,17 +55,13 @@ const UpdateGoalModal = ({ goal }: UpdateGoalModalProps) => {
     from: goal.start_date,
     to: goal.end_date,
   });
-  const [isEveryDay, setIsEveryDay] = useState(
-    goal.repeat_days?.length === 7,
-  );
+  const [isEveryDay, setIsEveryDay] = useState(goal.repeat_days?.length === 7);
   const [repeatDays, setRepeatDays] = useState<string[] | null>(
     goal.repeat_days,
   );
   const [targetValue, setTargetValue] = useState(goal.target_value);
 
-  const triggerGoalRefresh = useGoalStore(
-    (state) => state.triggerGoalRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const onSubmit = async () => {
     const repeat_days =

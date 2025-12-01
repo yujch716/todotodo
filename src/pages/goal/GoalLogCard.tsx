@@ -22,9 +22,7 @@ interface GoalLogCardProps {
 }
 
 const GoalLogCard = ({ type, logs }: GoalLogCardProps) => {
-  const triggerGoalRefresh = useGoalStore(
-    (state) => state.triggerGoalRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const handleDelete = async (logId: string, goalId: string) => {
     await deleteGoalLogById(logId);

@@ -36,9 +36,7 @@ const CompleteGoalModal = ({
 }: ModalProps) => {
   const [memo, setMemo] = useState("");
 
-  const triggerGoalRefresh = useGoalStore(
-    (state) => state.triggerGoalRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const handleSubmit = async () => {
     await createGoalLog({

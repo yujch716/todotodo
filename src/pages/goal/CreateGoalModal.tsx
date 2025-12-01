@@ -33,7 +33,6 @@ import { toast } from "sonner";
 import { createGoal } from "@/api/goal.ts";
 import EmojiPicker from "emoji-picker-react";
 import { useGoalStore } from "@/store/goalStore.ts";
-import { useNavigate } from "react-router-dom";
 
 const days = [
   { label: "일", value: "sun" },
@@ -45,9 +44,11 @@ const days = [
   { label: "토", value: "sat" },
 ];
 
-const CreateGoalModal = () => {
-  const navigate = useNavigate();
+interface Props {
+  groupId: string;
+}
 
+const CreateGoalModal = ({groupId}: Props) => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"daily" | "goal">("daily");
 
@@ -62,9 +63,7 @@ const CreateGoalModal = () => {
   const [repeatDays, setRepeatDays] = useState<string[]>([]);
   const [targetValue, setTargetValue] = useState<string>("100");
 
-  const triggerGoalRefresh = useGoalStore(
-    (state) => state.triggerGoalRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const onSubmit = async () => {
     if (!title.trim()) {
@@ -92,6 +91,7 @@ const CreateGoalModal = () => {
         : null;
 
     const goalPayload = {
+      group_id: groupId,
       emoji,
       title,
       type: activeTab,
@@ -107,7 +107,7 @@ const CreateGoalModal = () => {
       ...(activeTab === "goal" && { target_value: Number(targetValue) }),
     };
 
-    const newGoal = await createGoal(goalPayload);
+    await createGoal(goalPayload);
 
     triggerGoalRefresh();
 
@@ -119,8 +119,6 @@ const CreateGoalModal = () => {
     setIsEveryDay(true);
     setRepeatDays([]);
     setTargetValue("");
-
-    navigate(`/goal?id=${newGoal.id}`);
   };
 
   return (

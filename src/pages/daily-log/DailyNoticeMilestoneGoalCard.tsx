@@ -9,13 +9,10 @@ interface DailyNoticeGoalGoalProps {
   goal: Goal;
 }
 
-const DailyNoticeMilestoneGoalCard = ({
-  goal,
-}: DailyNoticeGoalGoalProps) => {
+const DailyNoticeMilestoneGoalCard = ({ goal }: DailyNoticeGoalGoalProps) => {
   const navigate = useNavigate();
 
-  const { id, emoji, title, goal_log, target_value, is_completed } =
-    goal;
+  const { id, emoji, title, goal_log, target_value, is_completed } = goal;
   const logs: GoalLog[] = goal_log || [];
   const targetValue = target_value!;
   const completeValue = logs.reduce((acc, log) => acc + log.value, 0);

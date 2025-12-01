@@ -70,10 +70,7 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
             ))}
 
             {dailyGoals.map((goal) => (
-              <DailyNoticeDailyGoalCard
-                goal={goal}
-                date={dailyLogDate}
-              />
+              <DailyNoticeDailyGoalCard goal={goal} date={dailyLogDate} />
             ))}
 
             {goalGoals.map((goal) => (

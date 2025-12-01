@@ -1,10 +1,10 @@
-export const GoalItemStatus = {
-  notStarted: "notStarted",
-  inProgress: "inProgress",
-  done: "done",
+export const GoalStatus = {
+  notStarted: "not_started",
+  inProgress: "in_progress",
+  completed: "completed",
 } as const;
 
-export type GoalItemStatusType = keyof typeof GoalItemStatus;
+export type GoalStatusType = (typeof GoalStatus)[keyof typeof GoalStatus];
 
 export interface Goal {
   id: string;
@@ -16,7 +16,7 @@ export interface Goal {
   end_date: Date;
   repeat_days: string[] | null;
   target_value: number | null;
-  is_completed: boolean;
+  status: GoalStatusType;
   created_at: Date;
 
   goal_log?: GoalLog[];

@@ -7,7 +7,6 @@ import { format } from "date-fns";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Trash2 } from "lucide-react";
-import CreateGoalModal from "@/pages/goal/CreateGoalModal.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { useGoalStore } from "@/store/goalStore.ts";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
@@ -25,13 +24,9 @@ const GoalList = ({ onCardClick }: GoalListProps) => {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
 
   const refreshGoal = useGoalStore((state) => state.refreshGoal);
-  const resetGoalRefresh = useGoalStore(
-    (state) => state.resetGoalRefresh,
-  );
+  const resetGoalRefresh = useGoalStore((state) => state.resetGoalRefresh);
 
-  const triggerGoalRefresh = useGoalStore(
-    (state) => state.triggerGoalRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const loadGoals = async () => {
     const goals = await getGoals();
@@ -100,7 +95,6 @@ const GoalList = ({ onCardClick }: GoalListProps) => {
                 <Trash2 />
               </div>
             )}
-            <CreateGoalModal />
           </div>
         </div>
         <Separator />
@@ -143,7 +137,7 @@ const GoalList = ({ onCardClick }: GoalListProps) => {
                     {format(goal.created_at, "yyyy.MM.dd")}
                   </span>
                 </div>
-                {goal.is_completed && (
+                {goal.status && (
                   <div className="ml-auto">
                     <DailyLogStatusIcon
                       checkedCount={1}

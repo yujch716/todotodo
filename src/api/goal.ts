@@ -1,11 +1,12 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import { format, getDay } from "date-fns";
-import type {
-  Goal,
-  CreateGoalDto,
-  UpdateGoalCompleteDto,
-  UpdateGoalDto,
+import {
+  type Goal,
+  type CreateGoalDto,
+  type UpdateGoalCompleteDto,
+  type UpdateGoalDto,
+  type GoalStatusType,
 } from "@/types/goal.ts";
 
 export const getGoals = async (): Promise<Goal[]> => {
@@ -27,9 +28,31 @@ export const getGoals = async (): Promise<Goal[]> => {
   return data ?? [];
 };
 
-export const getGoalById = async (
-  goalId: string,
-): Promise<Goal> => {
+export const getGoalsByStatus = async (
+  goalGroupId: string,
+  status: GoalStatusType,
+): Promise<Goal[]> => {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError || !user) {
+    throw new Error("인증된 유저가 없습니다.");
+  }
+
+  const { data, error } = await supabase
+    .from("goal")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("group_id", goalGroupId)
+    .eq("status", status);
+
+  if (error) toast.error("조회에 실패했습니다.");
+
+  return data ?? [];
+};
+
+export const getGoalById = async (goalId: string): Promise<Goal> => {
   const { data, error } = await supabase
     .from("goal")
     .select(`*, goal_log(*)`)
@@ -70,9 +93,7 @@ export const getOngoingDailyGoalsByDate = async (
   return data ?? [];
 };
 
-export const getOngoingGoalGoalsByDate = async (): Promise<
-  Goal[]
-> => {
+export const getOngoingGoalGoalsByDate = async (): Promise<Goal[]> => {
   const { data, error } = await supabase
     .from("goal")
     .select(`*, goal_log(*)`)
@@ -100,9 +121,7 @@ export const getDailyGoalByRangeDate = async (
   return data ?? [];
 };
 
-export const createGoal = async (
-  input: CreateGoalDto,
-): Promise<Goal> => {
+export const createGoal = async (input: CreateGoalDto): Promise<Goal> => {
   const {
     data: { user },
     error: userError,
@@ -127,10 +146,7 @@ export const createGoal = async (
   return data;
 };
 
-export const updateGoal = async (
-  id: string,
-  input: UpdateGoalDto,
-) => {
+export const updateGoal = async (id: string, input: UpdateGoalDto) => {
   const { error } = await supabase.from("goal").update(input).eq("id", id);
 
   if (error) toast.error("수정에 실패했습니다.");

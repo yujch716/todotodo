@@ -1,4 +1,9 @@
-import { CircleCheck, CircleEllipsis, CircleX, CircleDashed } from "lucide-react";
+import {
+  CircleCheck,
+  CircleEllipsis,
+  CircleX,
+  CircleDashed,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Props = {

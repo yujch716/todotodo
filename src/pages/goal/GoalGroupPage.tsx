@@ -1,15 +1,11 @@
 import { Button } from "@/components/ui/button.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
-import {Ellipsis, Folder, Plus} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card.tsx";
+import { Ellipsis, Folder, Plus } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
 import { useNavigate } from "react-router-dom";
-import {getGoalGroups} from "@/api/goal-group.ts";
-import type {GoalGroup} from "@/types/goal.ts";
-import {useEffect, useState} from "react";
+import { getGoalGroups } from "@/api/goal-group.ts";
+import type { GoalGroup } from "@/types/goal.ts";
+import { useEffect, useState } from "react";
 
 const GoalGroupPage = () => {
   const navigate = useNavigate();
@@ -56,10 +52,13 @@ const GoalGroupPage = () => {
                     </Button>
                   </CardHeader>
                   <CardContent className="flex flex-col items-center justify-center gap-2 w-full">
-                    <Folder className="w-16 h-16" style={{
-                      stroke: "#fde68a",
-                      fill: "#fde68a",
-                    }}/>
+                    <Folder
+                      className="w-16 h-16"
+                      style={{
+                        stroke: "#fde68a",
+                        fill: "#fde68a",
+                      }}
+                    />
                     <div className="w-full text-center truncate">
                       {group.name}
                     </div>

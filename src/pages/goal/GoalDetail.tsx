@@ -20,9 +20,7 @@ interface GoalDetailProps {
   goalId: string | null;
 }
 
-const GoalDetail = ({
-  goalId: propGoalId,
-}: GoalDetailProps) => {
+const GoalDetail = ({ goalId: propGoalId }: GoalDetailProps) => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -38,13 +36,9 @@ const GoalDetail = ({
   const [type, setType] = useState("");
 
   const refreshGoal = useGoalStore((state) => state.refreshGoal);
-  const resetGoalRefresh = useGoalStore(
-    (state) => state.resetGoalRefresh,
-  );
+  const resetGoalRefresh = useGoalStore((state) => state.resetGoalRefresh);
 
-  const triggerGoalRefresh = useGoalStore(
-    (state) => state.triggerGoalRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const loadGoal = useCallback(async () => {
     if (!goalId) return;

@@ -27,9 +27,7 @@ const MilestoneGoalCard = ({ goal }: GoalProps) => {
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
-  const triggerGoalRefresh = useGoalStore(
-    (state) => state.triggerGoalRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const handleSave = async () => {
     const value = parseInt(inputValue);

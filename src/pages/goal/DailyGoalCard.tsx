@@ -47,9 +47,7 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
 
-  const triggerGoalRefresh = useGoalStore(
-    (state) => state.triggerGoalRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const generateHeatmapData = ({
     startDate,
