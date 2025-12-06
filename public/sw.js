@@ -42,7 +42,7 @@ self.addEventListener("activate", (event) => {
 
 // fetch: 네트워크 우선, 실패 시 캐시에서 응답
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== 'GET') {
+  if (event.request.method !== "GET") {
     event.respondWith(fetch(event.request));
     return;
   }

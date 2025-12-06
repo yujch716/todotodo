@@ -46,7 +46,7 @@ const GoalGroupDetailPage = () => {
       activationConstraint: {
         distance: 8,
       },
-    })
+    }),
   );
 
   if (!id) {
@@ -71,7 +71,7 @@ const GoalGroupDetailPage = () => {
   useEffect(() => {
     loadGoalGroup();
     loadGoals();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (refreshGoal) {
@@ -143,7 +143,7 @@ const GoalGroupDetailPage = () => {
             </h1>
             <div className="flex flex-row gap-4">
               <CreateGoalModal groupId={id} />
-              <div className="ursor-pointer hover:text-red-600">
+              <div className="cursor-pointer hover:text-red-600">
                 <Trash2 />
               </div>
             </div>

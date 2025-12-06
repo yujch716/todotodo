@@ -19,7 +19,7 @@ const DailyNoticeDailyGoalCard = ({
   const { id, emoji, title, start_date, end_date, goal_log } = goal;
 
   const isCompleted = goal_log?.some((log: GoalLog) =>
-    log.date ? isSameDay(new Date(log.date), date) : false
+    log.date ? isSameDay(new Date(log.date), date) : false,
   );
 
   const handelMoveGoal = () => {

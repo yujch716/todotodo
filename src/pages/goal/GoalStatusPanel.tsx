@@ -11,6 +11,10 @@ import GoalDetailPage from "@/pages/goal/GoalDetailPage.tsx";
 import { useEffect, useState } from "react";
 import DroppableArea from "./DroppableArea.tsx";
 import DraggableGoalItem from "./DraggableGoalItem.tsx";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 interface Props {
   status: GoalStatusType;
@@ -61,13 +65,18 @@ const GoalStatusPanel = ({ status, goals }: Props) => {
         <DroppableArea status={status}>
           <div className="flex flex-col p-4 gap-4 overflow-y-auto">
             <ItemGroup className="gap-4">
-              {goals.map((goal) => (
-                <DraggableGoalItem
-                  key={goal.id}
-                  goal={goal}
-                  onSelect={() => handleGoalSelect(goal.id)}
-                />
-              ))}
+              <SortableContext
+                items={goals.map((g) => g.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {goals.map((goal) => (
+                  <DraggableGoalItem
+                    key={goal.id}
+                    goal={goal}
+                    onSelect={() => handleGoalSelect(goal.id)}
+                  />
+                ))}
+              </SortableContext>
             </ItemGroup>
           </div>
         </DroppableArea>
