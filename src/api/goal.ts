@@ -169,6 +169,15 @@ export const updateGoalCompleted = async (
   if (error) toast.error("변경에 실패했습니다.");
 };
 
+export const updateGoalStatus = async (id: string, status: GoalStatusType) => {
+  const { error } = await supabase.from("goal").update({ status }).eq("id", id);
+
+  if (error) {
+    toast.error("상태 변경에 실패했습니다.");
+    throw error;
+  }
+};
+
 export const deleteGoalById = async (id: string) => {
   const { error } = await supabase.from("goal").delete().eq("id", id);
 
