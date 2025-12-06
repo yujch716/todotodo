@@ -17,7 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet.tsx";
-import GoalDetail from "@/pages/goal/GoalDetail.tsx";
+import GoalDetailPage from "@/pages/goal/GoalDetailPage.tsx";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -106,7 +106,7 @@ const GoalStatusPanel = ({ status, goals }: Props) => {
           }}
         >
           <SheetTitle />
-          <GoalDetail goalId={selectedGoalId} />
+          <GoalDetailPage goalId={selectedGoalId} />
         </SheetContent>
       </Sheet>
     </>

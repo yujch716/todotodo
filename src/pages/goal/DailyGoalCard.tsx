@@ -9,6 +9,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { cn } from "@/lib/utils.ts";
+import { GoalStatus } from "@/types/goal.ts";
 import type { Goal, GoalLog } from "@/types/goal.ts";
 import {
   Tooltip,
@@ -39,7 +40,7 @@ interface HeatmapDay {
 const DailyGoalCard = ({ goal }: GoalProps) => {
   const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   const logs: GoalLog[] = goal.goal_log || [];
-  const isComplete = goal.is_completed;
+  const isComplete = goal.status === GoalStatus.completed;
 
   const [openCompleteModal, setOpenCompleteModal] = useState(false);
   const [isLogDeleteAlertOpen, setIsLogDeleteAlertOpen] = useState(false);
@@ -63,7 +64,7 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
     const repeatDaysInt = repeatDays.map((d) => WEEKDAYS.indexOf(d));
 
     let firstValidDate = startOfDay(
-      startOfWeek(startDate, { weekStartsOn: 0 }),
+      startOfWeek(startDate, { weekStartsOn: 0 })
     );
     const offsetStart = (repeatDaysInt[0] - firstValidDate.getDay() + 7) % 7;
     firstValidDate = addDays(firstValidDate, offsetStart);
@@ -83,7 +84,7 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
           currentDate >= startOfDay(startDate) &&
           currentDate <= startOfDay(endDate);
         const matchedLog = logs.find((l) =>
-          isSameDay(startOfDay(new Date(l.date)), currentDate),
+          isSameDay(startOfDay(new Date(l.date)), currentDate)
         );
 
         days.push({
@@ -193,7 +194,7 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
                                 "w-5 h-5 rounded-sm border cursor-pointer",
                                 day.completed
                                   ? "bg-sky-200"
-                                  : "hover:bg-slate-100 hover:border-slate-300",
+                                  : "hover:bg-slate-100 hover:border-slate-300"
                               )}
                               onClick={() => {
                                 if (day.completed && day.logId) {
@@ -212,7 +213,7 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
                         </Tooltip>
                       ) : (
                         <div key={di} className="w-5 h-5" />
-                      ),
+                      )
                     )}
                   </div>
                 ))}

@@ -20,7 +20,7 @@ interface GoalDetailProps {
   goalId: string | null;
 }
 
-const GoalDetail = ({ goalId: propGoalId }: GoalDetailProps) => {
+const GoalDetailPage = ({ goalId: propGoalId }: GoalDetailProps) => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -128,4 +128,4 @@ const GoalDetail = ({ goalId: propGoalId }: GoalDetailProps) => {
     </>
   );
 };
-export default GoalDetail;
+export default GoalDetailPage;
