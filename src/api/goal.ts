@@ -30,7 +30,7 @@ export const getGoals = async (): Promise<Goal[]> => {
 
 export const getGoalsByStatus = async (
   goalGroupId: string,
-  status: GoalStatusType,
+  status: GoalStatusType
 ): Promise<Goal[]> => {
   const {
     data: { user },
@@ -55,9 +55,17 @@ export const getGoalsByStatus = async (
 export const getGoalById = async (goalId: string): Promise<Goal> => {
   const { data, error } = await supabase
     .from("goal")
-    .select(`*, goal_log(*)`)
+    .select(
+      `
+        *,
+        goal_log (
+          *,
+          created_at
+        )
+      `
+    )
     .eq("id", goalId)
-    .order("created_at", { foreignTable: "goal_log", ascending: false })
+    .order("created_at", { ascending: false, foreignTable: "goal_log" })
     .single();
 
   if (error) toast.error("조회에 실패했습니다.");
@@ -66,7 +74,7 @@ export const getGoalById = async (goalId: string): Promise<Goal> => {
 };
 
 export const getOngoingDailyGoalsByDate = async (
-  date: Date,
+  date: Date
 ): Promise<Goal[]> => {
   const weekdayMap: Record<number, string> = {
     0: "sun",
@@ -107,7 +115,7 @@ export const getOngoingGoalGoalsByDate = async (): Promise<Goal[]> => {
 
 export const getDailyGoalByRangeDate = async (
   start: Date,
-  end: Date,
+  end: Date
 ): Promise<Goal[]> => {
   const { data, error } = await supabase
     .from("goal")
@@ -154,7 +162,7 @@ export const updateGoal = async (id: string, input: UpdateGoalDto) => {
 
 export const updateGoalCompleted = async (
   id: string,
-  input: UpdateGoalCompleteDto,
+  input: UpdateGoalCompleteDto
 ) => {
   const { error } = await supabase.from("goal").update(input).eq("id", id);
 

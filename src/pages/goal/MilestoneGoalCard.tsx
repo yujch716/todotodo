@@ -1,3 +1,4 @@
+import { GoalStatus } from "@/types/goal.ts";
 import type { Goal, GoalLog } from "@/types/goal.ts";
 import { Card } from "@/components/ui/card.tsx";
 import { Progress } from "@/components/ui/progress.tsx";
@@ -22,7 +23,7 @@ const MilestoneGoalCard = ({ goal }: GoalProps) => {
   const targetValue = goal.target_value!;
   const completeValue = logs.reduce((acc, log) => acc + log.value, 0);
   const progressValue = Math.floor((completeValue / targetValue) * 100);
-  const isComplete = goal.is_completed;
+  const isComplete = goal.status === GoalStatus.completed;
 
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState("");

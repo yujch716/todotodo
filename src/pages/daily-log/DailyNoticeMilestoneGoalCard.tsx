@@ -1,3 +1,4 @@
+import { GoalStatus } from "@/types/goal.ts";
 import type { Goal, GoalLog } from "@/types/goal.ts";
 import { Card } from "@/components/ui/card.tsx";
 import { Progress } from "@/components/ui/progress.tsx";
@@ -12,11 +13,12 @@ interface DailyNoticeGoalGoalProps {
 const DailyNoticeMilestoneGoalCard = ({ goal }: DailyNoticeGoalGoalProps) => {
   const navigate = useNavigate();
 
-  const { id, emoji, title, goal_log, target_value, is_completed } = goal;
+  const { id, emoji, title, goal_log, target_value } = goal;
   const logs: GoalLog[] = goal_log || [];
   const targetValue = target_value!;
   const completeValue = logs.reduce((acc, log) => acc + log.value, 0);
   const progressValue = Math.floor((completeValue / targetValue) * 100);
+  const isCompleted = goal.status === GoalStatus.completed;
 
   const handelMoveGoal = () => {
     navigate(`/goal?id=${id}`);
@@ -45,9 +47,9 @@ const DailyNoticeMilestoneGoalCard = ({ goal }: DailyNoticeGoalGoalProps) => {
           <Progress value={progressValue} className="border-2" />
           <Label className="inline-flex items-center gap-1">
             <Flag
-              className={`w-4 h-4 ${is_completed ? "text-sky-300" : "text-transparent"}`}
+              className={`w-4 h-4 ${isCompleted ? "text-sky-300" : "text-transparent"}`}
               stroke="black"
-              fill={is_completed ? "currentColor" : "none"}
+              fill={isCompleted ? "currentColor" : "none"}
             />
             {targetValue}
           </Label>

@@ -9,7 +9,6 @@ import {
   startOfWeek,
 } from "date-fns";
 import { cn } from "@/lib/utils.ts";
-import { GoalStatus } from "@/types/goal.ts";
 import type { Goal, GoalLog } from "@/types/goal.ts";
 import {
   Tooltip,
@@ -40,7 +39,6 @@ interface HeatmapDay {
 const DailyGoalCard = ({ goal }: GoalProps) => {
   const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   const logs: GoalLog[] = goal.goal_log || [];
-  const isComplete = goal.status === GoalStatus.completed;
 
   const [openCompleteModal, setOpenCompleteModal] = useState(false);
   const [isLogDeleteAlertOpen, setIsLogDeleteAlertOpen] = useState(false);
@@ -119,6 +117,7 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
   const totalDays = data.flat().filter((day) => day.date !== null).length;
   const completedDays = logs.length;
   const progressValue = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+  const isComplete = progressValue === 100;
 
   const handleOpenCompleteModal = (date: Date) => {
     setSelectedDate(date);

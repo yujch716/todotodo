@@ -9,7 +9,7 @@ import Layout from "@/layouts/Layout.tsx";
 import AuthRedirect from "@/pages/auth/AuthRedirect.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import GoalGroupPage from "@/pages/goal/GoalGroupPage.tsx";
-import GoalGroupDetail from "@/pages/goal/GoalGroupDetail.tsx";
+import GoalGroupDetailPage from "@/pages/goal/GoalGroupDetailPage.tsx";
 
 function App() {
   return (
@@ -32,7 +32,7 @@ function App() {
           <Route path="/daily" element={<DailyLogPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/goal-groups" element={<GoalGroupPage />} />
-          <Route path="/goal-groups/:id" element={<GoalGroupDetail />} />
+          <Route path="/goal-groups/:id" element={<GoalGroupDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import {useGoalStore} from "@/store/goalStore.ts";
 import {getGoalGroupById} from "@/api/goal-group.ts";
 
-const GoalGroupDetail = () => {
+const GoalGroupDetailPage = () => {
   const { id } = useParams();
 
   const [goalGroup, setGoalGroup] = useState<GoalGroup | null>(null);
@@ -96,4 +96,4 @@ const GoalGroupDetail = () => {
     </>
   );
 };
-export default GoalGroupDetail;
+export default GoalGroupDetailPage;
