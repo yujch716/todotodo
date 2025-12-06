@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useChallengeStore } from "@/store/challengeStore.ts";
+import { useGoalStore } from "@/store/goalStore.ts";
 import { toast } from "sonner";
-import { updateChallenge } from "@/api/chanllege.ts";
+import { updateGoal } from "@/api/goal.ts";
 import {
   Dialog,
   DialogClose,
@@ -26,7 +26,7 @@ import { Calendar } from "@/components/ui/calendar.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
-import type { Challenge, UpdateChallengeDto } from "@/types/challenge.ts";
+import type { Goal, UpdateGoalDto } from "@/types/goal.ts";
 import type { DateRange } from "react-day-picker";
 
 const days = [
@@ -39,33 +39,29 @@ const days = [
   { label: "토", value: "sat" },
 ];
 
-interface UpdateChallengeModalProps {
-  challenge: Challenge;
+interface UpdateGoalModalProps {
+  goal: Goal;
 }
 
-const UpdateChallengeModal = ({ challenge }: UpdateChallengeModalProps) => {
-  const type = challenge.type;
+const UpdateGoalModal = ({ goal }: UpdateGoalModalProps) => {
+  const type = goal.type;
 
   const [open, setOpen] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  const [emoji, setEmoji] = useState(challenge.emoji);
-  const [title, setTitle] = useState(challenge.title);
+  const [emoji, setEmoji] = useState(goal.emoji);
+  const [title, setTitle] = useState(goal.title);
   const [dateRange, setDateRange] = useState<DateRange>({
-    from: challenge.start_date,
-    to: challenge.end_date,
+    from: goal.start_date,
+    to: goal.end_date,
   });
-  const [isEveryDay, setIsEveryDay] = useState(
-    challenge.repeat_days?.length === 7,
-  );
+  const [isEveryDay, setIsEveryDay] = useState(goal.repeat_days?.length === 7);
   const [repeatDays, setRepeatDays] = useState<string[] | null>(
-    challenge.repeat_days,
+    goal.repeat_days,
   );
-  const [targetValue, setTargetValue] = useState(challenge.target_value);
+  const [targetValue, setTargetValue] = useState(goal.target_value);
 
-  const triggerChallengeRefresh = useChallengeStore(
-    (state) => state.triggerChallengeRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const onSubmit = async () => {
     const repeat_days =
@@ -75,7 +71,7 @@ const UpdateChallengeModal = ({ challenge }: UpdateChallengeModalProps) => {
           : repeatDays
         : null;
 
-    const challengePayload: UpdateChallengeDto = {
+    const goalPayload: UpdateGoalDto = {
       emoji,
       title,
       ...(type === "daily" && {
@@ -90,9 +86,9 @@ const UpdateChallengeModal = ({ challenge }: UpdateChallengeModalProps) => {
       ...(type === "goal" && { target_value: Number(targetValue) }),
     };
 
-    await updateChallenge(challenge.id, challengePayload);
+    await updateGoal(goal.id, goalPayload);
 
-    triggerChallengeRefresh();
+    triggerGoalRefresh();
 
     toast.info("챌린지가 수정되었습니다.");
 
@@ -101,17 +97,17 @@ const UpdateChallengeModal = ({ challenge }: UpdateChallengeModalProps) => {
 
   useEffect(() => {
     if (open) {
-      setEmoji(challenge.emoji);
-      setTitle(challenge.title);
+      setEmoji(goal.emoji);
+      setTitle(goal.title);
       setDateRange({
-        from: challenge.start_date,
-        to: challenge.end_date,
+        from: goal.start_date,
+        to: goal.end_date,
       });
-      setIsEveryDay(challenge.repeat_days?.length === 7);
-      setRepeatDays(challenge.repeat_days);
-      setTargetValue(challenge.target_value);
+      setIsEveryDay(goal.repeat_days?.length === 7);
+      setRepeatDays(goal.repeat_days);
+      setTargetValue(goal.target_value);
     }
-  }, [open, challenge]);
+  }, [open, goal]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -239,4 +235,4 @@ const UpdateChallengeModal = ({ challenge }: UpdateChallengeModalProps) => {
     </Dialog>
   );
 };
-export default UpdateChallengeModal;
+export default UpdateGoalModal;

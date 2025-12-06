@@ -10,49 +10,47 @@ import {
 import { Label } from "@/components/ui/label.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { createChallengeLog } from "@/api/challenge-log.ts";
+import { createGoalLog } from "@/api/goal-log.ts";
 import { useState } from "react";
-import { useChallengeStore } from "@/store/challengeStore.ts";
+import { useGoalStore } from "@/store/goalStore.ts";
 import { format } from "date-fns";
-import { updateChallengeCompleted } from "@/api/chanllege.ts";
+import { updateGoalCompleted } from "@/api/goal.ts";
 import { showCelebration } from "@/lib/effects";
 
 interface ModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  challengeId: string;
+  goalId: string;
   date: Date;
   totalDays: number;
   completedDays: number;
 }
 
-const CompleteChallengeModal = ({
+const CompleteGoalModal = ({
   open,
   onOpenChange,
-  challengeId,
+  goalId,
   date,
   totalDays,
   completedDays,
 }: ModalProps) => {
   const [memo, setMemo] = useState("");
 
-  const triggerChallengeRefresh = useChallengeStore(
-    (state) => state.triggerChallengeRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const handleSubmit = async () => {
-    await createChallengeLog({
-      challenge_id: challengeId,
+    await createGoalLog({
+      goal_id: goalId,
       date: format(date, "yyyy-MM-dd"),
       memo,
     });
 
     if (completedDays + 1 === totalDays) {
-      await updateChallengeCompleted(challengeId, { is_completed: true });
+      await updateGoalCompleted(goalId, { is_completed: true });
       showCelebration();
     }
 
-    triggerChallengeRefresh();
+    triggerGoalRefresh();
 
     setMemo("");
     onOpenChange(false);
@@ -95,4 +93,4 @@ const CompleteChallengeModal = ({
     </Dialog>
   );
 };
-export default CompleteChallengeModal;
+export default CompleteGoalModal;

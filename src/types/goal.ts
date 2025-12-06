@@ -1,4 +1,12 @@
-export interface Challenge {
+export const GoalStatus = {
+  notStarted: "not_started",
+  inProgress: "in_progress",
+  completed: "completed",
+} as const;
+
+export type GoalStatusType = (typeof GoalStatus)[keyof typeof GoalStatus];
+
+export interface Goal {
   id: string;
   user_id: string;
   title: string;
@@ -8,13 +16,13 @@ export interface Challenge {
   end_date: Date;
   repeat_days: string[] | null;
   target_value: number | null;
-  is_completed: boolean;
+  status: GoalStatusType;
   created_at: Date;
 
-  challenge_log?: ChallengeLog[];
+  goal_log?: GoalLog[];
 }
 
-export interface CreateChallengeDto {
+export interface CreateGoalDto {
   emoji: string;
   title: string;
   type: "daily" | "goal";
@@ -24,7 +32,7 @@ export interface CreateChallengeDto {
   target_value?: number | null;
 }
 
-export interface UpdateChallengeDto {
+export interface UpdateGoalDto {
   emoji?: string;
   title?: string;
   start_date?: string;
@@ -33,13 +41,13 @@ export interface UpdateChallengeDto {
   target_value?: number;
 }
 
-export interface UpdateChallengeCompleteDto {
+export interface UpdateGoalCompleteDto {
   is_completed: boolean;
 }
 
-export interface ChallengeLog {
+export interface GoalLog {
   id: string;
-  challenge_id: string;
+  goal_id: string;
   user_id: string;
   date: Date;
   memo: string;
@@ -47,9 +55,16 @@ export interface ChallengeLog {
   created_at: Date;
 }
 
-export interface CreateChallengeLogDto {
-  challenge_id: string;
+export interface CreateGoalLogDto {
+  goal_id: string;
   date: string;
   memo?: string | null;
   value?: number | null;
+}
+
+export interface GoalGroup {
+  id: string;
+  user_id: string;
+  name: string;
+  goals: Goal[];
 }

@@ -6,13 +6,13 @@ import { Lightbulb } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import DailyNoticeScheduleCard from "@/pages/daily-log/DailyNoticeScheduleCard.tsx";
-import type { Challenge } from "@/types/challenge.ts";
-import DailyNoticeDailyChallengeCard from "@/pages/daily-log/DailyNoticeDailyChallengeCard.tsx";
+import type { Goal } from "@/types/goal.ts";
+import DailyNoticeDailyGoalCard from "@/pages/daily-log/DailyNoticeDailyGoalCard.tsx";
 import {
-  getOngoingDailyChallengesByDate,
-  getOngoingGoalChallengesByDate,
-} from "@/api/chanllege.ts";
-import DailyNoticeGoalChallengeCard from "@/pages/daily-log/DailyNoticeGoalChallengeCard.tsx";
+  getOngoingDailyGoalsByDate,
+  getOngoingGoalGoalsByDate,
+} from "@/api/goal.ts";
+import DailyNoticeMilestoneGoalCard from "@/pages/daily-log/DailyNoticeMilestoneGoalCard.tsx";
 
 interface Props {
   dailyLogDate: Date;
@@ -20,8 +20,8 @@ interface Props {
 
 export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
   const [schedules, setSchedules] = useState<CalendarEventType[]>([]);
-  const [dailyChallenges, setDailyChallenges] = useState<Challenge[]>([]);
-  const [goalChallenges, setGoalChallenges] = useState<Challenge[]>([]);
+  const [dailyGoals, setDailyGoals] = useState<Goal[]>([]);
+  const [goalGoals, setGoalGoals] = useState<Goal[]>([]);
 
   const refreshCalendar = useCalendarStore((state) => state.refreshCalendar);
   const resetCalendarRefresh = useCalendarStore(
@@ -33,31 +33,31 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
     setSchedules(dailySchedules);
   }, [dailyLogDate]);
 
-  const loadDailyChallenges = useCallback(async () => {
-    const dailyChallenges = await getOngoingDailyChallengesByDate(dailyLogDate);
-    const goalChallenges = await getOngoingGoalChallengesByDate();
+  const loadDailyGoals = useCallback(async () => {
+    const dailyGoals = await getOngoingDailyGoalsByDate(dailyLogDate);
+    const goalGoals = await getOngoingGoalGoalsByDate();
 
-    setDailyChallenges(dailyChallenges);
-    setGoalChallenges(goalChallenges);
+    setDailyGoals(dailyGoals);
+    setGoalGoals(goalGoals);
   }, [dailyLogDate]);
 
   useEffect(() => {
     if (refreshCalendar) {
       loadDailySchedule();
-      loadDailyChallenges();
+      loadDailyGoals();
       resetCalendarRefresh();
     }
   }, [
     refreshCalendar,
     loadDailySchedule,
-    loadDailyChallenges,
+    loadDailyGoals,
     resetCalendarRefresh,
   ]);
 
   useEffect(() => {
     loadDailySchedule();
-    loadDailyChallenges();
-  }, [loadDailySchedule, loadDailyChallenges]);
+    loadDailyGoals();
+  }, [loadDailySchedule, loadDailyGoals]);
 
   return (
     <>
@@ -69,15 +69,12 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
               <DailyNoticeScheduleCard schedule={schedule} />
             ))}
 
-            {dailyChallenges.map((challenge) => (
-              <DailyNoticeDailyChallengeCard
-                challenge={challenge}
-                date={dailyLogDate}
-              />
+            {dailyGoals.map((goal) => (
+              <DailyNoticeDailyGoalCard goal={goal} date={dailyLogDate} />
             ))}
 
-            {goalChallenges.map((challenge) => (
-              <DailyNoticeGoalChallengeCard challenge={challenge} />
+            {goalGoals.map((goal) => (
+              <DailyNoticeMilestoneGoalCard goal={goal} />
             ))}
           </div>
           <ScrollBar orientation="horizontal" />

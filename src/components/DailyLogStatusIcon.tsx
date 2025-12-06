@@ -1,4 +1,9 @@
-import { CircleCheck, CircleMinus, CircleX, Circle } from "lucide-react";
+import {
+  CircleCheck,
+  CircleEllipsis,
+  CircleX,
+  CircleDashed,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -16,13 +21,13 @@ export const DailyLogStatusIcon = ({
   let className = "text-red-500 bg-red-100 border-red-500";
 
   if (totalCount === 0) {
-    Icon = Circle;
+    Icon = CircleDashed;
     className = "text-gray-500 bg-gray-100 border-gray-500";
   } else if (checkedCount === totalCount && totalCount > 0) {
     Icon = CircleCheck;
     className = "text-green-500 bg-green-100 border-green-500";
   } else if (checkedCount > 0) {
-    Icon = CircleMinus;
+    Icon = CircleEllipsis;
     className = "text-yellow-500 bg-yellow-100 border-yellow-500";
   }
 

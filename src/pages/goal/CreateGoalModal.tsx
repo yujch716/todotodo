@@ -30,10 +30,9 @@ import type { DateRange } from "react-day-picker";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { toast } from "sonner";
-import { createChallenge } from "@/api/chanllege.ts";
+import { createGoal } from "@/api/goal.ts";
 import EmojiPicker from "emoji-picker-react";
-import { useChallengeStore } from "@/store/challengeStore.ts";
-import { useNavigate } from "react-router-dom";
+import { useGoalStore } from "@/store/goalStore.ts";
 
 const days = [
   { label: "일", value: "sun" },
@@ -45,9 +44,11 @@ const days = [
   { label: "토", value: "sat" },
 ];
 
-const CreateChallengeModal = () => {
-  const navigate = useNavigate();
+interface Props {
+  groupId: string;
+}
 
+const CreateGoalModal = ({groupId}: Props) => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"daily" | "goal">("daily");
 
@@ -62,9 +63,7 @@ const CreateChallengeModal = () => {
   const [repeatDays, setRepeatDays] = useState<string[]>([]);
   const [targetValue, setTargetValue] = useState<string>("100");
 
-  const triggerChallengeRefresh = useChallengeStore(
-    (state) => state.triggerChallengeRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const onSubmit = async () => {
     if (!title.trim()) {
@@ -91,7 +90,8 @@ const CreateChallengeModal = () => {
           : repeatDays
         : null;
 
-    const challengePayload = {
+    const goalPayload = {
+      group_id: groupId,
       emoji,
       title,
       type: activeTab,
@@ -107,9 +107,9 @@ const CreateChallengeModal = () => {
       ...(activeTab === "goal" && { target_value: Number(targetValue) }),
     };
 
-    const newChallenge = await createChallenge(challengePayload);
+    await createGoal(goalPayload);
 
-    triggerChallengeRefresh();
+    triggerGoalRefresh();
 
     toast.info("챌린지가 생성되었습니다.");
 
@@ -119,8 +119,6 @@ const CreateChallengeModal = () => {
     setIsEveryDay(true);
     setRepeatDays([]);
     setTargetValue("");
-
-    navigate(`/challenge?id=${newChallenge.id}`);
   };
 
   return (
@@ -303,4 +301,4 @@ const CreateChallengeModal = () => {
     </Dialog>
   );
 };
-export default CreateChallengeModal;
+export default CreateGoalModal;

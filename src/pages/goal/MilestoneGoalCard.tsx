@@ -1,4 +1,4 @@
-import type { Challenge, ChallengeLog } from "@/types/challenge.ts";
+import type { Goal, GoalLog } from "@/types/goal.ts";
 import { Card } from "@/components/ui/card.tsx";
 import { Progress } from "@/components/ui/progress.tsx";
 import { Label } from "@/components/ui/label.tsx";
@@ -6,30 +6,28 @@ import { ChevronDown, Flag, PartyPopper, Rocket, Save } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
 import { Input } from "@/components/ui/input.tsx";
-import { createChallengeLog } from "@/api/challenge-log.ts";
+import { createGoalLog } from "@/api/goal-log.ts";
 import { format } from "date-fns";
-import { useChallengeStore } from "@/store/challengeStore.ts";
+import { useGoalStore } from "@/store/goalStore.ts";
 import { toast } from "sonner";
-import { updateChallengeCompleted } from "@/api/chanllege.ts";
+import { updateGoalCompleted } from "@/api/goal.ts";
 import { showCelebration } from "@/lib/effects";
 
-interface ChallengeProps {
-  challenge: Challenge;
+interface GoalProps {
+  goal: Goal;
 }
 
-const GoalChallengeCard = ({ challenge }: ChallengeProps) => {
-  const logs: ChallengeLog[] = challenge.challenge_log || [];
-  const targetValue = challenge.target_value!;
+const MilestoneGoalCard = ({ goal }: GoalProps) => {
+  const logs: GoalLog[] = goal.goal_log || [];
+  const targetValue = goal.target_value!;
   const completeValue = logs.reduce((acc, log) => acc + log.value, 0);
   const progressValue = Math.floor((completeValue / targetValue) * 100);
-  const isComplete = challenge.is_completed;
+  const isComplete = goal.is_completed;
 
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
-  const triggerChallengeRefresh = useChallengeStore(
-    (state) => state.triggerChallengeRefresh,
-  );
+  const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
 
   const handleSave = async () => {
     const value = parseInt(inputValue);
@@ -45,14 +43,14 @@ const GoalChallengeCard = ({ challenge }: ChallengeProps) => {
       return;
     }
 
-    await createChallengeLog({ challenge_id: challenge.id, date, value });
+    await createGoalLog({ goal_id: goal.id, date, value });
     if (completeValue + value === targetValue) {
-      await updateChallengeCompleted(challenge.id, { is_completed: true });
+      await updateGoalCompleted(goal.id, { is_completed: true });
 
       showCelebration();
     }
 
-    triggerChallengeRefresh();
+    triggerGoalRefresh();
 
     setShowInput(false);
     setInputValue("");
@@ -130,4 +128,4 @@ const GoalChallengeCard = ({ challenge }: ChallengeProps) => {
     </>
   );
 };
-export default GoalChallengeCard;
+export default MilestoneGoalCard;
