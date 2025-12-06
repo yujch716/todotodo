@@ -45,7 +45,8 @@ export const getGoalsByStatus = async (
     .select("*")
     .eq("user_id", user.id)
     .eq("group_id", goalGroupId)
-    .eq("status", status);
+    .eq("status", status)
+    .order("updated_at", { ascending: false });
 
   if (error) toast.error("조회에 실패했습니다.");
 
@@ -55,9 +56,17 @@ export const getGoalsByStatus = async (
 export const getGoalById = async (goalId: string): Promise<Goal> => {
   const { data, error } = await supabase
     .from("goal")
-    .select(`*, goal_log(*)`)
+    .select(
+      `
+        *,
+        goal_log (
+          *,
+          created_at
+        )
+      `,
+    )
     .eq("id", goalId)
-    .order("created_at", { foreignTable: "goal_log", ascending: false })
+    .order("created_at", { ascending: false, foreignTable: "goal_log" })
     .single();
 
   if (error) toast.error("조회에 실패했습니다.");
@@ -159,6 +168,12 @@ export const updateGoalCompleted = async (
   const { error } = await supabase.from("goal").update(input).eq("id", id);
 
   if (error) toast.error("변경에 실패했습니다.");
+};
+
+export const updateGoalStatus = async (id: string, status: GoalStatusType) => {
+  const { error } = await supabase.from("goal").update({ status }).eq("id", id);
+
+  if (error) toast.error("상태 변경에 실패했습니다.");
 };
 
 export const deleteGoalById = async (id: string) => {

@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
-import type { CreateGoalLogDto } from "@/types/goal1.ts";
+import type { CreateGoalLogDto } from "@/types/goal.ts";
 
 export const createGoalLog = async (input: CreateGoalLogDto) => {
   const {

@@ -6,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { Calendar, Flag  } from "lucide-react";
+import { Calendar, Flag } from "lucide-react";
 import CreateDailyLogModal from "@/pages/daily-log/CreateDailyLogModal.tsx";
 import DailyLogCollapsible from "@/pages/home/sidebar/DailyLogCollapsible.tsx";
 import { useNavigate } from "react-router-dom";

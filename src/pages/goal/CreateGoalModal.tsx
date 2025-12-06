@@ -48,7 +48,7 @@ interface Props {
   groupId: string;
 }
 
-const CreateGoalModal = ({groupId}: Props) => {
+const CreateGoalModal = ({ groupId }: Props) => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"daily" | "goal">("daily");
 

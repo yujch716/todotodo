@@ -18,6 +18,7 @@ export interface Goal {
   target_value: number | null;
   status: GoalStatusType;
   created_at: Date;
+  updated_at: Date;
 
   goal_log?: GoalLog[];
 }
