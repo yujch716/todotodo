@@ -4,9 +4,8 @@ import { format, getDay } from "date-fns";
 import {
   type Goal,
   type CreateGoalDto,
-  type UpdateGoalCompleteDto,
   type UpdateGoalDto,
-  type GoalStatusType,
+  type GoalStatusType, GoalStatus,
 } from "@/types/goal.ts";
 
 export const getGoals = async (): Promise<Goal[]> => {
@@ -58,15 +57,12 @@ export const getGoalById = async (goalId: string): Promise<Goal> => {
     .from("goal")
     .select(
       `
-        *,
-        goal_log (
-          *,
-          created_at
-        )
-      `,
+      *,
+      goal_log (*)
+    `,
     )
     .eq("id", goalId)
-    .order("created_at", { ascending: false, foreignTable: "goal_log" })
+    .order("created_at", { ascending: false, referencedTable: "goal_log" })
     .single();
 
   if (error) toast.error("조회에 실패했습니다.");
@@ -77,6 +73,14 @@ export const getGoalById = async (goalId: string): Promise<Goal> => {
 export const getOngoingDailyGoalsByDate = async (
   date: Date,
 ): Promise<Goal[]> => {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError || !user) {
+    throw new Error("인증된 유저가 없습니다.");
+  }
+
   const weekdayMap: Record<number, string> = {
     0: "sun",
     1: "mon",
@@ -92,6 +96,7 @@ export const getOngoingDailyGoalsByDate = async (
   const { data, error } = await supabase
     .from("goal")
     .select(`*, goal_log(*)`)
+    .eq("user_id", user.id)
     .eq("type", "daily")
     .lte("start_date", format(date, "yyyy-MM-dd"))
     .gte("end_date", format(date, "yyyy-MM-dd"))
@@ -102,12 +107,21 @@ export const getOngoingDailyGoalsByDate = async (
   return data ?? [];
 };
 
-export const getOngoingGoalGoalsByDate = async (): Promise<Goal[]> => {
+export const getOngoingMilestoneGoalsByDate = async (): Promise<Goal[]> => {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError || !user) {
+    throw new Error("인증된 유저가 없습니다.");
+  }
+
   const { data, error } = await supabase
     .from("goal")
     .select(`*, goal_log(*)`)
-    .eq("type", "goal")
-    .eq("is_completed", false);
+    .eq("user_id", user.id)
+    .eq("type", "milestone")
+    .eq("status", GoalStatus.inProgress);
 
   if (error) toast.error("조회에 실패했습니다.");
 
@@ -118,9 +132,18 @@ export const getDailyGoalByRangeDate = async (
   start: Date,
   end: Date,
 ): Promise<Goal[]> => {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError || !user) {
+    throw new Error("인증된 유저가 없습니다.");
+  }
+
   const { data, error } = await supabase
     .from("goal")
     .select(`*, goal_log(*)`)
+    .eq("user_id", user.id)
     .eq("type", "daily")
     .lte("start_date", format(end, "yyyy-MM-dd"))
     .gte("end_date", format(start, "yyyy-MM-dd"));
@@ -159,15 +182,6 @@ export const updateGoal = async (id: string, input: UpdateGoalDto) => {
   const { error } = await supabase.from("goal").update(input).eq("id", id);
 
   if (error) toast.error("수정에 실패했습니다.");
-};
-
-export const updateGoalCompleted = async (
-  id: string,
-  input: UpdateGoalCompleteDto,
-) => {
-  const { error } = await supabase.from("goal").update(input).eq("id", id);
-
-  if (error) toast.error("변경에 실패했습니다.");
 };
 
 export const updateGoalStatus = async (id: string, status: GoalStatusType) => {

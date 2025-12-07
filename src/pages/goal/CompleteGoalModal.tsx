@@ -14,8 +14,9 @@ import { createGoalLog } from "@/api/goal-log.ts";
 import { useState } from "react";
 import { useGoalStore } from "@/store/goalStore.ts";
 import { format } from "date-fns";
-import { updateGoalCompleted } from "@/api/goal.ts";
+import { updateGoalStatus } from "@/api/goal.ts";
 import { showCelebration } from "@/lib/effects";
+import { GoalStatus } from "@/types/goal.ts";
 
 interface ModalProps {
   open: boolean;
@@ -46,7 +47,7 @@ const CompleteGoalModal = ({
     });
 
     if (completedDays + 1 === totalDays) {
-      await updateGoalCompleted(goalId, { is_completed: true });
+      await updateGoalStatus(goalId, GoalStatus.completed);
       showCelebration();
     }
 

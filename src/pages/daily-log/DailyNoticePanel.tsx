@@ -10,7 +10,7 @@ import type { Goal } from "@/types/goal.ts";
 import DailyNoticeDailyGoalCard from "@/pages/daily-log/DailyNoticeDailyGoalCard.tsx";
 import {
   getOngoingDailyGoalsByDate,
-  getOngoingGoalGoalsByDate,
+  getOngoingMilestoneGoalsByDate,
 } from "@/api/goal.ts";
 import DailyNoticeMilestoneGoalCard from "@/pages/daily-log/DailyNoticeMilestoneGoalCard.tsx";
 
@@ -35,7 +35,7 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
 
   const loadDailyGoals = useCallback(async () => {
     const dailyGoals = await getOngoingDailyGoalsByDate(dailyLogDate);
-    const goalGoals = await getOngoingGoalGoalsByDate();
+    const goalGoals = await getOngoingMilestoneGoalsByDate();
 
     setDailyGoals(dailyGoals);
     setGoalGoals(goalGoals);
