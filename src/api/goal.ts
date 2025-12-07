@@ -7,15 +7,10 @@ import {
   type UpdateGoalDto,
   type GoalStatusType, GoalStatus,
 } from "@/types/goal.ts";
+import {getAuthenticatedUser} from "@/api/auth.ts";
 
 export const getGoals = async (): Promise<Goal[]> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("goal")
@@ -31,13 +26,7 @@ export const getGoalsByStatus = async (
   goalGroupId: string,
   status: GoalStatusType,
 ): Promise<Goal[]> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("goal")
@@ -73,13 +62,7 @@ export const getGoalById = async (goalId: string): Promise<Goal> => {
 export const getOngoingDailyGoalsByDate = async (
   date: Date,
 ): Promise<Goal[]> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const weekdayMap: Record<number, string> = {
     0: "sun",
@@ -108,13 +91,7 @@ export const getOngoingDailyGoalsByDate = async (
 };
 
 export const getOngoingMilestoneGoalsByDate = async (): Promise<Goal[]> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("goal")
@@ -132,13 +109,7 @@ export const getDailyGoalByRangeDate = async (
   start: Date,
   end: Date,
 ): Promise<Goal[]> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("goal")
@@ -154,13 +125,7 @@ export const getDailyGoalByRangeDate = async (
 };
 
 export const createGoal = async (input: CreateGoalDto): Promise<Goal> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { error, data } = await supabase
     .from("goal")

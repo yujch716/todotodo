@@ -40,3 +40,11 @@ export const logout = async (): Promise<{ error: Error | null }> => {
   const { error } = await supabase.auth.signOut();
   return { error };
 };
+
+export const getAuthenticatedUser = async () => {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
+    throw new Error("인증된 유저가 없습니다.");
+  }
+  return user;
+};

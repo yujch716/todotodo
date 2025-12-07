@@ -2,18 +2,13 @@ import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import type { CalendarEventType } from "@/types/calendar-event.ts";
+import {getAuthenticatedUser} from "@/api/auth.ts";
 
 export const getCalendarEvents = async (
   start: Date,
   end: Date,
 ): Promise<CalendarEventType[]> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("calendar_event")
@@ -54,6 +49,8 @@ export const getCalendarEventById = async (
 export const getCalendarEventByDate = async (
   date: Date,
 ): Promise<CalendarEventType[]> => {
+  const user = await getAuthenticatedUser();
+
   const { data, error } = await supabase
     .from("calendar_event")
     .select(
@@ -62,6 +59,7 @@ export const getCalendarEventByDate = async (
     category:calendar_category (*)
   `,
     )
+    .eq("user_id", user.id)
     .eq("start_at", date);
 
   if (error) toast.error("조회에 실패했습니다.");
@@ -77,13 +75,7 @@ export const createCalendarEvent = async (
   end_at: Date,
   category_id: string | null,
 ): Promise<CalendarEventType> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { error, data } = await supabase
     .from("calendar_event")
