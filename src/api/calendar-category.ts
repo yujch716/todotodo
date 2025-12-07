@@ -1,15 +1,10 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import type { CalendarCategory } from "@/types/calendar-category.ts";
+import {getAuthenticatedUser} from "@/api/auth.ts";
 
 export const getCalendarCategory = async (): Promise<CalendarCategory[]> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("calendar_category")
@@ -25,13 +20,7 @@ export const createCalendarCategory = async (
   name: string,
   color: string,
 ): Promise<void> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { error } = await supabase.from("calendar_category").insert([
     {

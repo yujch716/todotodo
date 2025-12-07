@@ -83,7 +83,7 @@ const UpdateGoalModal = ({ goal }: UpdateGoalModalProps) => {
           : undefined,
         repeat_days: repeat_days ?? undefined,
       }),
-      ...(type === "goal" && { target_value: Number(targetValue) }),
+      ...(type === "milestone" && { target_value: Number(targetValue) }),
     };
 
     await updateGoal(goal.id, goalPayload);

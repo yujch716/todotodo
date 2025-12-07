@@ -2,8 +2,11 @@ import { supabase } from "@/lib/supabaseClient";
 import type { DailyLogType } from "@/types/daily-log.ts";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import {getAuthenticatedUser} from "@/api/auth.ts";
 
 export const getDailyLogs = async (): Promise<DailyLogType[]> => {
+  const user = await getAuthenticatedUser();
+
   const { data, error } = await supabase
     .from("daily_log")
     .select(
@@ -12,6 +15,7 @@ export const getDailyLogs = async (): Promise<DailyLogType[]> => {
       daily_todo (*)
     `,
     )
+    .eq("user_id", user.id)
     .order("date", { ascending: false });
 
   if (error) toast.error("조회에 실패했습니다.");
@@ -66,9 +70,12 @@ export const getDailyLogById = async (
 export const getDailyLogByDate = async (
   date: Date,
 ): Promise<DailyLogType | null> => {
+  const user = await getAuthenticatedUser();
+
   const { data } = await supabase
     .from("daily_log")
     .select(`*`)
+    .eq("user_id", user.id)
     .eq("date", format(date, "yyyy-MM-dd"))
     .maybeSingle();
 
@@ -79,13 +86,7 @@ export const getDailyLogsByDate = async (
   start: Date,
   end: Date,
 ): Promise<DailyLogType[]> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("daily_log")
@@ -117,13 +118,7 @@ export const getDailyLogsByDate = async (
 };
 
 export const createDailyLog = async (date: Date): Promise<DailyLogType> => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
-    throw new Error("인증된 유저가 없습니다.");
-  }
+  const user = await getAuthenticatedUser();
 
   const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
 
