@@ -5,9 +5,10 @@ import {
   type Goal,
   type CreateGoalDto,
   type UpdateGoalDto,
-  type GoalStatusType, GoalStatus,
+  type GoalStatusType,
+  GoalStatus,
 } from "@/types/goal.ts";
-import {getAuthenticatedUser} from "@/api/auth.ts";
+import { getAuthenticatedUser } from "@/api/auth.ts";
 
 export const getGoals = async (): Promise<Goal[]> => {
   const user = await getAuthenticatedUser();

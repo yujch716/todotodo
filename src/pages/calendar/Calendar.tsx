@@ -190,7 +190,7 @@ const Calendar = () => {
                           className={cn(
                             "text-xs",
                             isToday &&
-                            "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
+                              "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
                           )}
                         >
                           {date.getDate()}
@@ -220,10 +220,7 @@ const Calendar = () => {
                       </button>
                     </div>
                     <div className="flex-grow overflow-hidden">
-                      <CalendarDayCell
-                        events={dayEvents}
-                        dailyLog={dailyLog}
-                      />
+                      <CalendarDayCell events={dayEvents} dailyLog={dailyLog} />
                     </div>
                   </button>
                 );

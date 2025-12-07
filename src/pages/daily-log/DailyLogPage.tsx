@@ -2,7 +2,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import DailyTodoPanel from "@/pages/daily-log/DailyTodoPanel.tsx";
 import MemoPanel from "@/pages/daily-log/MemoPanel.tsx";
 import { useCallback, useEffect, useState } from "react";
-import { deleteDailyLogById, getDailyLogById } from "@/api/daily-log.ts";
+import {
+  deleteDailyLogById,
+  getDailyLogById,
+  getDailyLogsByDate,
+} from "@/api/daily-log.ts";
 import { Trash2 } from "lucide-react";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import EmptyDailyLog from "@/pages/daily-log/EmptyDailyLog.tsx";
@@ -14,6 +18,8 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs.tsx";
 import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
+import { Calendar } from "@/components/ui/calendar.tsx";
+import { format } from "date-fns";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
@@ -22,32 +28,48 @@ const DailyLogPage = () => {
   const dailyLogId = searchParams.get("id");
 
   const [isSmall, setIsSmall] = useState(false);
-
-  const [date, setDate] = useState<Date | null>(null);
+  const [logsByDate, setLogsByDate] = useState<Record<string, string>>({});
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [memo, setMemo] = useState("");
-
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  const triggerSidebarRefresh = useDailyLogSidebarStore(
+    (state) => state.triggerSidebarRefresh,
+  );
+
+  const toYMD = useCallback((d: Date | string) => {
+    const dt = typeof d === "string" ? new Date(d) : d;
+    return format(dt, "yyyy-MM-dd");
+  }, []);
 
   const loadDailyLog = useCallback(async () => {
     if (!dailyLogId) return;
 
     const dailyLog = await getDailyLogById(dailyLogId);
 
-    setDate(dailyLog.date);
+    setDate(new Date(dailyLog.date));
     setMemo(dailyLog.memo || "");
   }, [dailyLogId]);
 
-  useEffect(() => {
-    loadDailyLog();
-  }, [loadDailyLog]);
+  const loadDailyLogs = useCallback(async () => {
+    if (!date) return;
 
-  const triggerSidebarRefresh = useDailyLogSidebarStore(
-    (state) => state.triggerSidebarRefresh,
-  );
+    const start = new Date(date.getFullYear(), date.getMonth(), 1);
+    const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+    const dailyLogs = await getDailyLogsByDate(start, end);
+
+    const map: Record<string, string> = {};
+    dailyLogs.forEach((log) => {
+      const key = toYMD(log.date);
+      map[key] = log.id;
+    });
+
+    setLogsByDate(map);
+  }, [date, toYMD]);
 
   const handleDelete = async () => {
     if (!dailyLogId) return;
-
     setIsAlertOpen(true);
   };
 
@@ -60,6 +82,33 @@ const DailyLogPage = () => {
     triggerSidebarRefresh();
     navigate("/calendar");
   };
+
+  const handleDateSelect = useCallback(
+    (selectedDate: Date | undefined) => {
+      if (!selectedDate) return;
+
+      setDate(new Date(selectedDate));
+
+      const key = toYMD(selectedDate);
+      const logId = logsByDate[key];
+
+      if (logId) {
+        navigate(`/daily?id=${logId}`);
+      } else {
+        console.log(logId);
+        console.log("해당 날짜의 로그가 없습니다");
+      }
+    },
+    [logsByDate, toYMD, navigate],
+  );
+
+  useEffect(() => {
+    loadDailyLog();
+  }, [loadDailyLog]);
+
+  useEffect(() => {
+    loadDailyLogs();
+  }, [loadDailyLogs]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 1023px)");
@@ -82,7 +131,7 @@ const DailyLogPage = () => {
         <header className="flex w-full gap-8 mb-5 items-center">
           <div className="w-1/2">
             <div className="text-sm text-gray-500 mb-1">
-              {date ? String(date) : null}
+              {date ? format(date, "yyyy-MM-dd") : null}
             </div>
           </div>
 
@@ -96,38 +145,54 @@ const DailyLogPage = () => {
           </div>
         </header>
 
-        {date && (
-          <div className="flex w-full">
-            <DailyNoticePanel dailyLogDate={date} />
-          </div>
-        )}
-
         <div className="flex flex-grow overflow-hidden gap-8">
           {isSmall ? (
-            <>
-              <Tabs defaultValue="todo" className="flex flex-col w-full h-full">
-                <TabsList className="flex w-fit">
-                  <TabsTrigger value="todo">To do</TabsTrigger>
-                  <TabsTrigger value="memo">Memo</TabsTrigger>
-                </TabsList>
-                <TabsContent value="todo">
-                  <DailyTodoPanel dailyLogId={dailyLogId} />
-                </TabsContent>
-                <TabsContent value="memo" className="flex-grow">
-                  <MemoPanel
-                    dailyLogId={dailyLogId}
-                    memo={memo}
-                    setMemo={setMemo}
-                  />
-                </TabsContent>
-              </Tabs>
-            </>
+            <Tabs defaultValue="todo" className="flex flex-col w-full h-full">
+              <TabsList className="flex w-fit">
+                <TabsTrigger value="todo">To do</TabsTrigger>
+                <TabsTrigger value="memo">Memo</TabsTrigger>
+              </TabsList>
+              <TabsContent value="todo">
+                <DailyTodoPanel dailyLogId={dailyLogId} />
+              </TabsContent>
+              <TabsContent value="memo" className="flex-grow">
+                <MemoPanel
+                  dailyLogId={dailyLogId}
+                  memo={memo}
+                  setMemo={setMemo}
+                />
+              </TabsContent>
+            </Tabs>
           ) : (
             <>
-              <div className="w-1/2 h-full flex flex-col overflow-auto">
+              <div className="w-1/5 flex flex-col gap-8">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={handleDateSelect}
+                  className="w-full rounded-lg border [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] bg-white shadow-lg"
+                  buttonVariant="ghost"
+                  modifiers={{
+                    hasLog: (day) => {
+                      const key = toYMD(day);
+                      return !!logsByDate[key];
+                    },
+                  }}
+                  modifiersClassNames={{
+                    hasLog:
+                      "relative after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:rounded-full after:bg-blue-500",
+                  }}
+                />
+                {date && (
+                  <div className="flex w-full">
+                    <DailyNoticePanel dailyLogDate={date} />
+                  </div>
+                )}
+              </div>
+              <div className="w-2/5 h-full flex flex-col overflow-auto">
                 <DailyTodoPanel dailyLogId={dailyLogId} />
               </div>
-              <div className="w-1/2 h-full flex flex-col overflow-auto">
+              <div className="w-2/5 h-full flex flex-col overflow-auto">
                 <MemoPanel
                   dailyLogId={dailyLogId}
                   memo={memo}
@@ -141,7 +206,7 @@ const DailyLogPage = () => {
 
       <AlertConfirmModal
         open={isAlertOpen}
-        message="이 체크리스트를 삭제하시겠습니까?"
+        message="이 데일리 로그를 삭제하시겠습니까?"
         onConfirm={handleConfirmDelete}
         onCancel={() => setIsAlertOpen(false)}
       />

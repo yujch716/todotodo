@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card.tsx";
 import { CalendarIcon } from "lucide-react";
 import { format, isSameDay } from "date-fns";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 interface DailyNoticeDailyGoalProps {
   goal: Goal;
@@ -14,7 +14,7 @@ const DailyNoticeDailyGoalCard = ({
   goal,
   date,
 }: DailyNoticeDailyGoalProps) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const { id, emoji, title, start_date, end_date, goal_log } = goal;
 
@@ -22,22 +22,22 @@ const DailyNoticeDailyGoalCard = ({
     log.date ? isSameDay(new Date(log.date), date) : false,
   );
 
-  const handelMoveGoal = () => {
-    navigate(`/goal?id=${id}`);
-  };
+  // const handelMoveGoal = () => {
+  //   navigate(`/goal?id=${id}`);
+  // };
 
   return (
     <div>
       <Card
         key={id}
-        className={`p-3 w-[270px] cursor-pointer shadow-sm ${
+        className={`p-3 w-[250px] cursor-pointer shadow-sm ${
           isCompleted
             ? "opacity-50"
             : "hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
         }`}
-        onClick={() => {
-          handelMoveGoal();
-        }}
+        // onClick={() => {
+        //   handelMoveGoal();
+        // }}
       >
         <div className="flex flex-row items-center gap-2 pb-2">
           {emoji}

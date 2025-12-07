@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabaseClient";
 import type { DailyLogType } from "@/types/daily-log.ts";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import {getAuthenticatedUser} from "@/api/auth.ts";
+import { getAuthenticatedUser } from "@/api/auth.ts";
 
 export const getDailyLogs = async (): Promise<DailyLogType[]> => {
   const user = await getAuthenticatedUser();

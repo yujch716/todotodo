@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import type { GoalGroup } from "@/types/goal.ts";
-import {getAuthenticatedUser} from "@/api/auth.ts";
+import { getAuthenticatedUser } from "@/api/auth.ts";
 
 export const getGoalGroups = async (): Promise<GoalGroup[]> => {
   const user = await getAuthenticatedUser();

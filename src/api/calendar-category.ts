@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import type { CalendarCategory } from "@/types/calendar-category.ts";
-import {getAuthenticatedUser} from "@/api/auth.ts";
+import { getAuthenticatedUser } from "@/api/auth.ts";
 
 export const getCalendarCategory = async (): Promise<CalendarCategory[]> => {
   const user = await getAuthenticatedUser();
