@@ -11,7 +11,7 @@ export interface Goal {
   user_id: string;
   title: string;
   emoji: string;
-  type: "daily" | "goal";
+  type: "daily" | "milestone";
   start_date: Date;
   end_date: Date;
   repeat_days: string[] | null;
@@ -26,7 +26,7 @@ export interface Goal {
 export interface CreateGoalDto {
   emoji: string;
   title: string;
-  type: "daily" | "goal";
+  type: "daily" | "milestone";
   start_date?: string;
   end_date?: string;
   repeat_days?: string[] | null;
@@ -40,10 +40,6 @@ export interface UpdateGoalDto {
   end_date?: string;
   repeat_days?: string[];
   target_value?: number;
-}
-
-export interface UpdateGoalCompleteDto {
-  is_completed: boolean;
 }
 
 export interface GoalLog {

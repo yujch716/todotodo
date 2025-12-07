@@ -1,7 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card.tsx";
-import type { GoalLog } from "@/types/goal.ts";
+import { type GoalLog, GoalStatus } from "@/types/goal.ts";
 import {
   Table,
   TableBody,
@@ -14,7 +14,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { deleteGoalLogById } from "@/api/goal-log.ts";
 import { useGoalStore } from "@/store/goalStore.ts";
-import { updateGoalCompleted } from "@/api/goal.ts";
+import { updateGoalStatus } from "@/api/goal.ts";
 
 interface GoalLogCardProps {
   type: "daily" | "goal";
@@ -26,7 +26,7 @@ const GoalLogCard = ({ type, logs }: GoalLogCardProps) => {
 
   const handleDelete = async (logId: string, goalId: string) => {
     await deleteGoalLogById(logId);
-    await updateGoalCompleted(goalId, { is_completed: false });
+    await updateGoalStatus(goalId, GoalStatus.inProgress);
 
     triggerGoalRefresh();
   };

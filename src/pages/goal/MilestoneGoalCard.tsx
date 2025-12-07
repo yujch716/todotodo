@@ -11,7 +11,7 @@ import { createGoalLog } from "@/api/goal-log.ts";
 import { format } from "date-fns";
 import { useGoalStore } from "@/store/goalStore.ts";
 import { toast } from "sonner";
-import { updateGoalCompleted } from "@/api/goal.ts";
+import { updateGoalStatus } from "@/api/goal.ts";
 import { showCelebration } from "@/lib/effects";
 
 interface GoalProps {
@@ -46,7 +46,7 @@ const MilestoneGoalCard = ({ goal }: GoalProps) => {
 
     await createGoalLog({ goal_id: goal.id, date, value });
     if (completeValue + value === targetValue) {
-      await updateGoalCompleted(goal.id, { is_completed: true });
+      await updateGoalStatus(goal.id, GoalStatus.completed);
 
       showCelebration();
     }

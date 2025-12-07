@@ -50,7 +50,7 @@ interface Props {
 
 const CreateGoalModal = ({ groupId }: Props) => {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"daily" | "goal">("daily");
+  const [activeTab, setActiveTab] = useState<"daily" | "milestone">("daily");
 
   const [emoji, setEmoji] = useState("✨");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -74,7 +74,7 @@ const CreateGoalModal = ({ groupId }: Props) => {
       toast.error("기간을 선택하세요.");
       return;
     }
-    if (activeTab === "goal" && targetValue === undefined) {
+    if (activeTab === "milestone" && targetValue === undefined) {
       toast.error("목표 수치를 1 이상 입력하세요.");
       return;
     }
@@ -104,7 +104,7 @@ const CreateGoalModal = ({ groupId }: Props) => {
           : undefined,
         repeat_days,
       }),
-      ...(activeTab === "goal" && { target_value: Number(targetValue) }),
+      ...(activeTab === "milestone" && { target_value: Number(targetValue) }),
     };
 
     await createGoal(goalPayload);
@@ -137,13 +137,13 @@ const CreateGoalModal = ({ groupId }: Props) => {
         <Tabs
           defaultValue="daily"
           value={activeTab}
-          onValueChange={(val) => setActiveTab(val as "daily" | "goal")}
+          onValueChange={(val) => setActiveTab(val as "daily" | "milestone")}
           className="flex flex-col w-full h-full"
         >
           <div className="flex flex-row gap-3 item-center">
             <TabsList className="flex w-fit">
               <TabsTrigger value="daily">일일 챌린지</TabsTrigger>
-              <TabsTrigger value="goal">목표 달성 챌린지</TabsTrigger>
+              <TabsTrigger value="milestone">목표 달성 챌린지</TabsTrigger>
             </TabsList>
 
             <Popover>

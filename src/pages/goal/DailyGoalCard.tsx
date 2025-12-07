@@ -9,7 +9,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { cn } from "@/lib/utils.ts";
-import type { Goal, GoalLog } from "@/types/goal.ts";
+import { type Goal, type GoalLog, GoalStatus } from "@/types/goal.ts";
 import {
   Tooltip,
   TooltipContent,
@@ -24,7 +24,7 @@ import { deleteGoalLogById } from "@/api/goal-log.ts";
 import { useGoalStore } from "@/store/goalStore.ts";
 import { CalendarIcon, PartyPopper } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
-import { updateGoalCompleted } from "@/api/goal.ts";
+import { updateGoalStatus } from "@/api/goal.ts";
 
 interface GoalProps {
   goal: Goal;
@@ -136,7 +136,7 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
 
     await deleteGoalLogById(selectedLogId);
 
-    await updateGoalCompleted(goal.id, { is_completed: false });
+    await updateGoalStatus(goal.id, GoalStatus.inProgress);
 
     setSelectedLogId(null);
 
