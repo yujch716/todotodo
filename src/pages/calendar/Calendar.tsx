@@ -25,7 +25,6 @@ import { CalendarPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils.ts";
 import CreateEventModal from "@/pages/calendar/CreateEventModal.tsx";
-import { Button } from "@/components/ui/button.tsx";
 import CalendarDayCell from "@/pages/calendar/CalendarDayCell.tsx";
 import { getDailyGoalByRangeDate } from "@/api/goal.ts";
 import type { Goal } from "@/types/goal.ts";
@@ -104,7 +103,7 @@ const Calendar = () => {
   const dayMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
   const getGoalForDate = (date: Date) => {
-    if (!goals) return [];
+    if (!date || !goals) return [];
 
     const dayString = dayMap[date.getDay()];
 
@@ -144,63 +143,61 @@ const Calendar = () => {
             month={currentMonth}
             onMonthChange={(month) => setCurrentMonth(month)}
             showOutsideDays
-            className="p-0"
+            hideNavigation
+            className="p-0 w-full"
             classNames={{
-              caption: "hidden",
-              months: "flex flex-col sm:flex-row gap-4",
-              month: "space-y-4",
-              table:
-                "w-full border-4 border-slate-200 border-collapse table-fixed rounded-xl",
-              head_row: "",
-              head_cell:
-                "font-medium text-center text-sm bg-slate-200 py-2 font-bold",
-              row: "",
-              cell: "h-[80px] md:h-[100px] lg:h-[130px] text-sm p-0 relative border-2 border-slate-200",
-              day: "h-full w-full p-1 font-normal flex flex-col items-center justify-start text-sm",
-              day_selected: "bg-primary text-white hover:bg-primary/90",
-              day_outside: "text-gray-400",
+              month_caption: "hidden",
+              months: "w-full",
+              month: "w-full space-y-4",
+              month_grid:
+                "w-full border-4 border-slate-200 border-collapse rounded-xl table-fixed",
+              weekdays: "w-full",
+              weekday:
+                "font-medium text-center text-sm bg-slate-200 py-2 font-bold w-[14.285%]",
+              week: "w-full",
+              day: "h-[80px] md:h-[100px] lg:h-[130px] text-sm p-0 relative border-2 border-slate-200 w-[14.285%]",
+              day_button: "h-full w-full p-2 font-normal",
+              outside: "text-gray-400",
             }}
             formatters={{
               formatWeekdayName: (date) => format(date, "EEE"),
             }}
             components={{
-              Day: (dayProps: any) => {
-                const { date, className, onClick, onKeyDown, onFocus, onBlur } =
-                  dayProps;
+              DayButton: (props) => {
+                const { day, ...buttonProps } = props;
+                const date = day.date;
+
+                if (!date) return <button {...buttonProps} />;
+
                 const dailyLog = getDailyLogForDate(date);
-                const events = getEventForDate(date);
-                const goals = getGoalForDate(date);
+                const dayEvents = getEventForDate(date);
+                const dayGoals = getGoalForDate(date);
                 const isToday = isSameDay(date, new Date());
                 const isOutside = !isSameMonth(date, currentMonth);
 
                 return (
-                  <div
+                  <button
+                    {...buttonProps}
                     className={cn(
-                      className,
-                      "flex flex-col h-full p-2 group",
+                      "h-full w-full p-2 flex flex-col group cursor-pointer hover:bg-slate-50",
                       isToday && "bg-slate-100",
                       isOutside && "text-gray-400",
                     )}
-                    onClick={onClick}
-                    onKeyDown={onKeyDown}
-                    onFocus={onFocus}
-                    onBlur={onBlur}
-                    tabIndex={0}
                   >
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center w-full">
                       <div className="flex items-center gap-2">
                         <span
                           className={cn(
                             "text-xs",
                             isToday &&
-                              "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
+                            "rounded-full border-2 border-sky-200 px-1 bg-sky-200",
                           )}
                         >
                           {date.getDate()}
                         </span>
 
                         <div className="flex flex-row gap-1">
-                          {goals.map((goal: Goal) => (
+                          {dayGoals.map((goal: Goal) => (
                             <div
                               key={goal.id}
                               className="w-5 h-5 flex items-center justify-center rounded-full bg-sky-50 border border-sky-200 text-xs shadow-md"
@@ -211,19 +208,23 @@ const Calendar = () => {
                         </div>
                       </div>
 
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="invisible group-hover:visible w-6 h-6 flex items-center justify-center"
-                        onClick={() => onDayClick(date)}
+                      <div
+                        className="invisible group-hover:visible w-6 h-6 flex items-center justify-center border rounded cursor-pointer hover:bg-slate-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDayClick(date);
+                        }}
                       >
-                        <CalendarPlus />
-                      </Button>
+                        <CalendarPlus className="w-3 h-3" />
+                      </div>
                     </div>
-                    <div>
-                      <CalendarDayCell events={events} dailyLog={dailyLog} />
+                    <div className="flex-grow overflow-hidden">
+                      <CalendarDayCell
+                        events={dayEvents}
+                        dailyLog={dailyLog}
+                      />
                     </div>
-                  </div>
+                  </button>
                 );
               },
             }}
@@ -241,4 +242,5 @@ const Calendar = () => {
     </div>
   );
 };
+
 export default Calendar;
