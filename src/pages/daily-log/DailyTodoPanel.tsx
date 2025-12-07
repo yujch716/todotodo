@@ -16,7 +16,6 @@ import { Progress } from "@/components/ui/progress.tsx";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
@@ -144,9 +143,9 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
 
   return (
     <>
-      <Card className="group">
+      <Card className="flex flex-col group h-full shadow-lg border-1">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-base">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2">
                 <SquareCheckBig /> To do
@@ -162,7 +161,6 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
               </div>
             </div>
           </CardTitle>
-          <CardDescription></CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

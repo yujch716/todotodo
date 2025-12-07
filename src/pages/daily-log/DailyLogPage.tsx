@@ -20,6 +20,7 @@ import {
 import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { format } from "date-fns";
+import TimelinePanel from "@/pages/daily-log/TimelinePanel.tsx";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
@@ -127,7 +128,7 @@ const DailyLogPage = () => {
 
   return (
     <>
-      <div className="flex flex-col h-full w-full overflow-hidden">
+      <div className="flex flex-col h-full w-full overflow">
         <header className="flex w-full gap-8 mb-5 items-center">
           <div className="w-1/2">
             <div className="text-sm text-gray-500 mb-1">
@@ -145,7 +146,7 @@ const DailyLogPage = () => {
           </div>
         </header>
 
-        <div className="flex flex-grow overflow-hidden gap-8">
+        <div className="flex flex-grow gap-8 min-h-0">
           {isSmall ? (
             <Tabs defaultValue="todo" className="flex flex-col w-full h-full">
               <TabsList className="flex w-fit">
@@ -170,7 +171,7 @@ const DailyLogPage = () => {
                   mode="single"
                   selected={date}
                   onSelect={handleDateSelect}
-                  className="w-full rounded-lg border [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] bg-white shadow-lg"
+                  className="w-full rounded-lg border [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] bg-white shadow-lg border-1"
                   buttonVariant="ghost"
                   modifiers={{
                     hasLog: (day) => {
@@ -189,15 +190,17 @@ const DailyLogPage = () => {
                   </div>
                 )}
               </div>
-              <div className="w-2/5 h-full flex flex-col overflow-auto">
-                <DailyTodoPanel dailyLogId={dailyLogId} />
+              <div className="w-2/5 h-full flex flex-col min-h-0">
+                <TimelinePanel />
               </div>
-              <div className="w-2/5 h-full flex flex-col overflow-auto">
-                <MemoPanel
-                  dailyLogId={dailyLogId}
-                  memo={memo}
-                  setMemo={setMemo}
-                />
+              <div className="w-2/5 h-full flex flex-col gap-8">
+                <div className="flex-[3]">
+                  <DailyTodoPanel dailyLogId={dailyLogId} />
+                </div>
+
+                <div className="flex-[2]">
+                  <MemoPanel dailyLogId={dailyLogId} memo={memo} setMemo={setMemo} />
+                </div>
               </div>
             </>
           )}

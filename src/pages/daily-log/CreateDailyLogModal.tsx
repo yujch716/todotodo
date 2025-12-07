@@ -69,7 +69,7 @@ const CreateDailyLogModal = () => {
 
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
-          <DialogTitle>체크리스트 만들기</DialogTitle>
+          <DialogTitle>Daily 만들기</DialogTitle>
           <DialogDescription />
         </DialogHeader>
 

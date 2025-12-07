@@ -14,3 +14,10 @@ export interface DailyTodoType {
   totalCount: number;
   checkedCount: number;
 }
+
+export interface DailyTimeline {
+  id: string;
+  content: string;
+  startAt: Date;
+  endAt: Date;
+}
