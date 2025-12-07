@@ -17,7 +17,7 @@ import { useGoalStore } from "@/store/goalStore.ts";
 import { updateGoalStatus } from "@/api/goal.ts";
 
 interface GoalLogCardProps {
-  type: "daily" | "goal";
+  type: "daily" | "milestone";
   logs: GoalLog[];
 }
 
