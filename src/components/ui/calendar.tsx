@@ -169,6 +169,7 @@ function Calendar({
     />
   )
 }
+Calendar.displayName = "Calendar"
 
 function CalendarDayButton({
   className,

@@ -208,7 +208,8 @@ const Calendar = () => {
                         </div>
                       </div>
 
-                      <div
+                      <button
+                        type="button"
                         className="invisible group-hover:visible w-6 h-6 flex items-center justify-center border rounded cursor-pointer hover:bg-slate-100"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -216,7 +217,7 @@ const Calendar = () => {
                         }}
                       >
                         <CalendarPlus className="w-3 h-3" />
-                      </div>
+                      </button>
                     </div>
                     <div className="flex-grow overflow-hidden">
                       <CalendarDayCell
