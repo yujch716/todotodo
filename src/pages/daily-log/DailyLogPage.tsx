@@ -20,7 +20,7 @@ import {
 import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { format } from "date-fns";
-import TimelinePanel from "@/pages/daily-log/TimelinePanel.tsx";
+import TimetablePanel from "@/pages/daily-log/TimetablePanel.tsx";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
@@ -191,7 +191,7 @@ const DailyLogPage = () => {
                 )}
               </div>
               <div className="w-2/5 h-full flex flex-col min-h-0">
-                <TimelinePanel />
+                <TimetablePanel dailyLogId={dailyLogId} />
               </div>
               <div className="w-2/5 h-full flex flex-col gap-8">
                 <div className="flex-[3]">
@@ -199,7 +199,11 @@ const DailyLogPage = () => {
                 </div>
 
                 <div className="flex-[2]">
-                  <MemoPanel dailyLogId={dailyLogId} memo={memo} setMemo={setMemo} />
+                  <MemoPanel
+                    dailyLogId={dailyLogId}
+                    memo={memo}
+                    setMemo={setMemo}
+                  />
                 </div>
               </div>
             </>

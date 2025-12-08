@@ -15,9 +15,9 @@ export interface DailyTodoType {
   checkedCount: number;
 }
 
-export interface DailyTimeline {
+export interface DailyTimetableType {
   id: string;
   content: string;
-  startAt: Date;
-  endAt: Date;
+  start_time: string;
+  end_time: string;
 }
