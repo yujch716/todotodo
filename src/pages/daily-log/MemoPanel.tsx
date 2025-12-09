@@ -12,7 +12,6 @@ import TiptapToolbar from "@/components/tiptap/TiptapToolbar.tsx";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
@@ -126,13 +125,12 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
 
   return (
     <>
-      <Card className="flex flex-col h-full overflow-hidden">
+      <Card className="flex flex-col h-full overflow-hidden shadow-lg border-1">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-base">
             <NotebookPen />
             Memo
           </CardTitle>
-          <CardDescription></CardDescription>
         </CardHeader>
         <CardContent className="flex-grow flex flex-col overflow-hidden">
           <div className="flex flex-col h-full border rounded-lg overflow-hidden">

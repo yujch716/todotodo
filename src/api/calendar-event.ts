@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import type { CalendarEventType } from "@/types/calendar-event.ts";
-import {getAuthenticatedUser} from "@/api/auth.ts";
+import { getAuthenticatedUser } from "@/api/auth.ts";
 
 export const getCalendarEvents = async (
   start: Date,
@@ -60,7 +60,7 @@ export const getCalendarEventByDate = async (
   `,
     )
     .eq("user_id", user.id)
-    .eq("start_at", date);
+    .eq("start_at", date.toISOString());
 
   if (error) toast.error("조회에 실패했습니다.");
 

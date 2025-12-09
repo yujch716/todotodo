@@ -4,14 +4,14 @@ import { Card } from "@/components/ui/card.tsx";
 import { Progress } from "@/components/ui/progress.tsx";
 import { Flag } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 interface DailyNoticeGoalGoalProps {
   goal: Goal;
 }
 
 const DailyNoticeMilestoneGoalCard = ({ goal }: DailyNoticeGoalGoalProps) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const { id, emoji, title, goal_log, target_value } = goal;
   const logs: GoalLog[] = goal_log || [];
@@ -20,18 +20,18 @@ const DailyNoticeMilestoneGoalCard = ({ goal }: DailyNoticeGoalGoalProps) => {
   const progressValue = Math.floor((completeValue / targetValue) * 100);
   const isCompleted = goal.status === GoalStatus.completed;
 
-  const handelMoveGoal = () => {
-    navigate(`/goal?id=${id}`);
-  };
+  // const handelMoveGoal = () => {
+  //   navigate(`/goal?id=${id}`);
+  // };
 
   return (
     <div>
       <Card
         key={id}
         className="p-3 w-[270px] cursor-pointer shadow-sm hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
-        onClick={() => {
-          handelMoveGoal();
-        }}
+        // onClick={() => {
+        //   handelMoveGoal();
+        // }}
       >
         <div className="flex flex-row items-center gap-2 pb-2">
           {emoji}
