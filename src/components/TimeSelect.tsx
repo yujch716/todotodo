@@ -14,15 +14,14 @@ interface TimeSelectProps {
 }
 
 const TimeSelect = ({
-                      value,
-                      onValueChange,
-                      disabledTimes = [],
-                      placeholder = "시간 선택",
-                    }: TimeSelectProps) => {
-  const [hour, minute] = value.split(':');
+  value,
+  onValueChange,
+  disabledTimes = [],
+}: TimeSelectProps) => {
+  const [hour, minute] = value.split(":");
 
   const hours = Array.from({ length: 24 }, (_, i) =>
-    String(i).padStart(2, "0")
+    String(i).padStart(2, "0"),
   );
   const minutes = ["00", "30"];
 
@@ -46,7 +45,7 @@ const TimeSelect = ({
         </SelectTrigger>
         <SelectContent className="max-h-60">
           {hours.map((h) => {
-            const isDisabled = minutes.every(m => isTimeDisabled(h, m));
+            const isDisabled = minutes.every((m) => isTimeDisabled(h, m));
             return (
               <SelectItem key={h} value={h} disabled={isDisabled}>
                 {h}시

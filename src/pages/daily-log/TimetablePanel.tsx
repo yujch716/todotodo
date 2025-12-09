@@ -58,7 +58,10 @@ const TimetablePanel = ({ dailyLogId }: Props) => {
                 <CalendarClock /> Timeline
               </div>
 
-              <CreateDailyTimelineModal dailyLogId={dailyLogId} timetables={timetables} />
+              <CreateDailyTimelineModal
+                dailyLogId={dailyLogId}
+                timetables={timetables}
+              />
             </div>
           </CardTitle>
         </CardHeader>

@@ -32,26 +32,31 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
   const getDisabledStartTimes = () => {
     const occupiedSlots: string[] = [];
 
-    timetables.forEach(tt => {
-      const [startHour, startMinute] = tt.start_time.split(':').map(Number);
-      const [endHour, endMinute] = tt.end_time.split(':').map(Number);
+    timetables.forEach((tt) => {
+      const [startHour, startMinute] = tt.start_time.split(":").map(Number);
+      const [endHour, endMinute] = tt.end_time.split(":").map(Number);
 
       const startTotalMinutes = startHour * 60 + startMinute;
       const endTotalMinutes = endHour * 60 + endMinute;
 
-      for (let minutes = startTotalMinutes; minutes < endTotalMinutes; minutes += 30) {
+      for (
+        let minutes = startTotalMinutes;
+        minutes < endTotalMinutes;
+        minutes += 30
+      ) {
         const hour = Math.floor(minutes / 60);
         const minute = minutes % 60;
-        occupiedSlots.push(`${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`);
+        occupiedSlots.push(
+          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+        );
       }
     });
 
     return occupiedSlots;
   };
 
-
   const getDisabledEndTimes = () => {
-    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [startHour, startMinute] = startTime.split(":").map(Number);
     const startTotalMinutes = startHour * 60 + startMinute;
 
     // 1. 선택한 시작 시간 이하 비활성화
@@ -59,22 +64,30 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
     for (let minutes = 0; minutes <= startTotalMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
-      disabledTimes.push(`${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`);
+      disabledTimes.push(
+        `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+      );
     }
 
     // 2. 기존 타임테이블의 start < time <= end (시작 시간은 제외, 종료 시간은 포함)
-    timetables.forEach(tt => {
-      const [ttStartHour, ttStartMinute] = tt.start_time.split(':').map(Number);
-      const [ttEndHour, ttEndMinute] = tt.end_time.split(':').map(Number);
+    timetables.forEach((tt) => {
+      const [ttStartHour, ttStartMinute] = tt.start_time.split(":").map(Number);
+      const [ttEndHour, ttEndMinute] = tt.end_time.split(":").map(Number);
 
       const ttStartTotalMinutes = ttStartHour * 60 + ttStartMinute;
       const ttEndTotalMinutes = ttEndHour * 60 + ttEndMinute;
 
       // start < time <= end
-      for (let minutes = ttStartTotalMinutes + 30; minutes <= ttEndTotalMinutes; minutes += 30) {
+      for (
+        let minutes = ttStartTotalMinutes + 30;
+        minutes <= ttEndTotalMinutes;
+        minutes += 30
+      ) {
         const hour = Math.floor(minutes / 60);
         const minute = minutes % 60;
-        disabledTimes.push(`${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`);
+        disabledTimes.push(
+          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+        );
       }
     });
 
@@ -121,7 +134,7 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
               onValueChange={setStartTime}
               disabledTimes={getDisabledStartTimes()}
               placeholder="시작 시간 선택"
-              />
+            />
           </div>
 
           <div className="flex items-center gap-2">
