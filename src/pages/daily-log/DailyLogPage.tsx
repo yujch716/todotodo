@@ -21,6 +21,7 @@ import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { format } from "date-fns";
 import TimetablePanel from "@/pages/daily-log/TimetablePanel.tsx";
+import { toast } from "sonner";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
@@ -96,8 +97,7 @@ const DailyLogPage = () => {
       if (logId) {
         navigate(`/daily?id=${logId}`);
       } else {
-        console.log(logId);
-        console.log("해당 날짜의 로그가 없습니다");
+        toast.error("해당 날짜의 로그가 없습니다.");
       }
     },
     [logsByDate, toYMD, navigate],
@@ -128,7 +128,7 @@ const DailyLogPage = () => {
 
   return (
     <>
-      <div className="flex flex-col h-full w-full overflow">
+      <div className="flex flex-col h-full w-full">
         <header className="flex w-full gap-8 mb-5 items-center">
           <div className="w-1/2">
             <div className="text-sm text-gray-500 mb-1">

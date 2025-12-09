@@ -59,7 +59,6 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
     const [startHour, startMinute] = startTime.split(":").map(Number);
     const startTotalMinutes = startHour * 60 + startMinute;
 
-    // 1. 선택한 시작 시간 이하 비활성화
     const disabledTimes: string[] = [];
     for (let minutes = 0; minutes <= startTotalMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
@@ -69,7 +68,6 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
       );
     }
 
-    // 2. 기존 타임테이블의 start < time <= end (시작 시간은 제외, 종료 시간은 포함)
     timetables.forEach((tt) => {
       const [ttStartHour, ttStartMinute] = tt.start_time.split(":").map(Number);
       const [ttEndHour, ttEndMinute] = tt.end_time.split(":").map(Number);
@@ -77,7 +75,6 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
       const ttStartTotalMinutes = ttStartHour * 60 + ttStartMinute;
       const ttEndTotalMinutes = ttEndHour * 60 + ttEndMinute;
 
-      // start < time <= end
       for (
         let minutes = ttStartTotalMinutes + 30;
         minutes <= ttEndTotalMinutes;
@@ -95,9 +92,18 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
   };
 
   const handleSubmit = async () => {
-    if (!content.trim()) toast.error("내용을 입력하새요");
-    if (!startTime) toast.error("시작시간 입력하새요");
-    if (!endTime) toast.error("종료시간 입력하새요");
+    if (!content.trim()) {
+      toast.error("내용을 입력하세요");
+      return;
+    }
+    if (!startTime) {
+      toast.error("시작시간을 입력하세요");
+      return;
+    }
+    if (!endTime) {
+      toast.error("종료시간을 입력하세요");
+      return;
+    }
 
     await createDailyTimetable(dailyLogId, content, startTime, endTime);
 
