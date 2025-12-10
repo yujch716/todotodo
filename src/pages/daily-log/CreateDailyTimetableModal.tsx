@@ -116,8 +116,8 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
 
     setOpen(false);
     setContent("");
-    setStartTime("");
-    setEndTime("");
+    setStartTime("09:00");
+    setEndTime("10:00");
 
     triggerTimeTableRefresh();
   };

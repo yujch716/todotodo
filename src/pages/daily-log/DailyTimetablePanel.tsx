@@ -62,8 +62,8 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (el) {
-      el.scrollTop = el.scrollHeight;
+    if (el && el.scrollTop === 0) {
+      el.scrollTop = 7 * 40;
     }
   }, [timetables]);
 
