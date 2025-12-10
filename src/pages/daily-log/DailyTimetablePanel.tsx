@@ -21,7 +21,7 @@ interface Props {
   dailyLogId: string;
 }
 
-const TimetablePanel = ({ dailyLogId }: Props) => {
+const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   const [timetables, setTimetables] = useState<DailyTimetableType[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -129,4 +129,4 @@ const TimetablePanel = ({ dailyLogId }: Props) => {
     </>
   );
 };
-export default TimetablePanel;
+export default DailyTimetablePanel;

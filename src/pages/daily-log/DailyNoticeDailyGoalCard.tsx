@@ -30,7 +30,7 @@ const DailyNoticeDailyGoalCard = ({
     <div>
       <Card
         key={id}
-        className={`p-3 w-[250px] cursor-pointer shadow-sm ${
+        className={`p-3 w-full cursor-pointer shadow-sm ${
           isCompleted
             ? "opacity-50"
             : "hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
@@ -59,8 +59,8 @@ const DailyNoticeDailyGoalCard = ({
 
         <div className="flex items-center gap-2 flex-wrap text-sm">
           <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-          {start_date ? format(start_date, "yyyy-MM-dd") : "시작일"} -{" "}
-          {end_date ? format(end_date, "yyyy-MM-dd") : "종료일"}
+          {start_date ? format(start_date, "MM.dd") : "시작일"} -{" "}
+          {end_date ? format(end_date, "MM.dd") : "종료일"}
         </div>
       </Card>
     </div>

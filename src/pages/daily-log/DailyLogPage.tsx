@@ -20,7 +20,7 @@ import {
 import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { format } from "date-fns";
-import TimetablePanel from "@/pages/daily-log/TimetablePanel.tsx";
+import DailyTimetablePanel from "@/pages/daily-log/DailyTimetablePanel.tsx";
 import { toast } from "sonner";
 
 const DailyLogPage = () => {
@@ -148,22 +148,46 @@ const DailyLogPage = () => {
 
         <div className="flex flex-grow gap-8 min-h-0">
           {isSmall ? (
-            <Tabs defaultValue="todo" className="flex flex-col w-full h-full">
-              <TabsList className="flex w-fit">
-                <TabsTrigger value="todo">To do</TabsTrigger>
-                <TabsTrigger value="memo">Memo</TabsTrigger>
-              </TabsList>
-              <TabsContent value="todo">
-                <DailyTodoPanel dailyLogId={dailyLogId} />
-              </TabsContent>
-              <TabsContent value="memo" className="flex-grow">
-                <MemoPanel
-                  dailyLogId={dailyLogId}
-                  memo={memo}
-                  setMemo={setMemo}
-                />
-              </TabsContent>
-            </Tabs>
+            <div className="flex flex-col gap-4 w-full">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={handleDateSelect}
+                className="w-full rounded-lg border [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] bg-white shadow-lg border-1"
+                buttonVariant="ghost"
+                modifiers={{
+                  hasLog: (day) => {
+                    const key = toYMD(day);
+                    return !!logsByDate[key];
+                  },
+                }}
+                modifiersClassNames={{
+                  hasLog:
+                    "relative after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:rounded-full after:bg-blue-500",
+                }}
+              />
+
+              <Tabs defaultValue="todo" className="flex flex-col w-full h-full">
+                <TabsList className="flex w-fit">
+                  <TabsTrigger value="timetable">Timetable</TabsTrigger>
+                  <TabsTrigger value="todo">To do</TabsTrigger>
+                  <TabsTrigger value="memo">Memo</TabsTrigger>
+                </TabsList>
+                <TabsContent value="timetable">
+                  <DailyTimetablePanel dailyLogId={dailyLogId} />
+                </TabsContent>
+                <TabsContent value="todo">
+                  <DailyTodoPanel dailyLogId={dailyLogId} />
+                </TabsContent>
+                <TabsContent value="memo" className="flex-grow">
+                  <MemoPanel
+                    dailyLogId={dailyLogId}
+                    memo={memo}
+                    setMemo={setMemo}
+                  />
+                </TabsContent>
+              </Tabs>
+            </div>
           ) : (
             <>
               <div className="w-1/5 flex flex-col gap-8">
@@ -191,7 +215,7 @@ const DailyLogPage = () => {
                 )}
               </div>
               <div className="w-2/5 h-full flex flex-col min-h-0">
-                <TimetablePanel dailyLogId={dailyLogId} />
+                <DailyTimetablePanel dailyLogId={dailyLogId} />
               </div>
               <div className="w-2/5 h-full flex flex-col gap-8">
                 <div className="flex-[3]">

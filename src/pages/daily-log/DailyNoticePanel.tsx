@@ -60,8 +60,8 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
 
   return (
     <>
-      <Card className="flex flex-col w-full p-1 px-2 mb-4 bg-transparent items-center">
-        <ScrollArea className="w-full overflow-y-auto p-3">
+      <Card className="flex flex-col w-full p-3 bg-transparent items-center">
+        <ScrollArea className="w-full overflow-y-auto">
           <div className="flex flex-col gap-3">
             {schedules.map((schedule) => (
               <DailyNoticeScheduleCard key={schedule.id} schedule={schedule} />
