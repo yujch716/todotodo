@@ -11,18 +11,23 @@ interface TimeSelectProps {
   onValueChange: (value: string) => void;
   disabledTimes?: string[]; // ["09:00", "09:30", "10:00"] 형식
   placeholder?: string;
+  isEnd?: boolean;
 }
 
 const TimeSelect = ({
   value,
   onValueChange,
   disabledTimes = [],
+  isEnd,
 }: TimeSelectProps) => {
   const [hour, minute] = value.split(":");
 
-  const hours = Array.from({ length: 24 }, (_, i) =>
-    String(i).padStart(2, "0"),
-  );
+  let hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+
+  if (isEnd) {
+    hours = [...hours, "24"];
+  }
+
   const minutes = ["00", "30"];
 
   const handleHourChange = (newHour: string) => {
