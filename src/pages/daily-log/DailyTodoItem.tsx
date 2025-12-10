@@ -94,10 +94,10 @@ const DailyTodoItem = ({
 
   return (
     <Card
-      className="w-full p-2 shadow-sm hover:shadow-md"
+      className="w-full p-2 shadow-sm hover:shadow-md h-12"
       onClick={() => setEditingItemId(item.id)}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 h-full">
         <div className="flex items-center gap-2 flex-grow">
           <Checkbox
             checked={item.is_checked}

@@ -17,17 +17,22 @@ import { toast } from "sonner";
 import { createDailyTimetable } from "@/api/daily-timetable.ts";
 import type { DailyTimetableType } from "@/types/daily-log";
 import TimeSelect from "@/components/TimeSelect";
+import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
 
 interface Props {
   dailyLogId: string;
   timetables: DailyTimetableType[];
 }
 
-const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
+const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
   const [open, setOpen] = useState(false);
   const [startTime, setStartTime] = useState<string>("09:00");
   const [endTime, setEndTime] = useState<string>("10:00");
   const [content, setContent] = useState<string>("");
+
+  const triggerTimeTableRefresh = useDailyTimetableStore(
+    (state) => state.triggerDailyTimetableRefresh,
+  );
 
   const getDisabledStartTimes = () => {
     const occupiedSlots: string[] = [];
@@ -60,7 +65,8 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
     const startTotalMinutes = startHour * 60 + startMinute;
 
     const disabledTimes: string[] = [];
-    for (let minutes = 0; minutes <= startTotalMinutes; minutes += 30) {
+    // 시작시간 이전 비활성화
+    for (let minutes = 0; minutes < startTotalMinutes; minutes += 30) {
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
       disabledTimes.push(
@@ -68,6 +74,7 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
       );
     }
 
+    // 기존 타임테이블과 겹치는 시간 비활성화
     timetables.forEach((tt) => {
       const [ttStartHour, ttStartMinute] = tt.start_time.split(":").map(Number);
       const [ttEndHour, ttEndMinute] = tt.end_time.split(":").map(Number);
@@ -77,7 +84,7 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
 
       for (
         let minutes = ttStartTotalMinutes + 30;
-        minutes <= ttEndTotalMinutes;
+        minutes < ttEndTotalMinutes;
         minutes += 30
       ) {
         const hour = Math.floor(minutes / 60);
@@ -109,8 +116,10 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
 
     setOpen(false);
     setContent("");
-    setStartTime("");
-    setEndTime("");
+    setStartTime("09:00");
+    setEndTime("10:00");
+
+    triggerTimeTableRefresh();
   };
 
   return (
@@ -140,6 +149,7 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
               onValueChange={setStartTime}
               disabledTimes={getDisabledStartTimes()}
               placeholder="시작 시간 선택"
+              isEnd={false}
             />
           </div>
 
@@ -152,6 +162,7 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
               onValueChange={setEndTime}
               disabledTimes={getDisabledEndTimes()}
               placeholder="종료 시간 선택"
+              isEnd={true}
             />
           </div>
 
@@ -164,6 +175,12 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
               value={content}
               placeholder="일정 내용을 입력하세요"
               onChange={(e) => setContent(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
             />
           </div>
         </div>
@@ -183,4 +200,4 @@ const CreateDailyTimelineModal = ({ dailyLogId, timetables }: Props) => {
     </Dialog>
   );
 };
-export default CreateDailyTimelineModal;
+export default CreateDailyTimetableModal;

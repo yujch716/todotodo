@@ -11,30 +11,46 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table.tsx";
-import CreateDailyTimelineModal from "@/pages/daily-log/CreateDailyTimelineModal.tsx";
+import CreateDailyTimetableModal from "@/pages/daily-log/CreateDailyTimetableModal.tsx";
 import { getDailyTimeTables } from "@/api/daily-timetable.ts";
 import type { DailyTimetableType } from "@/types/daily-log.ts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
 
 interface Props {
   dailyLogId: string;
 }
 
-const TimetablePanel = ({ dailyLogId }: Props) => {
+const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   const [timetables, setTimetables] = useState<DailyTimetableType[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const hours = Array.from({ length: 24 }, (_, i) => (i + 7) % 24);
+  const hours = Array.from({ length: 24 }, (_, i) => (i + 0) % 24);
 
-  const loadDailyTimeTable = async () => {
+  const refreshTimetables = useDailyTimetableStore(
+    (state) => state.refreshDailyTimetable,
+  );
+  const resetTimetablesRefresh = useDailyTimetableStore(
+    (state) => state.resetDailyTimetableRefresh,
+  );
+
+  const loadDailyTimeTable = useCallback(async () => {
     const timetables = await getDailyTimeTables(dailyLogId);
     setTimetables(timetables);
-  };
+  }, [dailyLogId]);
 
   const getTimetableForHour = (hour: number) => {
     return timetables.find((tt) => {
       const startHour = parseInt(tt.start_time.split(":")[0]);
       const endHour = parseInt(tt.end_time.split(":")[0]);
-      return hour >= startHour && hour < endHour;
+
+      if (startHour === endHour) return hour === startHour;
+
+      if (startHour < endHour) {
+        return hour >= startHour && hour < endHour;
+      }
+
+      return hour >= startHour || hour < endHour;
     });
   };
 
@@ -45,8 +61,22 @@ const TimetablePanel = ({ dailyLogId }: Props) => {
   };
 
   useEffect(() => {
+    const el = scrollRef.current;
+    if (el && el.scrollTop === 0) {
+      el.scrollTop = 7 * 40;
+    }
+  }, [timetables]);
+
+  useEffect(() => {
     loadDailyTimeTable();
-  }, [dailyLogId]);
+  }, [loadDailyTimeTable]);
+
+  useEffect(() => {
+    if (refreshTimetables) {
+      loadDailyTimeTable();
+      resetTimetablesRefresh();
+    }
+  }, [refreshTimetables, loadDailyTimeTable, resetTimetablesRefresh]);
 
   return (
     <>
@@ -58,14 +88,14 @@ const TimetablePanel = ({ dailyLogId }: Props) => {
                 <CalendarClock /> Timeline
               </div>
 
-              <CreateDailyTimelineModal
+              <CreateDailyTimetableModal
                 dailyLogId={dailyLogId}
                 timetables={timetables}
               />
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex-grow overflow-x-auto">
+        <CardContent ref={scrollRef} className="flex-grow overflow-y-auto">
           <Table>
             <TableBody>
               {hours.map((hour) => {
@@ -74,7 +104,7 @@ const TimetablePanel = ({ dailyLogId }: Props) => {
                 const hasContent = !!timetable;
 
                 return (
-                  <TableRow key={hour}>
+                  <TableRow key={hour} className="h-10 [&>td]:py-0 [&>td]:px-2">
                     <TableCell className="border-r w-[1%] whitespace-nowrap">
                       {String(hour).padStart(2, "0")}:00
                     </TableCell>
@@ -99,4 +129,4 @@ const TimetablePanel = ({ dailyLogId }: Props) => {
     </>
   );
 };
-export default TimetablePanel;
+export default DailyTimetablePanel;
