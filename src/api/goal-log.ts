@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import type { CreateGoalLogDto } from "@/types/goal.ts";
 import { getAuthenticatedUser } from "@/api/auth.ts";
 
-export const createGoalLog = async (input: CreateGoalLogDto) => {
+export const createGoalLog = async (input: CreateGoalLogDto): Promise<void> => {
   const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
@@ -20,7 +20,7 @@ export const createGoalLog = async (input: CreateGoalLogDto) => {
   return data;
 };
 
-export const deleteGoalLogById = async (id: string) => {
+export const deleteGoalLogById = async (id: string): Promise<void> => {
   const { error } = await supabase.from("goal_log").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");

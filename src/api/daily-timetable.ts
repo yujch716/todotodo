@@ -26,7 +26,7 @@ export const createDailyTimetable = async (
   startTime: string,
   endTime: string,
   category_id: string | null,
-) => {
+): Promise<void> => {
   const { error } = await supabase.from("daily_timetable").insert({
     daily_log_id: dailyLogId,
     content,

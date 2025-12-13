@@ -138,7 +138,10 @@ export const createDailyLog = async (date: Date): Promise<DailyLogType> => {
   return data;
 };
 
-export const updateDailyLogMemo = async (dailyLogId: string, memo: string) => {
+export const updateDailyLogMemo = async (
+  dailyLogId: string,
+  memo: string,
+): Promise<void> => {
   const { error } = await supabase
     .from("daily_log")
     .update({ memo })

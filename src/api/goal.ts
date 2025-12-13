@@ -144,25 +144,31 @@ export const createGoal = async (input: CreateGoalDto): Promise<Goal> => {
   return data;
 };
 
-export const updateGoal = async (id: string, input: UpdateGoalDto) => {
+export const updateGoal = async (
+  id: string,
+  input: UpdateGoalDto,
+): Promise<void> => {
   const { error } = await supabase.from("goal").update(input).eq("id", id);
 
   if (error) toast.error("수정에 실패했습니다.");
 };
 
-export const updateGoalStatus = async (id: string, status: GoalStatusType) => {
+export const updateGoalStatus = async (
+  id: string,
+  status: GoalStatusType,
+): Promise<void> => {
   const { error } = await supabase.from("goal").update({ status }).eq("id", id);
 
   if (error) toast.error("상태 변경에 실패했습니다.");
 };
 
-export const deleteGoalById = async (id: string) => {
+export const deleteGoalById = async (id: string): Promise<void> => {
   const { error } = await supabase.from("goal").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");
 };
 
-export const deleteGoalByIds = async (ids: string[]) => {
+export const deleteGoalByIds = async (ids: string[]): Promise<void> => {
   const { error } = await supabase.from("goal").delete().in("id", ids);
 
   if (error) toast.error("삭제에 실패했습니다.");

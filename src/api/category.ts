@@ -37,7 +37,7 @@ export const updateCategory = async (
   id: string,
   name: string,
   color: string,
-) => {
+): Promise<void> => {
   const { error } = await supabase
     .from("category")
     .update({ name, color })
@@ -46,7 +46,7 @@ export const updateCategory = async (
   if (error) toast.error("수정에 실패했습니다.");
 };
 
-export const deleteCategory = async (id: string) => {
+export const deleteCategory = async (id: string): Promise<void> => {
   const { error } = await supabase.from("category").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");

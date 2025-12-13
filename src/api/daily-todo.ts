@@ -22,7 +22,10 @@ export const getDailyTodoByDailyLogId = async (dailyLogId: string) => {
   };
 };
 
-export const createDailyTodo = async (dailyLogId: string, content: string) => {
+export const createDailyTodo = async (
+  dailyLogId: string,
+  content: string,
+): Promise<void> => {
   const { data, error } = await supabase
     .from("daily_todo")
     .insert({ daily_log_id: dailyLogId, content, is_checked: false })
@@ -34,7 +37,10 @@ export const createDailyTodo = async (dailyLogId: string, content: string) => {
   return data;
 };
 
-export const updateDailyTodoContent = async (id: string, content: string) => {
+export const updateDailyTodoContent = async (
+  id: string,
+  content: string,
+): Promise<void> => {
   const { error } = await supabase
     .from("daily_todo")
     .update({ content })
@@ -43,7 +49,10 @@ export const updateDailyTodoContent = async (id: string, content: string) => {
   if (error) toast.error("수정에 실패했습니다.");
 };
 
-export const toggleDailyTodo = async (id: string, isChecked: boolean) => {
+export const toggleDailyTodo = async (
+  id: string,
+  isChecked: boolean,
+): Promise<void> => {
   const { error } = await supabase
     .from("daily_todo")
     .update({ is_checked: isChecked })
@@ -52,7 +61,7 @@ export const toggleDailyTodo = async (id: string, isChecked: boolean) => {
   if (error) toast.error("수정에 실패했습니다.");
 };
 
-export const deleteDailyTodo = async (id: string) => {
+export const deleteDailyTodo = async (id: string): Promise<void> => {
   const { error } = await supabase.from("daily_todo").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");

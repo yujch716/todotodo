@@ -8,7 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { User, Tag } from "lucide-react";
+import { Tag } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const SettingSidebar = () => {
@@ -37,17 +37,6 @@ const SettingSidebar = () => {
                 >
                   <Tag className="w-4 h-4" />
                   <span>Category</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => navigate("/setting/user", { replace: true })}
-                  isActive={location.pathname === "/setting/user"}
-                  className="flex items-center hover:bg-sky-100 p-6"
-                >
-                  <User className="w-4 h-4" />
-                  <span>User</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

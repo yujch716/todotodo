@@ -106,7 +106,7 @@ export const updateCalendarEvent = async (
   start_at: Date,
   end_at: Date,
   category_id: string | null,
-) => {
+): Promise<void> => {
   const { error } = await supabase
     .from("calendar_event")
     .update({
@@ -122,7 +122,9 @@ export const updateCalendarEvent = async (
   if (error) toast.error("수정에 실패했습니다.");
 };
 
-export const deleteCalendarEventById = async (calendarEventId: string) => {
+export const deleteCalendarEventById = async (
+  calendarEventId: string,
+): Promise<void> => {
   const { error } = await supabase
     .from("calendar_event")
     .delete()
