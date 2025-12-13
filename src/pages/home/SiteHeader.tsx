@@ -12,6 +12,7 @@ const SiteHeader = () => {
     if (location.pathname.startsWith("/calendar")) return "Calendar";
     if (location.pathname.startsWith("/goal")) return "Goal";
     if (location.pathname.startsWith("/goal-groups")) return "Goal";
+    if (location.pathname.startsWith("/setting")) return "Setting";
     return "Home";
   };
 

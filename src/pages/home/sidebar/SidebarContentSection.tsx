@@ -6,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { Calendar, Flag } from "lucide-react";
+import { Calendar, Flag, Settings } from "lucide-react";
 import CreateDailyLogModal from "@/pages/daily-log/CreateDailyLogModal.tsx";
 import DailyLogCollapsible from "@/pages/home/sidebar/DailyLogCollapsible.tsx";
 import { useNavigate } from "react-router-dom";
@@ -70,6 +70,16 @@ const SidebarContentSection = ({
               >
                 <Flag className="w-4 h-4" />
                 <span>Goal</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                onClick={() => navigate("/setting/category", { replace: true })}
+                className="flex items-center gap-2 hover:bg-sky-200"
+              >
+                <Settings className="w-4 h-4" />
+                <span>Setting</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

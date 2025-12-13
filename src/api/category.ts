@@ -47,10 +47,7 @@ export const updateCategory = async (
 };
 
 export const deleteCategory = async (id: string) => {
-  const { error } = await supabase
-    .from("category")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("category").delete().eq("id", id);
 
   if (error) toast.error("삭제에 실패했습니다.");
 };

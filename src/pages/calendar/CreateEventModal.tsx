@@ -32,8 +32,7 @@ import { toast } from "sonner";
 import { createCalendarEvent } from "@/api/calendar-event";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import type { Category } from "@/types/category.ts";
-import { useCalendarCategoryStore } from "@/store/calendarCategoryStore.ts";
-import {getCategory} from "@/api/category.ts";
+import { getCategory } from "@/api/category.ts";
 
 interface ScheduleModalProps {
   selectedDate: Date;
@@ -64,14 +63,7 @@ const CreateEventModal = ({
     (state) => state.triggerCalendarRefresh,
   );
 
-  const refreshCalendarCategory = useCalendarCategoryStore(
-    (state) => state.refreshCalendarCategory,
-  );
-  const resetCalendarCategoryRefresh = useCalendarCategoryStore(
-    (state) => state.resetCalendarCategoryRefresh,
-  );
-
-  const fetchCategories = useCallback(async () => {
+  const loadCategories = useCallback(async () => {
     const data = await getCategory();
     setCategories(data);
   }, []);
@@ -124,15 +116,8 @@ const CreateEventModal = ({
   }, [selectedDate]);
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
-  useEffect(() => {
-    if (refreshCalendarCategory) {
-      fetchCategories();
-      resetCalendarCategoryRefresh();
-    }
-  }, [refreshCalendarCategory, fetchCategories, resetCalendarCategoryRefresh]);
+    loadCategories();
+  }, [loadCategories]);
 
   return (
     <>
