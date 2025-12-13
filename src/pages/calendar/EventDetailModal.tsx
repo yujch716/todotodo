@@ -35,8 +35,8 @@ import {
   updateCalendarEvent,
 } from "@/api/calendar-event";
 import { useCalendarStore } from "@/store/calendarStore.ts";
-import { getCalendarCategory } from "@/api/calendar-category.ts";
-import type { CalendarCategory } from "@/types/calendar-category.ts";
+import { getCategory } from "@/api/category.ts";
+import type { Category } from "@/types/category.ts";
 
 interface ScheduleModalProps {
   eventId: string;
@@ -51,7 +51,7 @@ const EventDetailModal = ({
 }: ScheduleModalProps) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [categories, setCategories] = useState<CalendarCategory[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [isAllDay, setIsAllDay] = useState(true);
 
@@ -63,7 +63,7 @@ const EventDetailModal = ({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState<CalendarCategory | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
 
   const triggerCalendarRefresh = useCalendarStore(
     (state) => state.triggerCalendarRefresh,
@@ -83,7 +83,7 @@ const EventDetailModal = ({
   };
 
   const fetchCategories = async () => {
-    const data = await getCalendarCategory();
+    const data = await getCategory();
     setCategories(data);
   };
 

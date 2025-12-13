@@ -15,7 +15,7 @@ export const getCalendarEvents = async (
     .select(
       `
     *,
-    category:calendar_category (*)
+    category:category (*)
   `,
     )
     .eq("user_id", user.id)
@@ -35,7 +35,7 @@ export const getCalendarEventById = async (
     .select(
       `
     *,
-    category:calendar_category (*)
+    category:category (*)
   `,
     )
     .eq("id", calendarEventId)
@@ -56,7 +56,7 @@ export const getCalendarEventByDate = async (
     .select(
       `
     *,
-    category:calendar_category (*)
+    category:category (*)
   `,
     )
     .eq("user_id", user.id)

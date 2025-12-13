@@ -2,7 +2,7 @@ import Calendar from "@/pages/calendar/Calendar.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Tag } from "lucide-react";
 import { useState } from "react";
-import CalendarCategoryManager from "@/pages/calendar/CalendarCategoryManager.tsx";
+import CategoryPage from "@/pages/setting/category/CategoryPanel.tsx";
 
 const CalendarPage = () => {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ const CalendarPage = () => {
         <Tag className="w-6 h-6" />
       </Button>
 
-      <CalendarCategoryManager open={open} onOpenChange={setOpen} />
+      <CategoryPage open={open} onOpenChange={setOpen} />
     </>
   );
 };

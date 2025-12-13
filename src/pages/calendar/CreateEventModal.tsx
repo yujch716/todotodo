@@ -31,9 +31,9 @@ import {
 import { toast } from "sonner";
 import { createCalendarEvent } from "@/api/calendar-event";
 import { useCalendarStore } from "@/store/calendarStore.ts";
-import { getCalendarCategory } from "@/api/calendar-category.ts";
-import type { CalendarCategory } from "@/types/calendar-category.ts";
+import type { Category } from "@/types/category.ts";
 import { useCalendarCategoryStore } from "@/store/calendarCategoryStore.ts";
+import {getCategory} from "@/api/category.ts";
 
 interface ScheduleModalProps {
   selectedDate: Date;
@@ -46,7 +46,7 @@ const CreateEventModal = ({
   open,
   onOpenChange,
 }: ScheduleModalProps) => {
-  const [categories, setCategories] = useState<CalendarCategory[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [isAllDay, setIsAllDay] = useState(true);
 
@@ -72,7 +72,7 @@ const CreateEventModal = ({
   );
 
   const fetchCategories = useCallback(async () => {
-    const data = await getCalendarCategory();
+    const data = await getCategory();
     setCategories(data);
   }, []);
 
