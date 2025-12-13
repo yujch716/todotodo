@@ -31,9 +31,8 @@ import {
 import { toast } from "sonner";
 import { createCalendarEvent } from "@/api/calendar-event";
 import { useCalendarStore } from "@/store/calendarStore.ts";
-import { getCalendarCategory } from "@/api/calendar-category.ts";
-import type { CalendarCategory } from "@/types/calendar-category.ts";
-import { useCalendarCategoryStore } from "@/store/calendarCategoryStore.ts";
+import type { Category } from "@/types/category.ts";
+import { getCategory } from "@/api/category.ts";
 
 interface ScheduleModalProps {
   selectedDate: Date;
@@ -46,7 +45,7 @@ const CreateEventModal = ({
   open,
   onOpenChange,
 }: ScheduleModalProps) => {
-  const [categories, setCategories] = useState<CalendarCategory[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [isAllDay, setIsAllDay] = useState(true);
 
@@ -64,15 +63,8 @@ const CreateEventModal = ({
     (state) => state.triggerCalendarRefresh,
   );
 
-  const refreshCalendarCategory = useCalendarCategoryStore(
-    (state) => state.refreshCalendarCategory,
-  );
-  const resetCalendarCategoryRefresh = useCalendarCategoryStore(
-    (state) => state.resetCalendarCategoryRefresh,
-  );
-
-  const fetchCategories = useCallback(async () => {
-    const data = await getCalendarCategory();
+  const loadCategories = useCallback(async () => {
+    const data = await getCategory();
     setCategories(data);
   }, []);
 
@@ -124,15 +116,8 @@ const CreateEventModal = ({
   }, [selectedDate]);
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
-  useEffect(() => {
-    if (refreshCalendarCategory) {
-      fetchCategories();
-      resetCalendarCategoryRefresh();
-    }
-  }, [refreshCalendarCategory, fetchCategories, resetCalendarCategoryRefresh]);
+    loadCategories();
+  }, [loadCategories]);
 
   return (
     <>
@@ -160,7 +145,7 @@ const CreateEventModal = ({
               <Label htmlFor="is-all-day">하루종일</Label>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap">
               <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
 
               {isAllDay ? (
@@ -223,7 +208,7 @@ const CreateEventModal = ({
             </div>
 
             {!isAllDay && (
-              <div className="flex items-center gap-2 flex-nowrap">
+              <div className="flex items-center gap-3 flex-nowrap">
                 <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <Input
                   type="time"
@@ -241,11 +226,11 @@ const CreateEventModal = ({
               </div>
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Tag className="w-4 h-4 text-muted-foreground" />
               <Select value={category ?? undefined} onValueChange={setCategory}>
                 <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="구분 선택" />
+                  <SelectValue placeholder="카테고리 선택" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (

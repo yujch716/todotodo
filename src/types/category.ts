@@ -1,4 +1,4 @@
-export interface CalendarCategory {
+export interface Category {
   id: string;
   name: string;
   color: string;

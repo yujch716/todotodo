@@ -1,4 +1,4 @@
-import type { CalendarCategory } from "@/types/calendar-category.ts";
+import type { Category } from "@/types/category.ts";
 
 export interface CalendarEventType {
   id: string;
@@ -8,5 +8,5 @@ export interface CalendarEventType {
   start_at: Date;
   end_at: Date;
   category_id?: number;
-  category?: CalendarCategory;
+  category?: Category;
 }

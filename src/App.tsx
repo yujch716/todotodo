@@ -10,6 +10,7 @@ import AuthRedirect from "@/pages/auth/AuthRedirect.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import GoalGroupPage from "@/pages/goal/GoalGroupPage.tsx";
 import GoalGroupDetailPage from "@/pages/goal/GoalGroupDetailPage.tsx";
+import CategoryPage from "@/pages/setting/category/CategoryPage.tsx";
 
 function App() {
   return (
@@ -29,10 +30,11 @@ function App() {
             </PrivateRoute>
           }
         >
-          <Route path="/daily" element={<DailyLogPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/daily" element={<DailyLogPage />} />
           <Route path="/goal-groups" element={<GoalGroupPage />} />
           <Route path="/goal-groups/:id" element={<GoalGroupDetailPage />} />
+          <Route path="/setting/category" element={<CategoryPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
