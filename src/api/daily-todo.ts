@@ -25,7 +25,7 @@ export const getDailyTodoByDailyLogId = async (dailyLogId: string) => {
 export const createDailyTodo = async (
   dailyLogId: string,
   content: string,
-): Promise<void> => {
+) => {
   const { data, error } = await supabase
     .from("daily_todo")
     .insert({ daily_log_id: dailyLogId, content, is_checked: false })
