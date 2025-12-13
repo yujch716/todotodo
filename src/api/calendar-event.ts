@@ -14,9 +14,9 @@ export const getCalendarEvents = async (
     .from("calendar_event")
     .select(
       `
-    *,
-    category:category (*)
-  `,
+      *,
+      category:category (*)
+    `,
     )
     .eq("user_id", user.id)
     .gte("start_at", start.toISOString())

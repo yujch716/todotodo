@@ -51,8 +51,14 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
   };
 
   return (
-    <Sidebar side="left" variant="inset" collapsible="icon">
-      <SidebarHeader className="bg-sky-100 flex flex-row items-center gap-2 px-3 py-2">
+    <Sidebar
+      side="left"
+      variant="inset"
+      collapsible="icon"
+      className="relative"
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-50 to-sky-100" />
+      <SidebarHeader className="bg-transparent flex flex-row items-center gap-2 px-3 py-2">
         <SidebarMenu>
           <SidebarMenuItem className="flex flex-row gap-2">
             <SidebarMenuButton className="px-0 bg-transparent hover:bg-transparent cursor-default focus:bg-transparent active:bg-transparent focus-visible:ring-0 focus-visible:outline-none">
@@ -67,7 +73,7 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="bg-sky-100">
+      <SidebarContent className="bg-transparent">
         <SidebarContentSection
           dailyLogState={{ dailyLogs, selectedId, isOpen }}
           onSelect={handleSelect}

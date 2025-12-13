@@ -38,6 +38,7 @@ const CategoryPanel = () => {
   }, []);
 
   const handleCreate = async () => {
+    console.log("handleCreate called");
     if (!name.trim()) return;
     const finalColor = color === "#000000" ? "#fecaca" : color;
 
@@ -83,12 +84,6 @@ const CategoryPanel = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="flex-1"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleCreate();
-                }
-              }}
             />
             <Button onClick={handleCreate} className="h-10">
               <Plus className="w-4 h-4" />

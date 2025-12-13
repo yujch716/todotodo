@@ -14,7 +14,7 @@ const Layout = () => {
 
   return (
     <div className="flex w-screen h-screen max-w-screen overflow-hidden bg-sky-100 relative">
-      <div className="absolute inset-0 bg-sky-100" />
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-50 to-sky-100" />
       <SidebarProvider>
         <div className="flex h-full w-full overflow-hidden">
           <AppSidebar selectedId={selectedId} onSelect={handleSelectDaily} />

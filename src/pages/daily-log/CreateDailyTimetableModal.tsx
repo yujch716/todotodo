@@ -8,16 +8,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.tsx";
-import { SquarePlus } from "lucide-react";
+import { SquarePlus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input.tsx";
 import { toast } from "sonner";
 import { createDailyTimetable } from "@/api/daily-timetable.ts";
 import type { DailyTimetableType } from "@/types/daily-log";
 import TimeSelect from "@/components/TimeSelect";
 import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
+import type { Category } from "@/types/category.ts";
+import { getCategory } from "@/api/category.ts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select.tsx";
 
 interface Props {
   dailyLogId: string;
@@ -26,13 +35,20 @@ interface Props {
 
 const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [startTime, setStartTime] = useState<string>("09:00");
   const [endTime, setEndTime] = useState<string>("10:00");
   const [content, setContent] = useState<string>("");
+  const [category, setCategory] = useState<string | null>(null);
 
   const triggerTimeTableRefresh = useDailyTimetableStore(
     (state) => state.triggerDailyTimetableRefresh,
   );
+
+  const loadCategories = useCallback(async () => {
+    const data = await getCategory();
+    setCategories(data);
+  }, []);
 
   const getDisabledStartTimes = () => {
     const occupiedSlots: string[] = [];
@@ -112,7 +128,13 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
       return;
     }
 
-    await createDailyTimetable(dailyLogId, content, startTime, endTime);
+    await createDailyTimetable(
+      dailyLogId,
+      content,
+      startTime,
+      endTime,
+      category,
+    );
 
     setOpen(false);
     setContent("");
@@ -121,6 +143,10 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
 
     triggerTimeTableRefresh();
   };
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -140,6 +166,19 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
         </DialogHeader>
 
         <div className="grid gap-4">
+          <Input
+            id="content"
+            value={content}
+            placeholder="일정 내용을 입력하세요"
+            onChange={(e) => setContent(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSubmit();
+              }
+            }}
+          />
+
           <div className="flex items-center gap-2">
             <Label htmlFor="start-time" className="w-24">
               시작 시간
@@ -166,22 +205,26 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <Label htmlFor="timeline-content" className="w-24">
-              내용
-            </Label>
-            <Input
-              id="content"
-              value={content}
-              placeholder="일정 내용을 입력하세요"
-              onChange={(e) => setContent(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
-            />
+          <div className="flex items-center gap-3">
+            <Tag className="w-4 h-4 text-muted-foreground" />
+            <Select value={category ?? undefined} onValueChange={setCategory}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="카테고리 선택" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-4 h-4 rounded-full border border-muted"
+                        style={{ backgroundColor: cat.color }}
+                      />
+                      <span>{cat.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

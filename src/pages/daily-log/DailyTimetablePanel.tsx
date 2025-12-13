@@ -16,6 +16,7 @@ import { getDailyTimeTables } from "@/api/daily-timetable.ts";
 import type { DailyTimetableType } from "@/types/daily-log.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
+import { increaseSaturationAndDarken } from "@/lib/color.ts";
 
 interface Props {
   dailyLogId: string;
@@ -34,7 +35,7 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
     (state) => state.resetDailyTimetableRefresh,
   );
 
-  const loadDailyTimeTable = useCallback(async () => {
+  const loadDailyTimeTables = useCallback(async () => {
     const timetables = await getDailyTimeTables(dailyLogId);
     setTimetables(timetables);
   }, [dailyLogId]);
@@ -68,15 +69,15 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   }, [timetables]);
 
   useEffect(() => {
-    loadDailyTimeTable();
-  }, [loadDailyTimeTable]);
+    loadDailyTimeTables();
+  }, [loadDailyTimeTables]);
 
   useEffect(() => {
     if (refreshTimetables) {
-      loadDailyTimeTable();
+      loadDailyTimeTables();
       resetTimetablesRefresh();
     }
-  }, [refreshTimetables, loadDailyTimeTable, resetTimetablesRefresh]);
+  }, [refreshTimetables, loadDailyTimeTables, resetTimetablesRefresh]);
 
   return (
     <>
@@ -109,10 +110,21 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
                       {String(hour).padStart(2, "0")}:00
                     </TableCell>
                     <TableCell
-                      className={
+                      className={hasContent ? "border-l-4" : ""}
+                      style={
                         hasContent
-                          ? "bg-blue-100 border-l-4 border-l-blue-500"
-                          : ""
+                          ? timetable?.category
+                            ? {
+                                backgroundColor: timetable.category.color,
+                                borderLeftColor: increaseSaturationAndDarken(
+                                  timetable.category.color,
+                                ),
+                              }
+                            : {
+                                backgroundColor: "#f1f5f9",
+                                borderLeftColor: "#cbd5e1",
+                              }
+                          : undefined
                       }
                     >
                       {isStart && timetable && (
