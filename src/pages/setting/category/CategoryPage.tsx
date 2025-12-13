@@ -1,4 +1,4 @@
-import SettingSidebar from "@/pages/home/sidebar/SettingSidebar";
+import SettingSidebar from "@/pages/setting/SettingSidebar.tsx";
 import CategoryPanel from "@/pages/setting/category/CategoryPanel.tsx";
 
 const CategoryPage = () => {
