@@ -13,6 +13,11 @@ import { getDailyLogs } from "@/api/daily-log.ts";
 import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
 import SidebarFooterSection from "@/pages/home/sidebar/SidebarFooterSection.tsx";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar.tsx";
 
 interface Props {
   selectedId: string | null;
@@ -61,12 +66,13 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
       <SidebarHeader className="bg-transparent flex flex-row items-center gap-2 px-3 py-2">
         <SidebarMenu>
           <SidebarMenuItem className="flex flex-row gap-2">
-            <SidebarMenuButton className="px-0 bg-transparent hover:bg-transparent cursor-default focus:bg-transparent active:bg-transparent focus-visible:ring-0 focus-visible:outline-none">
-              <img
-                src="/todotodo-logo.png"
-                alt="todotodo logo"
-                className="w-6 h-6"
-              />
+            <SidebarMenuButton className="h-auto px-0 bg-transparent hover:bg-transparent cursor-default focus:bg-transparent active:bg-transparent focus-visible:ring-0 focus-visible:outline-none">
+              <Avatar className="rounded-lg w-10 h-10 bg-white p-1 border border-slate-500">
+                <AvatarImage src="/todotodo-logo.png" alt="todotodo logo" />
+                <AvatarFallback>
+                  <img src="/todotodo-logo.png" alt="todotodo logo" />
+                </AvatarFallback>
+              </Avatar>
               <h1 className="text-base font-medium">todotodo</h1>
             </SidebarMenuButton>
           </SidebarMenuItem>

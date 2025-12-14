@@ -31,7 +31,7 @@ function App() {
           }
         >
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/daily" element={<DailyLogPage />} />
+          <Route path="/daily/:id" element={<DailyLogPage />} />
           <Route path="/goal-groups" element={<GoalGroupPage />} />
           <Route path="/goal-groups/:id" element={<GoalGroupDetailPage />} />
           <Route path="/setting/category" element={<CategoryPage />} />

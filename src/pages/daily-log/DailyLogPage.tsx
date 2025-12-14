@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DailyTodoPanel from "@/pages/daily-log/DailyTodoPanel.tsx";
 import MemoPanel from "@/pages/daily-log/MemoPanel.tsx";
 import { useCallback, useEffect, useState } from "react";
@@ -21,19 +21,20 @@ import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { format } from "date-fns";
 import DailyTimetablePanel from "@/pages/daily-log/DailyTimetablePanel.tsx";
-import { toast } from "sonner";
+import CreateDailyLogModal from "@/pages/daily-log/CreateDailyLogModal.tsx";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams();
-  const dailyLogId = searchParams.get("id");
+  const { id: dailyLogId } = useParams();
 
   const [isSmall, setIsSmall] = useState(false);
   const [logsByDate, setLogsByDate] = useState<Record<string, string>>({});
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [memo, setMemo] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createDate, setCreateDate] = useState<Date | undefined>(undefined);
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
@@ -95,9 +96,10 @@ const DailyLogPage = () => {
       const logId = logsByDate[key];
 
       if (logId) {
-        navigate(`/daily?id=${logId}`);
+        navigate(`/daily/${logId}`);
       } else {
-        toast.error("해당 날짜의 로그가 없습니다.");
+        setCreateDate(selectedDate);
+        setCreateModalOpen(true);
       }
     },
     [logsByDate, toYMD, navigate],
@@ -128,7 +130,12 @@ const DailyLogPage = () => {
 
   return (
     <>
-      <div className="flex flex-col h-full w-full">
+      <div
+        className={`
+          flex flex-col w-full
+          ${isSmall ? "min-h-fit overflow-visible" : "h-full"}
+        `}
+      >
         <header className="flex w-full gap-8 mb-5 items-center">
           <div className="w-1/2">
             <div className="text-sm text-gray-500 mb-1">
@@ -148,11 +155,12 @@ const DailyLogPage = () => {
 
         <div className="flex flex-grow gap-8 min-h-0">
           {isSmall ? (
-            <div className="flex flex-col gap-4 w-full">
+            <div className="flex flex-col gap-4 w-full min-h-fit">
               <Calendar
                 mode="single"
                 selected={date}
                 onSelect={handleDateSelect}
+                autoFocus={false}
                 className="w-full rounded-lg border [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] bg-white shadow-lg border-1"
                 buttonVariant="ghost"
                 modifiers={{
@@ -173,13 +181,16 @@ const DailyLogPage = () => {
                   <TabsTrigger value="todo">To do</TabsTrigger>
                   <TabsTrigger value="memo">Memo</TabsTrigger>
                 </TabsList>
-                <TabsContent value="timetable">
+                <TabsContent value="timetable" className="overflow-visible">
                   <DailyTimetablePanel dailyLogId={dailyLogId} />
                 </TabsContent>
-                <TabsContent value="todo">
+                <TabsContent value="todo" className="overflow-visible">
                   <DailyTodoPanel dailyLogId={dailyLogId} />
                 </TabsContent>
-                <TabsContent value="memo" className="flex-grow">
+                <TabsContent
+                  value="memo"
+                  className="flex-grow overflow-visible"
+                >
                   <MemoPanel
                     dailyLogId={dailyLogId}
                     memo={memo}
@@ -195,6 +206,7 @@ const DailyLogPage = () => {
                   mode="single"
                   selected={date}
                   onSelect={handleDateSelect}
+                  autoFocus={false}
                   className="w-full rounded-lg border [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] bg-white shadow-lg border-1"
                   buttonVariant="ghost"
                   modifiers={{
@@ -240,6 +252,12 @@ const DailyLogPage = () => {
         message="이 데일리 로그를 삭제하시겠습니까?"
         onConfirm={handleConfirmDelete}
         onCancel={() => setIsAlertOpen(false)}
+      />
+
+      <CreateDailyLogModal
+        open={createModalOpen}
+        defaultDate={createDate}
+        onClose={() => setCreateModalOpen(false)}
       />
     </>
   );

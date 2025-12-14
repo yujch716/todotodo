@@ -53,7 +53,11 @@ const CategoryItem = ({ category }: Props) => {
   };
 
   return (
-    <Item variant="outline" role="listitem" className="flex items-center">
+    <Item
+      variant="outline"
+      role="listitem"
+      className="flex items-center hover:bg-gradient-to-br hover:from-white hover:to-slate-100 "
+    >
       {editingId === category.id ? (
         <>
           <ItemMedia>
@@ -75,7 +79,12 @@ const CategoryItem = ({ category }: Props) => {
             </ItemTitle>
           </ItemContent>
           <ItemActions>
-            <Button variant="ghost" size="icon" onClick={handleUpdate}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="border border-transparent hover:border-slate-300"
+              onClick={handleUpdate}
+            >
               <Save className="w-4 h-4" />
             </Button>
           </ItemActions>
@@ -95,6 +104,7 @@ const CategoryItem = ({ category }: Props) => {
             <Button
               variant="ghost"
               size="icon"
+              className="border border-transparent hover:border-slate-300"
               onClick={() => startEditing(category)}
             >
               <Pencil className="w-4 h-4 cursor-pointer" />
@@ -102,6 +112,7 @@ const CategoryItem = ({ category }: Props) => {
             <Button
               variant="ghost"
               size="icon"
+              className="border border-transparent hover:border-slate-300"
               onClick={() => handleDelete(category.id)}
             >
               <X className="w-4 h-4" />

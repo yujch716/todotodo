@@ -243,7 +243,7 @@ const CreateGoalModal = ({ groupId }: Props) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="goal">
+          <TabsContent value="milestone">
             <div className="grid gap-4 mt-2">
               <div className="flex items-center gap-2 relative">
                 <Button

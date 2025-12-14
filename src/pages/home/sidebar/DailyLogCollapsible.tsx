@@ -14,6 +14,7 @@ import type { DailyLogType } from "@/types/daily-log.ts";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
 import { format } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   dailyLogs: DailyLogType[];
@@ -34,6 +35,8 @@ const DailyLogCollapsible = ({
     onSelect(id);
   };
 
+  const location = useLocation();
+
   return (
     <Collapsible
       open={isOpen}
@@ -42,9 +45,12 @@ const DailyLogCollapsible = ({
     >
       <CollapsibleTrigger asChild>
         <SidebarMenuItem>
-          <SidebarMenuButton className="flex items-center gap-2 hover:bg-sky-200">
-            <BookText className="w-4 h-4" />
-            <span>Daily</span>
+          <SidebarMenuButton
+            isActive={location.pathname === "/daily"}
+            className="h-auto min-h-9 p-3 flex items-center gap-3 hover:bg-sky-200 [&_svg]:size-auto data-[active=true]:bg-white data-[active=true]:shadow-md data-[active=true]:border-l-4 data-[active=true]:border-sky-300"
+          >
+            <BookText className="w-12 h-12 shrink-0" />
+            <span className="text-base">Daily</span>
             <span className="ml-auto">
               {isOpen ? (
                 <ChevronDown className="w-4 h-4" />
