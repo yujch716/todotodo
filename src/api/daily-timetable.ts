@@ -37,3 +37,12 @@ export const createDailyTimetable = async (
 
   if (error) toast.error("생성에 실패했습니다.");
 };
+
+export const deleteDailyTimetableById = async (id: string): Promise<void> => {
+  const { error } = await supabase
+    .from("daily_timetable")
+    .delete()
+    .eq("id", id);
+
+  if (error) toast.error("삭제에 실패했습니다.");
+};
