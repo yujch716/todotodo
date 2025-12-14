@@ -59,8 +59,8 @@ const DailyNoticeDailyGoalCard = ({
 
         <div className="flex items-center gap-2 flex-wrap text-sm">
           <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-          {start_date ? format(start_date, "MM.dd") : "시작일"} -{" "}
-          {end_date ? format(end_date, "MM.dd") : "종료일"}
+          {start_date ? format(start_date, "yy.MM.dd") : "시작일"} -{" "}
+          {end_date ? format(end_date, "yy.MM.dd") : "종료일"}
         </div>
       </Card>
     </div>
