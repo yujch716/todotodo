@@ -64,7 +64,7 @@ const CreateDailyLogModal = ({
     setDate(undefined);
     onClose();
 
-    navigate(`/daily?id=${newDailyLog.id}`);
+    navigate(`/daily/${newDailyLog.id}`);
   };
 
   useEffect(() => {
