@@ -9,7 +9,7 @@ const Layout = () => {
   const selectedId = searchParams.get("id");
 
   const handleSelectDaily = (id: string) => {
-    navigate(`/daily?id=${id}`);
+    navigate(`/daily/${id}`);
   };
 
   return (

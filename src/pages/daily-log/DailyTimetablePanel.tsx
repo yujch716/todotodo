@@ -181,7 +181,7 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
                         />
                       )}
 
-                      {/* 🔥 오버레이 (진짜 핵심) */}
+                      {/* 타임테이블 컨텐츠 오버레이 */}
                       {isStart && timetable && (
                         <div className="absolute inset-x-2 -top-2 z-10 flex items-center justify-between pointer-events-none">
                           <span className="text-sm font-medium truncate max-w-[80%] p-4">

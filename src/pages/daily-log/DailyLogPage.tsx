@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DailyTodoPanel from "@/pages/daily-log/DailyTodoPanel.tsx";
 import MemoPanel from "@/pages/daily-log/MemoPanel.tsx";
 import { useCallback, useEffect, useState } from "react";
@@ -26,8 +26,7 @@ import CreateDailyLogModal from "@/pages/daily-log/CreateDailyLogModal.tsx";
 const DailyLogPage = () => {
   const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams();
-  const dailyLogId = searchParams.get("id");
+  const { id: dailyLogId } = useParams();
 
   const [isSmall, setIsSmall] = useState(false);
   const [logsByDate, setLogsByDate] = useState<Record<string, string>>({});
@@ -97,12 +96,10 @@ const DailyLogPage = () => {
       const logId = logsByDate[key];
 
       if (logId) {
-        navigate(`/daily?id=${logId}`);
+        navigate(`/daily/${logId}`);
       } else {
         setCreateDate(selectedDate);
-        setTimeout(() => {
-          setCreateModalOpen(true);
-        }, 0);
+        setCreateModalOpen(true);
       }
     },
     [logsByDate, toYMD, navigate],
