@@ -128,7 +128,12 @@ const DailyLogPage = () => {
 
   return (
     <>
-      <div className="flex flex-col h-full w-full">
+      <div
+        className={`
+          flex flex-col w-full
+          ${isSmall ? "min-h-fit overflow-visible" : "h-full"}
+        `}
+      >
         <header className="flex w-full gap-8 mb-5 items-center">
           <div className="w-1/2">
             <div className="text-sm text-gray-500 mb-1">
@@ -148,7 +153,7 @@ const DailyLogPage = () => {
 
         <div className="flex flex-grow gap-8 min-h-0">
           {isSmall ? (
-            <div className="flex flex-col gap-4 w-full">
+            <div className="flex flex-col gap-4 w-full min-h-fit">
               <Calendar
                 mode="single"
                 selected={date}
@@ -173,13 +178,13 @@ const DailyLogPage = () => {
                   <TabsTrigger value="todo">To do</TabsTrigger>
                   <TabsTrigger value="memo">Memo</TabsTrigger>
                 </TabsList>
-                <TabsContent value="timetable">
+                <TabsContent value="timetable" className="overflow-visible">
                   <DailyTimetablePanel dailyLogId={dailyLogId} />
                 </TabsContent>
-                <TabsContent value="todo">
+                <TabsContent value="todo" className="overflow-visible">
                   <DailyTodoPanel dailyLogId={dailyLogId} />
                 </TabsContent>
-                <TabsContent value="memo" className="flex-grow">
+                <TabsContent value="memo" className="flex-grow overflow-visible">
                   <MemoPanel
                     dailyLogId={dailyLogId}
                     memo={memo}
