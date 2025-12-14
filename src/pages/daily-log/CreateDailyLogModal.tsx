@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -19,15 +18,24 @@ import {
 } from "@/components/ui/popover.tsx";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils.ts";
-import { CalendarIcon, Plus } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { createDailyLog, getDailyLogByDate } from "@/api/daily-log.ts";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const CreateDailyLogModal = () => {
-  const [open, setOpen] = useState(false);
+interface CreateDailyLogModalProps {
+  open: boolean;
+  defaultDate?: Date;
+  onClose: () => void;
+}
+
+const CreateDailyLogModal = ({
+  open,
+  defaultDate,
+  onClose,
+}: CreateDailyLogModalProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const navigate = useNavigate();
@@ -54,19 +62,17 @@ const CreateDailyLogModal = () => {
     triggerCalendarRefresh();
 
     setDate(undefined);
-    setOpen(false);
+    onClose();
 
     navigate(`/daily?id=${newDailyLog.id}`);
   };
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <div className="flex items-center justify-center px-3 py-1.5 rounded-md border bg-sky-600 text-white hover:bg-sky-500">
-          <Plus />
-        </div>
-      </DialogTrigger>
+  useEffect(() => {
+    setDate(defaultDate);
+  }, [defaultDate]);
 
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
           <DialogTitle>Daily 만들기</DialogTitle>
