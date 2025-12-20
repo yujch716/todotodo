@@ -124,6 +124,7 @@ const Calendar = () => {
       <Card>
         <CardHeader className="flex flex-row justify-between items-center">
           <Button
+            variant="outline"
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
             className="p-2 hover:bg-slate-100 rounded"
           >
@@ -131,6 +132,7 @@ const Calendar = () => {
           </Button>
           <CardTitle>{format(currentMonth, "MMMM yyyy")}</CardTitle>
           <Button
+            variant="outline"
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             className="p-2 hover:bg-slate-100 rounded"
           >
@@ -165,10 +167,10 @@ const Calendar = () => {
             }}
             components={{
               DayButton: (props) => {
-                const { day, ...ButtonProps } = props;
+                const { day, ...buttonProps } = props;
                 const date = day.date;
 
-                if (!date) return <Button {...ButtonProps} />;
+                if (!date) return <Button {...buttonProps} />;
 
                 const dailyLog = getDailyLogForDate(date);
                 const dayEvents = getEventForDate(date);
@@ -178,7 +180,7 @@ const Calendar = () => {
 
                 return (
                   <button
-                    {...ButtonProps}
+                    {...buttonProps}
                     className={cn(
                       "h-full w-full p-2 flex flex-col group cursor-pointer hover:bg-slate-50",
                       isToday && "bg-slate-100",
