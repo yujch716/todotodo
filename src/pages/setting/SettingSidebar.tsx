@@ -20,9 +20,9 @@ const SettingSidebar = () => {
   return (
     <Sidebar
       side="left"
-      variant="floating"
+      variant="sidebar"
       collapsible="icon"
-      className="relative"
+      className="relative min-h-0"
     >
       <SidebarHeader className="px-0 mt-2">
         <SidebarGroupLabel className="gap-2">
