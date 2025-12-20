@@ -14,7 +14,7 @@ const Layout = () => {
             <header className="flex-shrink-0">
               <SiteHeader />
             </header>
-            <main className="flex flex-col flex-1 w-full overflow-auto">
+            <main className="flex flex-col flex-1 w-full min-h-0">
               <Outlet />
             </main>
           </SidebarInset>
