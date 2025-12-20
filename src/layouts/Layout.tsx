@@ -1,23 +1,15 @@
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/pages/home/sidebar/AppSidebar.tsx";
 import SiteHeader from "@/pages/home/SiteHeader.tsx";
 
 const Layout = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const selectedId = searchParams.get("id");
-
-  const handleSelectDaily = (id: string) => {
-    navigate(`/daily/${id}`);
-  };
-
   return (
     <div className="flex w-screen h-screen max-w-screen overflow-hidden bg-sky-100 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-sky-50 to-sky-100" />
       <SidebarProvider>
         <div className="flex h-full w-full overflow-hidden">
-          <AppSidebar selectedId={selectedId} onSelect={handleSelectDaily} />
+          <AppSidebar/>
           <SidebarInset className="flex flex-col h-full flex-1 overflow-hidden border-l-2 border-sky-100 bg-gradient-to-br from-slate-50 to-sky-50">
             <header className="flex-shrink-0">
               <SiteHeader />
