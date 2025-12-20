@@ -21,6 +21,7 @@ import { Calendar } from "@/components/ui/calendar.tsx";
 import { format } from "date-fns";
 import DailyTimetablePanel from "@/pages/daily-log/DailyTimetablePanel.tsx";
 import DailyEmptyPage from "@/pages/daily-log/DailyEmptyPage.tsx";
+import { cn } from "@/lib/utils.ts";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
@@ -125,10 +126,10 @@ const DailyLogPage = () => {
   return (
     <>
       <div
-        className={`
-          flex flex-col w-full
-          ${isSmall ? "min-h-full" : "h-full"}
-        `}
+        className={cn(
+          "flex flex-col w-full",
+          isSmall ? "min-h-full" : "h-full",
+        )}
       >
         <header className="flex w-full gap-8 mb-5 items-center">
           <div className="w-1/2">
