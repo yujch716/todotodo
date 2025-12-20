@@ -9,7 +9,6 @@ import {
 } from "@/api/daily-log.ts";
 import { Trash2 } from "lucide-react";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
-import EmptyDailyLog from "@/pages/daily-log/EmptyDailyLog.tsx";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 import {
   Tabs,
@@ -21,7 +20,7 @@ import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { format } from "date-fns";
 import DailyTimetablePanel from "@/pages/daily-log/DailyTimetablePanel.tsx";
-import CreateDailyLogModal from "@/pages/daily-log/CreateDailyLogModal.tsx";
+import DailyEmptyPage from "@/pages/daily-log/DailyEmptyPage.tsx";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
@@ -33,8 +32,7 @@ const DailyLogPage = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [memo, setMemo] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [createDate, setCreateDate] = useState<Date | undefined>(undefined);
+  const isValidLog = dailyLogId && dailyLogId !== "undefined" && date;
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
@@ -46,7 +44,7 @@ const DailyLogPage = () => {
   }, []);
 
   const loadDailyLog = useCallback(async () => {
-    if (!dailyLogId) return;
+    if (!dailyLogId || dailyLogId === "undefined") return;
 
     const dailyLog = await getDailyLogById(dailyLogId);
 
@@ -56,7 +54,6 @@ const DailyLogPage = () => {
 
   const loadDailyLogs = useCallback(async () => {
     if (!date) return;
-
     const start = new Date(date.getFullYear(), date.getMonth(), 1);
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -98,8 +95,7 @@ const DailyLogPage = () => {
       if (logId) {
         navigate(`/daily/${logId}`);
       } else {
-        setCreateDate(selectedDate);
-        setCreateModalOpen(true);
+        navigate(`/daily/undefined`);
       }
     },
     [logsByDate, toYMD, navigate],
@@ -126,8 +122,6 @@ const DailyLogPage = () => {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  if (!dailyLogId) return <EmptyDailyLog />;
-
   return (
     <>
       <div
@@ -148,7 +142,7 @@ const DailyLogPage = () => {
               className="ml-auto cursor-pointer hover:text-red-600"
               onClick={handleDelete}
             >
-              <Trash2 />
+              {isValidLog && <Trash2 />}
             </div>
           </div>
         </header>
@@ -175,29 +169,36 @@ const DailyLogPage = () => {
                 }}
               />
 
-              <Tabs defaultValue="todo" className="flex flex-col w-full h-full">
-                <TabsList className="flex w-fit">
-                  <TabsTrigger value="timetable">Timetable</TabsTrigger>
-                  <TabsTrigger value="todo">To do</TabsTrigger>
-                  <TabsTrigger value="memo">Memo</TabsTrigger>
-                </TabsList>
-                <TabsContent value="timetable" className="overflow-visible">
-                  <DailyTimetablePanel dailyLogId={dailyLogId} />
-                </TabsContent>
-                <TabsContent value="todo" className="overflow-visible">
-                  <DailyTodoPanel dailyLogId={dailyLogId} />
-                </TabsContent>
-                <TabsContent
-                  value="memo"
-                  className="flex-grow overflow-visible"
+              {isValidLog ? (
+                <Tabs
+                  defaultValue="todo"
+                  className="flex flex-col w-full h-full"
                 >
-                  <MemoPanel
-                    dailyLogId={dailyLogId}
-                    memo={memo}
-                    setMemo={setMemo}
-                  />
-                </TabsContent>
-              </Tabs>
+                  <TabsList className="flex w-fit">
+                    <TabsTrigger value="timetable">Timetable</TabsTrigger>
+                    <TabsTrigger value="todo">To do</TabsTrigger>
+                    <TabsTrigger value="memo">Memo</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="timetable" className="overflow-visible">
+                    <DailyTimetablePanel dailyLogId={dailyLogId} />
+                  </TabsContent>
+                  <TabsContent value="todo" className="overflow-visible">
+                    <DailyTodoPanel dailyLogId={dailyLogId} />
+                  </TabsContent>
+                  <TabsContent
+                    value="memo"
+                    className="flex-grow overflow-visible"
+                  >
+                    <MemoPanel
+                      dailyLogId={dailyLogId}
+                      memo={memo}
+                      setMemo={setMemo}
+                    />
+                  </TabsContent>
+                </Tabs>
+              ) : (
+                <DailyEmptyPage date={date} />
+              )}
             </div>
           ) : (
             <>
@@ -226,22 +227,30 @@ const DailyLogPage = () => {
                   </div>
                 )}
               </div>
-              <div className="w-2/5 h-full flex flex-col min-h-0">
-                <DailyTimetablePanel dailyLogId={dailyLogId} />
-              </div>
-              <div className="w-2/5 h-full flex flex-col gap-8">
-                <div className="flex-[3]">
-                  <DailyTodoPanel dailyLogId={dailyLogId} />
-                </div>
+              {isValidLog ? (
+                <>
+                  <div className="w-2/5 h-full flex flex-col min-h-0">
+                    <DailyTimetablePanel dailyLogId={dailyLogId} />
+                  </div>
+                  <div className="w-2/5 h-full flex flex-col gap-8">
+                    <div className="flex-[3]">
+                      <DailyTodoPanel dailyLogId={dailyLogId} />
+                    </div>
 
-                <div className="flex-[2]">
-                  <MemoPanel
-                    dailyLogId={dailyLogId}
-                    memo={memo}
-                    setMemo={setMemo}
-                  />
+                    <div className="flex-[2]">
+                      <MemoPanel
+                        dailyLogId={dailyLogId}
+                        memo={memo}
+                        setMemo={setMemo}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="w-4/5 h-full flex flex-col">
+                  <DailyEmptyPage date={date} />
                 </div>
-              </div>
+              )}
             </>
           )}
         </div>
@@ -252,12 +261,6 @@ const DailyLogPage = () => {
         message="이 데일리 로그를 삭제하시겠습니까?"
         onConfirm={handleConfirmDelete}
         onCancel={() => setIsAlertOpen(false)}
-      />
-
-      <CreateDailyLogModal
-        open={createModalOpen}
-        defaultDate={createDate}
-        onClose={() => setCreateModalOpen(false)}
       />
     </>
   );

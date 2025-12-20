@@ -24,18 +24,13 @@ import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 interface CreateDailyLogModalProps {
-  open: boolean;
   defaultDate?: Date;
-  onClose: () => void;
 }
 
-const CreateDailyLogModal = ({
-  open,
-  defaultDate,
-  onClose,
-}: CreateDailyLogModalProps) => {
+const CreateDailyLogModal = ({ defaultDate }: CreateDailyLogModalProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const navigate = useNavigate();
@@ -62,7 +57,6 @@ const CreateDailyLogModal = ({
     triggerCalendarRefresh();
 
     setDate(undefined);
-    onClose();
 
     navigate(`/daily/${newDailyLog.id}`);
   };
@@ -72,7 +66,12 @@ const CreateDailyLogModal = ({
   }, [defaultDate]);
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="bg-sky-100 border border-sky-300 text-black hover:bg-sky-200">
+          기록하기
+        </Button>
+      </DialogTrigger>
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
           <DialogTitle>Daily 만들기</DialogTitle>
