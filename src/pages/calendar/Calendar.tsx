@@ -126,7 +126,6 @@ const Calendar = () => {
           <Button
             variant="outline"
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className="p-2 hover:bg-slate-100 rounded"
           >
             <ChevronLeft className="w-5 h-5" />
           </Button>
@@ -134,7 +133,6 @@ const Calendar = () => {
           <Button
             variant="outline"
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className="p-2 hover:bg-slate-100 rounded"
           >
             <ChevronRight className="w-5 h-5" />
           </Button>
@@ -167,10 +165,12 @@ const Calendar = () => {
             }}
             components={{
               DayButton: (props) => {
-                const { day, ...buttonProps } = props;
+                const { day } = props;
                 const date = day.date;
 
-                if (!date) return <Button {...buttonProps} />;
+                if (!date) {
+                  return <div aria-hidden />;
+                }
 
                 const dailyLog = getDailyLogForDate(date);
                 const dayEvents = getEventForDate(date);
@@ -179,15 +179,15 @@ const Calendar = () => {
                 const isOutside = !isSameMonth(date, currentMonth);
 
                 return (
-                  <button
-                    {...buttonProps}
+                  <div
+                    tabIndex={0}
                     className={cn(
-                      "h-full w-full p-2 flex flex-col group cursor-pointer hover:bg-slate-50",
+                      "h-full w-full p-2 flex flex-col group hover:bg-slate-50",
                       isToday && "bg-slate-100",
                       isOutside && "text-gray-400",
                     )}
                   >
-                    <div className="flex justify-between items-center w-full">
+                    <div className="flex justify-between items-center w-full mb-1">
                       <div className="flex items-center gap-2">
                         <span
                           className={cn(
@@ -211,20 +211,22 @@ const Calendar = () => {
                         </div>
                       </div>
 
-                      <div
-                        className="invisible group-hover:visible w-6 h-6 flex items-center justify-center border rounded cursor-pointer hover:bg-slate-100"
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="invisible group-hover:visible w-6 h-6 flex items-center justify-center"
                         onClick={(e) => {
                           e.stopPropagation();
                           onDayClick(date);
                         }}
                       >
                         <CalendarPlus className="w-3 h-3" />
-                      </div>
+                      </Button>
                     </div>
                     <div className="flex-grow overflow-hidden">
                       <CalendarDayCell events={dayEvents} dailyLog={dailyLog} />
                     </div>
-                  </button>
+                  </div>
                 );
               },
             }}
