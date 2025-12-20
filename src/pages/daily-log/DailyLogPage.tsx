@@ -175,15 +175,19 @@ const DailyLogPage = () => {
                   className="flex flex-col w-full h-full"
                 >
                   <TabsList className="flex w-fit">
-                    <TabsTrigger value="timetable">Timetable</TabsTrigger>
+                    <TabsTrigger value="notice">Notice</TabsTrigger>
                     <TabsTrigger value="todo">To do</TabsTrigger>
+                    <TabsTrigger value="timetable">Timetable</TabsTrigger>
                     <TabsTrigger value="memo">Memo</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="timetable" className="overflow-visible">
-                    <DailyTimetablePanel dailyLogId={dailyLogId} />
+                  <TabsContent value="notice" className="overflow-visible">
+                    <DailyNoticePanel dailyLogDate={date} />
                   </TabsContent>
                   <TabsContent value="todo" className="overflow-visible">
                     <DailyTodoPanel dailyLogId={dailyLogId} />
+                  </TabsContent>
+                  <TabsContent value="timetable" className="overflow-visible">
+                    <DailyTimetablePanel dailyLogId={dailyLogId} />
                   </TabsContent>
                   <TabsContent
                     value="memo"
@@ -232,12 +236,12 @@ const DailyLogPage = () => {
                   <div className="w-2/5 h-full flex flex-col min-h-0">
                     <DailyTimetablePanel dailyLogId={dailyLogId} />
                   </div>
-                  <div className="w-2/5 h-full flex flex-col gap-8">
-                    <div className="flex-[3]">
+                  <div className="w-2/5 h-full flex flex-col min-h-0 gap-8">
+                    <div className="flex-[3] min-h-0 flex flex-col">
                       <DailyTodoPanel dailyLogId={dailyLogId} />
                     </div>
 
-                    <div className="flex-[2]">
+                    <div className="flex-[2] min-h-0 flex flex-col">
                       <MemoPanel
                         dailyLogId={dailyLogId}
                         memo={memo}
