@@ -29,8 +29,11 @@ import CalendarDayCell from "@/pages/calendar/CalendarDayCell.tsx";
 import { getDailyGoalByRangeDate } from "@/api/goal.ts";
 import type { Goal } from "@/types/goal.ts";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile.tsx";
 
 const Calendar = () => {
+  const isMobile = useIsMobile();
+
   const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
   const [events, setEvents] = useState<CalendarEventType[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -140,7 +143,7 @@ const Calendar = () => {
           </Button>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className={isMobile ? "px-0" : ""}>
           <DayPicker
             mode="single"
             month={currentMonth}
@@ -158,7 +161,7 @@ const Calendar = () => {
               weekday:
                 "font-medium text-center text-sm bg-slate-200 py-2 font-bold w-[14.285%]",
               week: "w-full",
-              day: "h-[80px] md:h-[100px] lg:h-[130px] text-sm p-0 relative border-2 border-slate-200 w-[14.285%]",
+              day: "h-[100px] md:h-[130px] lg:h-[130px] text-sm p-0 relative border-2 border-slate-200 w-[14.285%]",
               day_button: "h-full w-full p-2 font-normal",
               outside: "text-gray-400",
             }}
@@ -201,16 +204,18 @@ const Calendar = () => {
                           {date.getDate()}
                         </span>
 
-                        <div className="flex flex-row gap-1">
-                          {dayGoals.map((goal: Goal) => (
-                            <div
-                              key={goal.id}
-                              className="w-5 h-5 flex items-center justify-center rounded-full bg-sky-50 border border-sky-200 text-xs shadow-md"
-                            >
-                              {goal.emoji}
-                            </div>
-                          ))}
-                        </div>
+                        {!isMobile && (
+                          <div className="flex flex-row gap-1">
+                            {dayGoals.map((goal: Goal) => (
+                              <div
+                                key={goal.id}
+                                className="w-5 h-5 flex items-center justify-center rounded-full bg-sky-50 border border-sky-200 text-xs shadow-md"
+                              >
+                                {goal.emoji}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
 
                       <Button
