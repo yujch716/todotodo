@@ -7,7 +7,7 @@ const HomePage = () => {
     <div className="flex h-screen">
       <SidebarProvider>
         <SidebarTrigger />
-        <AppSidebar/>
+        <AppSidebar />
         <main className="flex-1">
           <DailyLogPage />
         </main>

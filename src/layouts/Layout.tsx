@@ -9,7 +9,7 @@ const Layout = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-sky-50 to-sky-100" />
       <SidebarProvider>
         <div className="flex h-full w-full overflow-hidden">
-          <AppSidebar/>
+          <AppSidebar />
           <SidebarInset className="flex flex-col h-full flex-1 overflow-hidden border-l-2 border-sky-100 bg-gradient-to-br from-slate-50 to-sky-50">
             <header className="flex-shrink-0">
               <SiteHeader />
