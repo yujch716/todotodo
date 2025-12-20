@@ -7,7 +7,7 @@ import {
   GoalStatus,
 } from "@/types/goal.ts";
 import GoalStatusPanel from "@/pages/goal/GoalStatusPanel.tsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getGoalsByStatus, updateGoalStatus } from "@/api/goal.ts";
 import { useParams } from "react-router-dom";
 import { useGoalStore } from "@/store/goalStore.ts";
@@ -49,36 +49,23 @@ const GoalGroupDetailPage = () => {
     }),
   );
 
-  if (!id) {
-    return <div>잘못된 접근입니다.</div>;
-  }
-
-  const loadGoalGroup = async () => {
+  const loadGoalGroup = useCallback(async () => {
+    if (!id) return;
     const goalGroup = await getGoalGroupById(id);
     setGoalGroup(goalGroup);
-  };
-
-  const loadGoals = async () => {
-    const notStartedGoals = await getGoalsByStatus(id, GoalStatus.notStarted);
-    const inProgressGoals = await getGoalsByStatus(id, GoalStatus.inProgress);
-    const completedGoals = await getGoalsByStatus(id, GoalStatus.completed);
-
-    setNotStartedGoals(notStartedGoals);
-    setInProgressGoals(inProgressGoals);
-    setCompletedGoals(completedGoals);
-  };
-
-  useEffect(() => {
-    loadGoalGroup();
-    loadGoals();
   }, [id]);
 
-  useEffect(() => {
-    if (refreshGoal) {
-      loadGoals();
-      resetGoalRefresh();
-    }
-  }, [refreshGoal, resetGoalRefresh]);
+  const loadGoals = useCallback(async () => {
+    if (!id) return;
+
+    const notStarted = await getGoalsByStatus(id, GoalStatus.notStarted);
+    const inProgress = await getGoalsByStatus(id, GoalStatus.inProgress);
+    const completed = await getGoalsByStatus(id, GoalStatus.completed);
+
+    setNotStartedGoals(notStarted);
+    setInProgressGoals(inProgress);
+    setCompletedGoals(completed);
+  }, [id]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -122,8 +109,24 @@ const GoalGroupDetailPage = () => {
     }
   };
 
+  useEffect(() => {
+    loadGoalGroup();
+    loadGoals();
+  }, [loadGoalGroup, loadGoals]);
+
+  useEffect(() => {
+    if (!refreshGoal) return;
+
+    loadGoals();
+    resetGoalRefresh();
+  }, [refreshGoal, loadGoals, resetGoalRefresh]);
+
   if (!goalGroup) {
     return <div>로딩 중...</div>;
+  }
+
+  if (!id) {
+    return <div>잘못된 접근입니다.</div>;
   }
 
   return (
