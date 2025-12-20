@@ -4,12 +4,14 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { Tag } from "lucide-react";
+import { ArrowLeftIcon, Tag } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button.tsx";
 
 const SettingSidebar = () => {
   const navigate = useNavigate();
@@ -19,12 +21,25 @@ const SettingSidebar = () => {
     <Sidebar
       side="left"
       variant="floating"
-      collapsible="none"
-      className="border-r p-2"
+      collapsible="icon"
+      className="relative"
     >
+      <SidebarHeader className="px-0 mt-2">
+        <SidebarGroupLabel className="gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Go Back"
+            onClick={() => navigate("/", { replace: true })}
+          >
+            <ArrowLeftIcon />
+          </Button>
+          Options
+        </SidebarGroupLabel>
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup className="px-0">
-          <SidebarGroupLabel>Options</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>

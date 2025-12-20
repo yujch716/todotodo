@@ -25,34 +25,32 @@ const DailyNoticeMilestoneGoalCard = ({ goal }: DailyNoticeGoalGoalProps) => {
   // };
 
   return (
-      <Card
-        key={id}
-        className="p-3 w-full cursor-pointer min-w-0 shadow-sm hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
-        // onClick={() => {
-        //   handelMoveGoal();
-        // }}
-      >
-        <div className="flex flex-row items-center gap-2 pb-2">
-          <span className="flex-shrink-0">{emoji}</span>
-          <h1
-            className="text-base font-bold leading-tight truncate min-w-0 flex-1"
-          >
-            {title}
-          </h1>
-        </div>
+    <Card
+      key={id}
+      className="p-3 w-full cursor-pointer min-w-0 shadow-sm hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
+      // onClick={() => {
+      //   handelMoveGoal();
+      // }}
+    >
+      <div className="flex flex-row items-center gap-2 pb-2">
+        <span className="flex-shrink-0">{emoji}</span>
+        <h1 className="text-base font-bold leading-tight truncate min-w-0 flex-1">
+          {title}
+        </h1>
+      </div>
 
-        <div className="flex items-center gap-2 min-w-0 w-full">
-          <Progress value={progressValue} className="border-2 flex-1 min-w-0" />
-          <Label className="inline-flex items-center gap-1">
-            <Flag
-              className={`w-4 h-4 ${isCompleted ? "text-sky-300" : "text-transparent"}`}
-              stroke="black"
-              fill={isCompleted ? "currentColor" : "none"}
-            />
-            {targetValue}
-          </Label>
-        </div>
-      </Card>
+      <div className="flex items-center gap-2 min-w-0 w-full">
+        <Progress value={progressValue} className="border-2 flex-1 min-w-0" />
+        <Label className="inline-flex items-center gap-1">
+          <Flag
+            className={`w-4 h-4 ${isCompleted ? "text-sky-300" : "text-transparent"}`}
+            stroke="black"
+            fill={isCompleted ? "currentColor" : "none"}
+          />
+          {targetValue}
+        </Label>
+      </div>
+    </Card>
   );
 };
 export default DailyNoticeMilestoneGoalCard;

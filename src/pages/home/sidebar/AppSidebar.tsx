@@ -7,9 +7,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { DailyLogType } from "@/types/daily-log.ts";
-import { getDailyLogs } from "@/api/daily-log.ts";
+import { getDailyLogByDate } from "@/api/daily-log.ts";
 import SidebarContentSection from "@/pages/home/sidebar/SidebarContentSection.tsx";
 import SidebarFooterSection from "@/pages/home/sidebar/SidebarFooterSection.tsx";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
@@ -19,14 +19,8 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 
-interface Props {
-  selectedId: string | null;
-  onSelect: (string: string) => void;
-}
-
-const AppSidebar = ({ selectedId, onSelect }: Props) => {
-  const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
+const AppSidebar = () => {
+  const [dailyLog, setDailyLog] = useState<DailyLogType | null>(null);
 
   const refreshSidebar = useDailyLogSidebarStore(
     (state) => state.refreshSidebar,
@@ -35,25 +29,23 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
     (state) => state.resetSidebarRefresh,
   );
 
-  const loadDailyLogs = async () => {
-    const data = await getDailyLogs();
-    setDailyLogs(data);
-  };
+  const loadDailyLog = useCallback(async () => {
+    const date = new Date();
 
-  useEffect(() => {
-    loadDailyLogs();
+    const daily = await getDailyLogByDate(date);
+    setDailyLog(daily);
   }, []);
 
   useEffect(() => {
+    loadDailyLog();
+  }, [loadDailyLog]);
+
+  useEffect(() => {
     if (refreshSidebar) {
-      loadDailyLogs();
+      loadDailyLog();
       resetSidebarRefresh();
     }
-  }, [refreshSidebar, resetSidebarRefresh]);
-
-  const handleSelect = (id: string) => {
-    onSelect(id);
-  };
+  }, [loadDailyLog, refreshSidebar, resetSidebarRefresh]);
 
   return (
     <Sidebar
@@ -80,11 +72,7 @@ const AppSidebar = ({ selectedId, onSelect }: Props) => {
       </SidebarHeader>
 
       <SidebarContent className="bg-transparent">
-        <SidebarContentSection
-          dailyLogState={{ dailyLogs, selectedId, isOpen }}
-          onSelect={handleSelect}
-          onOpenChange={setIsOpen}
-        />
+        <SidebarContentSection dailyLog={dailyLog} />
       </SidebarContent>
 
       <SidebarFooter className="bg-sky-100">

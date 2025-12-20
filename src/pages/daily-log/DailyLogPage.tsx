@@ -32,7 +32,7 @@ const DailyLogPage = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [memo, setMemo] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const isValidLog = dailyLogId && dailyLogId !== "undefined" && date;
+  const isValidLog = dailyLogId && dailyLogId !== "new" && date;
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
@@ -44,7 +44,7 @@ const DailyLogPage = () => {
   }, []);
 
   const loadDailyLog = useCallback(async () => {
-    if (!dailyLogId || dailyLogId === "undefined") return;
+    if (!dailyLogId || dailyLogId === "new") return;
 
     const dailyLog = await getDailyLogById(dailyLogId);
 
@@ -95,7 +95,7 @@ const DailyLogPage = () => {
       if (logId) {
         navigate(`/daily/${logId}`);
       } else {
-        navigate(`/daily/undefined`);
+        navigate(`/daily/new`);
       }
     },
     [logsByDate, toYMD, navigate],
@@ -155,7 +155,7 @@ const DailyLogPage = () => {
                 selected={date}
                 onSelect={handleDateSelect}
                 autoFocus={false}
-                className="w-full rounded-lg border bg-white shadow-lg border-1"
+                className="w-full rounded-lg border bg-white shadow-lg border-1 [&_table]:min-h-[300px]"
                 buttonVariant="ghost"
                 modifiers={{
                   hasLog: (day) => {
