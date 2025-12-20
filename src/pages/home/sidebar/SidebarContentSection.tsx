@@ -6,29 +6,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { Calendar, Flag, Settings } from "lucide-react";
-import DailyLogCollapsible from "@/pages/home/sidebar/DailyLogCollapsible.tsx";
+import { Calendar, BookText, Flag, Settings } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { DailyLogType } from "@/types/daily-log.ts";
 
-interface DailyLogState {
-  dailyLogs: DailyLogType[];
-  selectedId: string | null;
-  isOpen: boolean;
-}
-
 interface Props {
-  dailyLogState: DailyLogState;
-  onSelect: (id: string) => void;
-  onOpenChange: (open: boolean) => void;
+  dailyLog: DailyLogType | null;
 }
 
-const SidebarContentSection = ({
-  dailyLogState,
-  onSelect,
-  onOpenChange,
-}: Props) => {
-  const { dailyLogs, selectedId, isOpen } = dailyLogState;
+const SidebarContentSection = ({ dailyLog }: Props) => {
+  const dailyPath = dailyLog ? `${dailyLog.id}` : "undefined";
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,17 +36,22 @@ const SidebarContentSection = ({
               </SidebarMenuButton>
             </SidebarMenuItem>
 
-            <DailyLogCollapsible
-              dailyLogs={dailyLogs}
-              selectedId={selectedId}
-              onSelect={onSelect}
-              isOpen={isOpen}
-              onOpenChange={onOpenChange}
-            />
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={location.pathname.startsWith("/daily")}
+                onClick={() =>
+                  navigate(`/daily/${dailyPath}`, { replace: true })
+                }
+                className="h-auto min-h-9 p-3 flex items-center gap-3 hover:bg-sky-200 [&_svg]:size-auto data-[active=true]:bg-white data-[active=true]:shadow-md data-[active=true]:border-l-4 data-[active=true]:border-sky-300"
+              >
+                <BookText className="w-12 h-12 shrink-0" />
+                <span className="text-base">Daily</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
 
             <SidebarMenuItem>
               <SidebarMenuButton
-                isActive={location.pathname === "/goal-groups"}
+                isActive={location.pathname.startsWith("/goal-groups")}
                 onClick={() => navigate("/goal-groups", { replace: true })}
                 className="h-auto min-h-9 p-3 flex items-center gap-3 hover:bg-sky-200 [&_svg]:size-auto data-[active=true]:bg-white data-[active=true]:shadow-md data-[active=true]:border-l-4 data-[active=true]:border-sky-300"
               >

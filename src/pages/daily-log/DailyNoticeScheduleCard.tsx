@@ -30,9 +30,7 @@ const DailyNoticeScheduleCard = ({
         onClick={() => openModal(id)}
       >
         <div className="flex flex-row items-center justify-between pb-2">
-          <h1
-            className="text-base font-bold leading-tight truncate min-w-0"
-          >
+          <h1 className="text-base font-bold leading-tight truncate min-w-0">
             {title}
           </h1>
           {category?.color && (
