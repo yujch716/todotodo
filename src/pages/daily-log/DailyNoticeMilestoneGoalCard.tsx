@@ -36,7 +36,6 @@ const DailyNoticeMilestoneGoalCard = ({ goal }: DailyNoticeGoalGoalProps) => {
           <span className="flex-shrink-0">{emoji}</span>
           <h1
             className="text-base font-bold leading-tight truncate min-w-0 flex-1"
-            style={{ minWidth: 0 }}
           >
             {title}
           </h1>
