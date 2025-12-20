@@ -201,7 +201,7 @@ const DailyLogPage = () => {
             </div>
           ) : (
             <>
-              <div className="w-1/5 flex flex-col gap-8">
+              <div className="w-1/5 flex flex-col gap-8 min-w-0">
                 <Calendar
                   mode="single"
                   selected={date}
@@ -221,7 +221,7 @@ const DailyLogPage = () => {
                   }}
                 />
                 {date && (
-                  <div className="flex w-full">
+                  <div className="flex w-full min-w-0">
                     <DailyNoticePanel dailyLogDate={date} />
                   </div>
                 )}

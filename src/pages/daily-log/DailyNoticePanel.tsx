@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/card.tsx";
 import { getCalendarEventByDate } from "@/api/calendar-event.ts";
 import { useCallback, useEffect, useState } from "react";
 import type { CalendarEventType } from "@/types/calendar-event.ts";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import DailyNoticeScheduleCard from "@/pages/daily-log/DailyNoticeScheduleCard.tsx";
 import type { Goal } from "@/types/goal.ts";
@@ -60,8 +59,8 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
 
   return (
     <>
-      <Card className="flex flex-col w-full p-3 bg-transparent items-center">
-        <ScrollArea className="w-full overflow-y-auto">
+      <Card className="flex flex-col w-full p-3 bg-transparent items-center min-w-0">
+        <div className="w-full overflow-y-auto overflow-x-hidden">
           <div className="flex flex-col gap-3">
             {schedules.map((schedule) => (
               <DailyNoticeScheduleCard key={schedule.id} schedule={schedule} />
@@ -79,8 +78,7 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
               <DailyNoticeMilestoneGoalCard key={goal.id} goal={goal} />
             ))}
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </div>
       </Card>
     </>
   );

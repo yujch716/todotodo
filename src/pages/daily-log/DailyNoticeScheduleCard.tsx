@@ -26,12 +26,12 @@ const DailyNoticeScheduleCard = ({
     <>
       <Card
         key={id}
-        className="p-3 w-[250px] cursor-pointer shadow-sm hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
+        className="p-3 w-full cursor-pointer min-w-0 shadow-sm hover:shadow-md hover:bg-gradient-to-br hover:from-white hover:to-slate-100"
         onClick={() => openModal(id)}
       >
         <div className="flex flex-row items-center justify-between pb-2">
           <h1
-            className="flex-grow overflow-hidden whitespace-nowrap text-ellipsis leading-tight text-base font-bold"
+            className="text-base font-bold leading-tight truncate min-w-0"
             style={{ minWidth: 0 }}
           >
             {title}
@@ -44,20 +44,22 @@ const DailyNoticeScheduleCard = ({
           )}
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap text-sm">
+        <div className="flex items-center gap-2 min-w-0 text-sm">
           <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-          {is_all_day ? (
-            <>
-              {start_at ? format(start_at, "yyyy-MM-dd") : "시작일"} -{" "}
-              {end_at ? format(end_at, "yyyy-MM-dd") : "종료일"}
-            </>
-          ) : (
-            <>
-              {start_at ? format(start_at, "yyyy-MM-dd") : "시작일"}
-              <span className="mx-0.5" />
-              {format(start_at, "HH:mm")} - {format(end_at, "HH:mm")}
-            </>
-          )}
+          <span className="truncate">
+            {is_all_day ? (
+              <>
+                {start_at ? format(start_at, "yy.MM.dd") : "시작일"} -{" "}
+                {end_at ? format(end_at, "yy.MM.dd") : "종료일"}
+              </>
+            ) : (
+              <>
+                {start_at ? format(start_at, "yy.MM.dd") : "시작일"}
+                <span className="mx-0.5" />
+                {format(start_at, "HH:mm")} - {format(end_at, "HH:mm")}
+              </>
+            )}
+          </span>
         </div>
       </Card>
 
