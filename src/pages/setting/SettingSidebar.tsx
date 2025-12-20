@@ -22,7 +22,7 @@ const SettingSidebar = () => {
       side="left"
       variant="sidebar"
       collapsible="icon"
-      className="relative min-h-0"
+      className="h-full relative min-h-0 overflow-hidden"
     >
       <SidebarHeader className="px-0 mt-2">
         <SidebarGroupLabel className="gap-2">

@@ -127,7 +127,7 @@ const DailyLogPage = () => {
       <div
         className={`
           flex flex-col w-full
-          ${isSmall ? "min-h-fit overflow-visible" : "h-full"}
+          ${isSmall ? "min-h-full" : "h-full"}
         `}
       >
         <header className="flex w-full gap-8 mb-5 items-center">
