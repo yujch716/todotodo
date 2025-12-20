@@ -143,7 +143,7 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
 
   return (
     <>
-      <Card className="flex flex-col group h-full shadow-lg border-1">
+      <Card className="flex flex-col group h-full overflow-hidden shadow-lg border-1">
         <CardHeader>
           <CardTitle className="text-base">
             <div className="flex items-center justify-between w-full">
@@ -162,7 +162,7 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-grow overflow-y-auto">
           <div className="space-y-3">
             {items.map((item) => (
               <DailyTodoItem
