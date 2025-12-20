@@ -155,7 +155,7 @@ const DailyLogPage = () => {
                 selected={date}
                 onSelect={handleDateSelect}
                 autoFocus={false}
-                className="w-full rounded-lg border [--cell-size:--spacing(11)] md:[--cell-size:--spacing(12)] bg-white shadow-lg border-1"
+                className="w-full rounded-lg border bg-white shadow-lg border-1"
                 buttonVariant="ghost"
                 modifiers={{
                   hasLog: (day) => {
@@ -202,7 +202,7 @@ const DailyLogPage = () => {
             </div>
           ) : (
             <>
-              <div className="w-1/5 flex flex-col gap-8">
+              <div className="w-1/5 flex flex-col gap-8 min-w-0">
                 <Calendar
                   mode="single"
                   selected={date}
@@ -222,7 +222,7 @@ const DailyLogPage = () => {
                   }}
                 />
                 {date && (
-                  <div className="flex w-full">
+                  <div className="flex w-full min-w-0">
                     <DailyNoticePanel dailyLogDate={date} />
                   </div>
                 )}
