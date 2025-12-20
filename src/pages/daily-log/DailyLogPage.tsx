@@ -155,7 +155,7 @@ const DailyLogPage = () => {
                 selected={date}
                 onSelect={handleDateSelect}
                 autoFocus={false}
-                className="w-full rounded-lg border bg-white shadow-lg border-1"
+                className="w-full rounded-lg border bg-white shadow-lg border-1 [&_table]:min-h-[300px]"
                 buttonVariant="ghost"
                 modifiers={{
                   hasLog: (day) => {
