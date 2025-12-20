@@ -15,7 +15,7 @@ interface Props {
 }
 
 const SidebarContentSection = ({ dailyLog }: Props) => {
-  const dailyPath = dailyLog ? `${dailyLog.id}` : "undefined";
+  const dailyPath = dailyLog ? `${dailyLog.id}` : "new";
   const navigate = useNavigate();
   const location = useLocation();
 
