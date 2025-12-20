@@ -28,6 +28,7 @@ import CreateEventModal from "@/pages/calendar/CreateEventModal.tsx";
 import CalendarDayCell from "@/pages/calendar/CalendarDayCell.tsx";
 import { getDailyGoalByRangeDate } from "@/api/goal.ts";
 import type { Goal } from "@/types/goal.ts";
+import { Button } from "@/components/ui/button";
 
 const Calendar = () => {
   const [dailyLogs, setDailyLogs] = useState<DailyLogType[]>([]);
@@ -122,19 +123,19 @@ const Calendar = () => {
     <div className="w-full max-w-5xl mx-auto">
       <Card>
         <CardHeader className="flex flex-row justify-between items-center">
-          <button
+          <Button
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
             className="p-2 hover:bg-slate-100 rounded"
           >
             <ChevronLeft className="w-5 h-5" />
-          </button>
+          </Button>
           <CardTitle>{format(currentMonth, "MMMM yyyy")}</CardTitle>
-          <button
+          <Button
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             className="p-2 hover:bg-slate-100 rounded"
           >
             <ChevronRight className="w-5 h-5" />
-          </button>
+          </Button>
         </CardHeader>
 
         <CardContent>
@@ -164,10 +165,10 @@ const Calendar = () => {
             }}
             components={{
               DayButton: (props) => {
-                const { day, ...buttonProps } = props;
+                const { day, ...ButtonProps } = props;
                 const date = day.date;
 
-                if (!date) return <button {...buttonProps} />;
+                if (!date) return <Button {...ButtonProps} />;
 
                 const dailyLog = getDailyLogForDate(date);
                 const dayEvents = getEventForDate(date);
@@ -177,7 +178,7 @@ const Calendar = () => {
 
                 return (
                   <button
-                    {...buttonProps}
+                    {...ButtonProps}
                     className={cn(
                       "h-full w-full p-2 flex flex-col group cursor-pointer hover:bg-slate-50",
                       isToday && "bg-slate-100",
@@ -208,8 +209,7 @@ const Calendar = () => {
                         </div>
                       </div>
 
-                      <button
-                        type="button"
+                      <div
                         className="invisible group-hover:visible w-6 h-6 flex items-center justify-center border rounded cursor-pointer hover:bg-slate-100"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -217,7 +217,7 @@ const Calendar = () => {
                         }}
                       >
                         <CalendarPlus className="w-3 h-3" />
-                      </button>
+                      </div>
                     </div>
                     <div className="flex-grow overflow-hidden">
                       <CalendarDayCell events={dayEvents} dailyLog={dailyLog} />
