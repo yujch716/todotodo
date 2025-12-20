@@ -125,6 +125,7 @@ const Calendar = () => {
         <CardHeader className="flex flex-row justify-between items-center">
           <Button
             variant="outline"
+            size="icon"
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
           >
             <ChevronLeft className="w-5 h-5" />
@@ -132,6 +133,7 @@ const Calendar = () => {
           <CardTitle>{format(currentMonth, "MMMM yyyy")}</CardTitle>
           <Button
             variant="outline"
+            size="icon"
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
           >
             <ChevronRight className="w-5 h-5" />
