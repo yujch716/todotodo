@@ -1,25 +1,39 @@
 import { Button } from "@/components/ui/button.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
-import { Ellipsis, Folder, Plus } from "lucide-react";
+import { Ellipsis, Folder } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
 import { useNavigate } from "react-router-dom";
 import { getGoalGroups } from "@/api/goal-group.ts";
 import type { GoalGroup } from "@/types/goal.ts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import CreateGoalGroupModal from "@/pages/goal/CreateGoalGroupModal.tsx";
+import { useGoalGroupStore } from "@/store/goalGroupStore.ts";
 
 const GoalGroupPage = () => {
   const navigate = useNavigate();
 
   const [goalGroups, setGoalGroups] = useState<GoalGroup[]>([]);
 
-  const loadGoalGroups = async () => {
+  const refreshGoalGroup = useGoalGroupStore((state) => state.refreshGoalGroup);
+  const resetGoalGroupRefresh = useGoalGroupStore(
+    (state) => state.resetGoalGroupRefresh,
+  );
+
+  const loadGoalGroups = useCallback(async () => {
     const goalGroups = await getGoalGroups();
     setGoalGroups(goalGroups);
-  };
+  }, []);
 
   useEffect(() => {
     loadGoalGroups();
-  }, []);
+  }, [loadGoalGroups]);
+
+  useEffect(() => {
+    if (refreshGoalGroup) {
+      loadGoalGroups();
+      resetGoalGroupRefresh();
+    }
+  }, [refreshGoalGroup, resetGoalGroupRefresh, loadGoalGroups]);
 
   const handleMoveGoal = (id: string) => {
     navigate(`/goal-groups/${id}`);
@@ -29,10 +43,7 @@ const GoalGroupPage = () => {
     <>
       <div className="flex flex-col w-full h-full">
         <header className="flex w-full items-center justify-end mb-4">
-          <Button variant="outline" className="bg-slate-500 text-white">
-            <Plus />
-            만들기
-          </Button>
+          <CreateGoalGroupModal />
         </header>
 
         <div className="flex flex-grow overflow-hidden">

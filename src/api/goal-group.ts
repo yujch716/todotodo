@@ -27,3 +27,22 @@ export const getGoalGroupById = async (id: string): Promise<GoalGroup> => {
 
   return data;
 };
+
+export const createGoalGroup = async (name: string): Promise<GoalGroup> => {
+  const user = await getAuthenticatedUser();
+
+  const { error, data } = await supabase
+    .from("goal_group")
+    .insert([
+      {
+        user_id: user.id,
+        name,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) toast.error("생성에 실패했습니다.");
+
+  return data;
+};
