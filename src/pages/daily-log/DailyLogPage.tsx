@@ -111,7 +111,7 @@ const DailyLogPage = () => {
   }, [loadDailyLogs]);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 1200px)");
+    const mediaQuery = window.matchMedia("(max-width: 1100px)");
 
     const handleChange = (e: MediaQueryListEvent) => {
       setIsSmall(e.matches);
