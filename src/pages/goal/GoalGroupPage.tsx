@@ -8,11 +8,21 @@ import type { GoalGroup } from "@/types/goal.ts";
 import { useCallback, useEffect, useState } from "react";
 import CreateGoalGroupModal from "@/pages/goal/CreateGoalGroupModal.tsx";
 import { useGoalGroupStore } from "@/store/goalGroupStore.ts";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu.tsx";
+import UpdateGoalGroupModal from "@/pages/goal/UpdateGoalGroupModal.tsx";
 
 const GoalGroupPage = () => {
   const navigate = useNavigate();
 
   const [goalGroups, setGoalGroups] = useState<GoalGroup[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<GoalGroup | null>(null);
 
   const refreshGoalGroup = useGoalGroupStore((state) => state.refreshGoalGroup);
   const resetGoalGroupRefresh = useGoalGroupStore(
@@ -24,6 +34,19 @@ const GoalGroupPage = () => {
     setGoalGroups(goalGroups);
   }, []);
 
+  const handleMoveGoal = (id: string) => {
+    navigate(`/goal-groups/${id}`);
+  };
+
+  const handleOpenEditModal = (group: GoalGroup, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedGroup(group);
+  };
+
+  const handleCloseEditModal = () => {
+    setSelectedGroup(null);
+  };
+
   useEffect(() => {
     loadGoalGroups();
   }, [loadGoalGroups]);
@@ -34,10 +57,6 @@ const GoalGroupPage = () => {
       resetGoalGroupRefresh();
     }
   }, [refreshGoalGroup, resetGoalGroupRefresh, loadGoalGroups]);
-
-  const handleMoveGoal = (id: string) => {
-    navigate(`/goal-groups/${id}`);
-  };
 
   return (
     <>
@@ -52,15 +71,37 @@ const GoalGroupPage = () => {
               {goalGroups.map((group) => (
                 <Card
                   key={group.id}
-                  className="w-[150px] h-[150px] hover:bg-gradient-to-br hover:bg-slate-50 cursor-pointer"
+                  className="w-[150px] h-[150px] hover:shadow-lg  cursor-pointer"
                   onClick={() => {
                     handleMoveGoal(group.id);
                   }}
                 >
                   <CardHeader className="flex flex-row justify-end px-1 pt-1 pb-0">
-                    <Button variant="ghost" size="icon">
-                      <Ellipsis />
-                    </Button>
+                    <DropdownMenu modal={false}>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          aria-label="Open menu"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <Ellipsis />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent side="right" align="end">
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem onClick={(e) => handleOpenEditModal(group, e)}>
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </CardHeader>
                   <CardContent className="flex flex-col items-center justify-center gap-1 w-full">
                     <Folder
@@ -80,6 +121,14 @@ const GoalGroupPage = () => {
           </ScrollArea>
         </div>
       </div>
+
+      {selectedGroup && (
+        <UpdateGoalGroupModal
+          id={selectedGroup.id}
+          initialName={selectedGroup.name}
+          onClose={handleCloseEditModal}
+        />
+      )}
     </>
   );
 };
