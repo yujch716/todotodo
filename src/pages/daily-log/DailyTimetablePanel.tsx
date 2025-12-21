@@ -118,7 +118,7 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
           <CardTitle className="text-base">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2">
-                <CalendarClock /> Timeline
+                <CalendarClock /> Timetable
               </div>
 
               <CreateDailyTimetableModal

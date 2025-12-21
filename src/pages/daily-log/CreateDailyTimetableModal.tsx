@@ -162,7 +162,7 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
 
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
-          <DialogTitle>Timeline 만들기</DialogTitle>
+          <DialogTitle>타임테이블 만들기</DialogTitle>
           <DialogDescription />
         </DialogHeader>
 
