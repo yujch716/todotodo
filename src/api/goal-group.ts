@@ -59,3 +59,9 @@ export const updateGoalGroup = async (
 
   if (error) toast.error("수정에 실패했습니다.");
 };
+
+export const deleteGoalGroupById = async (id: string): Promise<void> => {
+  const { error } = await supabase.from("goal_group").delete().eq("id", id);
+
+  if (error) toast.error("삭제에 실패했습니다.");
+};

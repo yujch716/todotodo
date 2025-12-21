@@ -3,7 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { Ellipsis, Folder } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
 import { useNavigate } from "react-router-dom";
-import { getGoalGroups } from "@/api/goal-group.ts";
+import { deleteGoalGroupById, getGoalGroups } from "@/api/goal-group.ts";
 import type { GoalGroup } from "@/types/goal.ts";
 import { useCallback, useEffect, useState } from "react";
 import CreateGoalGroupModal from "@/pages/goal/CreateGoalGroupModal.tsx";
@@ -17,16 +17,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import UpdateGoalGroupModal from "@/pages/goal/UpdateGoalGroupModal.tsx";
+import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 
 const GoalGroupPage = () => {
   const navigate = useNavigate();
 
   const [goalGroups, setGoalGroups] = useState<GoalGroup[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<GoalGroup | null>(null);
+  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
 
   const refreshGoalGroup = useGoalGroupStore((state) => state.refreshGoalGroup);
   const resetGoalGroupRefresh = useGoalGroupStore(
     (state) => state.resetGoalGroupRefresh,
+  );
+  const triggerGoalGroupRefresh = useGoalGroupStore(
+    (state) => state.triggerGoalGroupRefresh,
   );
 
   const loadGoalGroups = useCallback(async () => {
@@ -41,10 +46,34 @@ const GoalGroupPage = () => {
   const handleOpenEditModal = (group: GoalGroup, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedGroup(group);
+    setModalType("edit");
   };
 
   const handleCloseEditModal = () => {
     setSelectedGroup(null);
+    setModalType(null);
+  };
+
+  const handleDelete = async (group: GoalGroup, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedGroup(group);
+    setModalType("delete");
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedGroup) return;
+
+    await deleteGoalGroupById(selectedGroup.id);
+
+    triggerGoalGroupRefresh();
+
+    setSelectedGroup(null);
+    setModalType(null);
+  };
+
+  const handleCancelDelete = () => {
+    setSelectedGroup(null);
+    setModalType(null);
   };
 
   useEffect(() => {
@@ -92,11 +121,16 @@ const GoalGroupPage = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent side="right" align="end">
                         <DropdownMenuGroup>
-                          <DropdownMenuItem onClick={(e) => handleOpenEditModal(group, e)}>
+                          <DropdownMenuItem
+                            onClick={(e) => handleOpenEditModal(group, e)}
+                          >
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={(e) => handleDelete(group, e)}
+                          >
                             Delete
                           </DropdownMenuItem>
                         </DropdownMenuGroup>
@@ -122,11 +156,20 @@ const GoalGroupPage = () => {
         </div>
       </div>
 
-      {selectedGroup && (
+      {selectedGroup && modalType === "edit" && (
         <UpdateGoalGroupModal
           id={selectedGroup.id}
           initialName={selectedGroup.name}
           onClose={handleCloseEditModal}
+        />
+      )}
+
+      {selectedGroup && modalType === "delete" && (
+        <AlertConfirmModal
+          open={true}
+          message="이 그룹을 삭제하시겠습니까?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
         />
       )}
     </>
