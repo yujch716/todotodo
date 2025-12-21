@@ -54,7 +54,7 @@ const GoalGroupPage = () => {
     setModalType(null);
   };
 
-  const handleDelete = async (group: GoalGroup, e: React.MouseEvent) => {
+  const handleDelete = (group: GoalGroup, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedGroup(group);
     setModalType("delete");

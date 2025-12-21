@@ -23,19 +23,19 @@ interface Props {
 }
 
 const UpdateGoalGroupModal = ({ id, initialName, onClose }: Props) => {
-  const [name, setName] = useState(initialName);
+  const [groupName, setGroupName] = useState(initialName);
 
   const triggerGoalGroupRefresh = useGoalGroupStore(
     (state) => state.triggerGoalGroupRefresh,
   );
 
   const onSubmit = async () => {
-    if (!name.trim()) {
+    if (!groupName.trim()) {
       toast.error("그룸명을 입력하세요.");
       return;
     }
 
-    await updateGoalGroup(id, name);
+    await updateGoalGroup(id, groupName);
 
     triggerGoalGroupRefresh();
 
@@ -61,7 +61,7 @@ const UpdateGoalGroupModal = ({ id, initialName, onClose }: Props) => {
             만들기
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-full max-w-md sm:mx-auto z-50">
           <DialogHeader>
             <DialogTitle>그룹 만들기</DialogTitle>
             <DialogDescription />
@@ -70,9 +70,9 @@ const UpdateGoalGroupModal = ({ id, initialName, onClose }: Props) => {
             <div className="grid gap-3">
               <Input
                 id="name"
-                value={name}
+                value={groupName}
                 placeholder="그룹명을 입력하세요"
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setGroupName(e.target.value)}
               />
             </div>
           </div>
@@ -85,7 +85,7 @@ const UpdateGoalGroupModal = ({ id, initialName, onClose }: Props) => {
               onClick={onSubmit}
               className="bg-slate-600 hover:bg-slate-500"
             >
-              만들기
+              저장
             </Button>
           </DialogFooter>
         </DialogContent>

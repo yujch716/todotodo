@@ -18,25 +18,25 @@ import { useGoalGroupStore } from "@/store/goalGroupStore.ts";
 
 const CreateGoalGroupModal = () => {
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
+  const [groupName, setGroupName] = useState("");
 
   const triggerGoalGroupRefresh = useGoalGroupStore(
     (state) => state.triggerGoalGroupRefresh,
   );
 
   const onSubmit = async () => {
-    if (!name.trim()) {
+    if (!groupName.trim()) {
       toast.error("그룸명을 입력하세요.");
       return;
     }
 
-    await createGoalGroup(name);
+    await createGoalGroup(groupName);
 
     triggerGoalGroupRefresh();
 
     toast.info("그룹이 생성되었습니다.");
 
-    setName("");
+    setGroupName("");
     setOpen(false);
   };
 
@@ -52,7 +52,7 @@ const CreateGoalGroupModal = () => {
             만들기
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-full max-w-md sm:mx-auto z-50">
           <DialogHeader>
             <DialogTitle>그룹 만들기</DialogTitle>
             <DialogDescription />
@@ -61,9 +61,9 @@ const CreateGoalGroupModal = () => {
             <div className="grid gap-3">
               <Input
                 id="name"
-                value={name}
+                value={groupName}
                 placeholder="그룹명을 입력하세요"
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setGroupName(e.target.value)}
               />
             </div>
           </div>

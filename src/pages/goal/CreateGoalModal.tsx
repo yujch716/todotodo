@@ -294,7 +294,7 @@ const CreateGoalModal = ({ groupId }: Props) => {
             onClick={onSubmit}
             className="bg-slate-600 hover:bg-slate-500"
           >
-            만들기
+            저장
           </Button>
         </DialogFooter>
       </DialogContent>
