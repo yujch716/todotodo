@@ -41,19 +41,19 @@ const GoalGroupPage = () => {
               {goalGroups.map((group) => (
                 <Card
                   key={group.id}
-                  className="w-[200px] h-[200px] hover:bg-gradient-to-br hover:bg-slate-50 cursor-pointer"
+                  className="w-[150px] h-[150px] hover:bg-gradient-to-br hover:bg-slate-50 cursor-pointer"
                   onClick={() => {
                     handleMoveGoal(group.id);
                   }}
                 >
-                  <CardHeader className="flex flex-row justify-end p-4 pb-2">
+                  <CardHeader className="flex flex-row justify-end px-1 pt-1 pb-0">
                     <Button variant="ghost" size="icon">
                       <Ellipsis />
                     </Button>
                   </CardHeader>
-                  <CardContent className="flex flex-col items-center justify-center gap-2 w-full">
+                  <CardContent className="flex flex-col items-center justify-center gap-1 w-full">
                     <Folder
-                      className="w-16 h-16"
+                      className="w-14 h-14"
                       style={{
                         stroke: "#fde68a",
                         fill: "#fde68a",
