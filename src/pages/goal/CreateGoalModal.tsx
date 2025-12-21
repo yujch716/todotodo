@@ -288,13 +288,13 @@ const CreateGoalModal = ({ groupId }: Props) => {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">취소</Button>
           </DialogClose>
           <Button
             onClick={onSubmit}
             className="bg-slate-600 hover:bg-slate-500"
           >
-            Save
+            저장
           </Button>
         </DialogFooter>
       </DialogContent>

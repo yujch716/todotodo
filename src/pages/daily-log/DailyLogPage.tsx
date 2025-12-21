@@ -131,14 +131,14 @@ const DailyLogPage = () => {
           isSmall ? "min-h-full" : "h-full",
         )}
       >
-        <header className="flex w-full gap-8 mb-5 items-center">
+        <header className="flex w-full gap-6 mb-5 items-center">
           <div className="w-1/2">
             <div className="text-sm text-gray-500 mb-1">
               {date ? format(date, "yyyy-MM-dd") : null}
             </div>
           </div>
 
-          <div className="w-1/2 flex items-center gap-2">
+          <div className="w-1/2 flex items-center">
             <div
               className="ml-auto cursor-pointer hover:text-red-600"
               onClick={handleDelete}
@@ -148,7 +148,7 @@ const DailyLogPage = () => {
           </div>
         </header>
 
-        <div className="flex flex-grow gap-8 min-h-0">
+        <div className="flex flex-grow gap-6 min-h-0">
           {isSmall ? (
             <div className="flex flex-col gap-4 w-full min-h-fit">
               <Calendar
@@ -207,7 +207,7 @@ const DailyLogPage = () => {
             </div>
           ) : (
             <>
-              <div className="w-1/5 flex flex-col gap-8 min-w-0">
+              <div className="w-1/5 flex flex-col gap-6 min-w-0">
                 <Calendar
                   mode="single"
                   selected={date}
@@ -237,7 +237,7 @@ const DailyLogPage = () => {
                   <div className="w-2/5 h-full flex flex-col min-h-0">
                     <DailyTimetablePanel dailyLogId={dailyLogId} />
                   </div>
-                  <div className="w-2/5 h-full flex flex-col min-h-0 gap-8">
+                  <div className="w-2/5 h-full flex flex-col min-h-0 gap-6">
                     <div className="flex-[3] min-h-0 flex flex-col">
                       <DailyTodoPanel dailyLogId={dailyLogId} />
                     </div>
