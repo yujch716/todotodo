@@ -1,14 +1,11 @@
-import DailyTodoItem from "./DailyTodoItem.tsx";
+import DailyTodoGroup from "./DailyTodoGroup.tsx";
 import { useCallback, useEffect, useState } from "react";
 import EmptyDailyLog from "@/pages/daily-log/EmptyDailyLog.tsx";
-import type { DailyTodoType } from "@/types/daily-log.ts";
+import type { DailyTodoGroupType } from "@/types/daily-log.ts";
 import {
-  createDailyTodo,
-  deleteDailyTodo,
-  getDailyTodoByDailyLogId,
-  toggleDailyTodo,
-  updateDailyTodoContent,
-} from "@/api/daily-todo.ts";
+  getDailyTodoGroupsWithTodos,
+  createDailyTodoGroup,
+} from "@/api/daily-todo-group.ts";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";
 import { DailyLogStatusIcon } from "@/components/DailyLogStatusIcon.tsx";
@@ -19,16 +16,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { SquareCheckBig, SquarePlus } from "lucide-react";
+import { SquareCheckBig, FolderPlus } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
-import { cn } from "@/lib/utils.ts";
+import {
+  getDailyTodoCheckedCount,
+  getDailyTodoTotalCount,
+} from "@/api/daily-todo.ts";
 
 interface Props {
   dailyLogId: string;
 }
 
 const DailyTodoPanel = ({ dailyLogId }: Props) => {
-  const [items, setItems] = useState<DailyTodoType[]>([]);
+  const [groups, setGroups] = useState<DailyTodoGroupType[]>([]);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [checkedCount, setCheckedCount] = useState(0);
@@ -46,90 +46,50 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
     (store) => store.resetDailyLogRefresh,
   );
 
-  const loadDailyTodo = useCallback(async () => {
+  const loadData = useCallback(async () => {
     if (!dailyLogId) return;
 
-    const dailyTodo = await getDailyTodoByDailyLogId(dailyLogId);
+    const [todoGroups, totalCount, checkedCount] = await Promise.all([
+      getDailyTodoGroupsWithTodos(dailyLogId),
+      getDailyTodoTotalCount(dailyLogId),
+      getDailyTodoCheckedCount(dailyLogId),
+    ]);
 
-    setItems(dailyTodo.items ?? []);
-    setTotalCount(dailyTodo.totalCount ?? 0);
-    setCheckedCount(dailyTodo.checkedCount ?? 0);
+    setGroups(todoGroups);
+    setTotalCount(totalCount);
+    setCheckedCount(checkedCount);
   }, [dailyLogId]);
 
   useEffect(() => {
-    loadDailyTodo();
-  }, [loadDailyTodo]);
+    loadData();
+  }, [loadData]);
 
   useEffect(() => {
     if (refreshDailyLog) {
-      loadDailyTodo();
+      loadData();
       resetDailyLogRefresh();
     }
-  }, [loadDailyTodo, refreshDailyLog, resetDailyLogRefresh]);
+  }, [loadData, refreshDailyLog, resetDailyLogRefresh]);
 
-  const onUpdateItemContent = async (id: string, newContent: string) => {
-    if (newContent.trim() === "") {
-      await deleteItem(id);
-      return;
-    }
-
-    setItems((prevItems) => {
-      if (newContent.trim() === "") return prevItems;
-
-      return prevItems.map((item) =>
-        item.id === id ? { ...item, content: newContent } : item,
-      );
-    });
-
-    await updateDailyTodoContent(id, newContent);
-  };
-
-  const deleteItem = async (id: string) => {
-    await deleteDailyTodo(id);
-
-    triggerDailyLogRefresh();
-    triggerSidebarRefresh();
-
-    setItems((prevItems) => {
-      const index = prevItems.findIndex((item) => item.id === id);
-      if (index === -1) return prevItems;
-
-      const newItems = prevItems.filter((item) => item.id !== id);
-
-      const focusId = index > 0 ? prevItems[index - 1].id : null;
-      setEditingItemId(focusId);
-
-      return newItems;
-    });
-  };
-
-  const onToggleItem = async (id: string) => {
-    const item = items.find((i) => i.id === id);
-    if (!item) return;
-
-    const newChecked = !item.is_checked;
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, is_checked: newChecked } : i)),
-    );
-
-    await toggleDailyTodo(id, newChecked);
-
-    triggerDailyLogRefresh();
-    triggerSidebarRefresh();
-  };
-
-  const createEmptyItem = async () => {
+  const createEmptyGroup = async () => {
     if (!dailyLogId) return;
 
-    if (items.some((item) => item.content.trim() === "")) return;
+    const newGroup = await createDailyTodoGroup(
+      dailyLogId,
+      null,
+      groups.length,
+    );
 
-    const newItem = await createDailyTodo(dailyLogId, "");
+    if (newGroup) {
+      loadData();
+      triggerSidebarRefresh();
+    }
+  };
 
-    triggerDailyLogRefresh();
+  const handleGroupUpdate = () => {
+    loadData();
     triggerSidebarRefresh();
-
-    setItems((prev) => [...prev, newItem]);
-    setEditingItemId(newItem.id);
+    triggerDailyLogRefresh();
   };
 
   const progressValue = totalCount > 0 ? (checkedCount / totalCount) * 100 : 0;
@@ -142,58 +102,68 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
     );
 
   return (
-    <>
-      <Card className="flex flex-col group h-full overflow-hidden shadow-lg border-1">
-        <CardHeader>
-          <CardTitle className="text-base">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2">
-                <SquareCheckBig /> To do
-              </div>
-
-              <div className="flex items-center gap-2 w-2/3 justify-end">
-                <Progress value={progressValue} className="w-full border-2" />
-                <DailyLogStatusIcon
-                  checkedCount={checkedCount}
-                  totalCount={totalCount}
-                  iconClassName="w-6 h-6"
-                />
-              </div>
+    <Card className="flex flex-col group h-full overflow-hidden shadow-lg border-1">
+      <CardHeader>
+        <CardTitle className="text-base">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <SquareCheckBig /> To do
             </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex-grow overflow-y-auto">
-          <div className="space-y-3">
-            {items.map((item) => (
-              <DailyTodoItem
-                key={item.id}
-                item={item}
-                onToggle={onToggleItem}
-                onUpdateContent={onUpdateItemContent}
-                isEditing={editingItemId === item.id}
-                setEditingItemId={setEditingItemId}
-                onAddEmptyItem={createEmptyItem}
+
+            <div className="flex items-center gap-2 w-2/3 justify-end">
+              <Progress value={progressValue} className="w-full border-2" />
+              <DailyLogStatusIcon
+                checkedCount={checkedCount}
+                totalCount={totalCount}
+                iconClassName="w-6 h-6"
               />
-            ))}
+
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-8 h-8"
+                onClick={createEmptyGroup}
+              >
+                <FolderPlus className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
-          <div className="flex justify-center mt-3">
-            <Button
-              variant="outline"
-              size="icon"
-              className={cn(
-                "transition-opacity duration-200 w-6 h-6 mt-3 p-4",
-                items.length === 0
-                  ? "visible"
-                  : "invisible group-hover:visible",
-              )}
-              onClick={createEmptyItem}
-            >
-              <SquarePlus className="text-slate-700" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </>
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="flex-grow overflow-y-auto">
+        <div className="space-y-4">
+          {groups.map((group) => (
+            <DailyTodoGroup
+              key={group.id}
+              group={group}
+              onUpdate={handleGroupUpdate}
+              editingItemId={editingItemId}
+              setEditingItemId={setEditingItemId}
+            />
+          ))}
+
+          {groups.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="text-gray-500 mb-4">
+                <FolderPlus className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">아직 투두 그룹이 없습니다</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  그룹을 만들어서 투두를 정리해보세요
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={createEmptyGroup}
+                className="mt-2"
+              >
+                <FolderPlus className="w-4 h-4 mr-2" />첫 번째 그룹 만들기
+              </Button>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

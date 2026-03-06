@@ -9,8 +9,19 @@ export interface DailyLogType {
   checkedCount: number;
 }
 
+export interface DailyTodoGroupType {
+  id: string;
+  daily_log_id: string;
+  category_id: string | null;
+  title: string;
+  sort_order: number;
+  created_at: string;
+  todos: DailyTodoType[];
+}
+
 export interface DailyTodoType {
   id: string;
+  group_id?: string;
   content: string;
   is_checked: boolean;
   totalCount: number;

@@ -22,6 +22,11 @@ import { CalendarIcon } from "lucide-react";
 import { createDailyLog, getDailyLogByDate } from "@/api/daily-log.ts";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import { createDailyTodo } from "@/api/daily-todo.ts";
+import {
+  createDailyTodoGroup,
+  getDailyTodoGroups,
+} from "@/api/daily-todo-group.ts";
+import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";
 
 interface CopyDailyTodoModalProps {
   content: string;
@@ -34,6 +39,9 @@ const CopyDailTodoModal = ({ content, onClose }: CopyDailyTodoModalProps) => {
   const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
   );
+  const triggerDailyLogDetailRefresh = useDailyLogDetailStore(
+    (state) => state.triggerDailyLogRefresh,
+  );
 
   const handleSubmit = async () => {
     if (!date) return;
@@ -43,9 +51,17 @@ const CopyDailTodoModal = ({ content, onClose }: CopyDailyTodoModalProps) => {
       dailyLog = await createDailyLog(date);
     }
 
-    await createDailyTodo(dailyLog.id, content);
+    const dailyTodoGroups = await getDailyTodoGroups(dailyLog.id);
+    const dailyTodoGroup = await createDailyTodoGroup(
+      dailyLog.id,
+      null,
+      dailyTodoGroups.length,
+    );
+
+    await createDailyTodo(dailyLog.id, dailyTodoGroup.id, content);
 
     triggerSidebarRefresh();
+    triggerDailyLogDetailRefresh();
 
     setDate(undefined);
     onClose();
