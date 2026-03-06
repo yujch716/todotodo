@@ -13,12 +13,17 @@ import {
 import type { DailyTimetableType } from "@/types/daily-log.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
-import { increaseSaturationAndDarken } from "@/lib/color.ts";
 import { Button } from "@/components/ui/button.tsx";
+import { withAlpha } from "@/lib/color.ts";
 
 interface Props {
   dailyLogId: string;
 }
+
+const MINUTES_PER_CELL = 10;
+const CELLS_PER_HOUR = 6;
+const ROW_HEIGHT = 40;
+const TIME_COL_WIDTH = 56;
 
 const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   const [timetables, setTimetables] = useState<DailyTimetableType[]>([]);
@@ -26,14 +31,12 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
     null,
   );
   const scrollRef = useRef<HTMLDivElement>(null);
-  const ROW_HEIGHT = 20;
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
   const triggerTimeTableRefresh = useDailyTimetableStore(
     (state) => state.triggerDailyTimetableRefresh,
   );
-
   const refreshTimetables = useDailyTimetableStore(
     (state) => state.refreshDailyTimetable,
   );
@@ -42,50 +45,13 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   );
 
   const loadDailyTimeTables = useCallback(async () => {
-    const timetables = await getDailyTimeTables(dailyLogId);
-    setTimetables(timetables);
+    const data = await getDailyTimeTables(dailyLogId);
+    setTimetables(data);
   }, [dailyLogId]);
 
-  // 시간을 분 단위로 변환
   const timeToMinutes = (time: string): number => {
-    const [hours, minutes] = time.split(":").map(Number);
-    return hours * 60 + minutes;
-  };
-
-  // 특정 30분 슬롯에 해당하는 타임테이블 찾기
-  const getTimetableForHalfHour = (hour: number, isSecondHalf: boolean) => {
-    const slotMinutes = hour * 60 + (isSecondHalf ? 30 : 0);
-
-    return timetables.find((tt) => {
-      const startMinutes = timeToMinutes(tt.start_time);
-      const endMinutes = timeToMinutes(tt.end_time);
-
-      if (startMinutes === endMinutes) {
-        return slotMinutes === startMinutes;
-      }
-
-      if (startMinutes < endMinutes) {
-        return slotMinutes >= startMinutes && slotMinutes < endMinutes;
-      }
-
-      return slotMinutes >= startMinutes || slotMinutes < endMinutes;
-    });
-  };
-
-  // 타임테이블의 시작 슬롯인지 확인
-  const isStartSlot = (
-    hour: number,
-    isSecondHalf: boolean,
-    timetable?: DailyTimetableType,
-  ) => {
-    if (!timetable) return false;
-    const [startHour, startMinute] = timetable.start_time
-      .split(":")
-      .map(Number);
-    return (
-      hour === startHour &&
-      (isSecondHalf ? startMinute === 30 : startMinute === 0)
-    );
+    const [h, m] = time.split(":").map(Number);
+    return h * 60 + m;
   };
 
   const deleteTimetable = async (id: string) => {
@@ -96,7 +62,7 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   useEffect(() => {
     const el = scrollRef.current;
     if (el && el.scrollTop === 0) {
-      el.scrollTop = 7 * 80; // 7시 위치로 스크롤 (행당 높이 * 2)
+      el.scrollTop = 7 * ROW_HEIGHT;
     }
   }, [timetables]);
 
@@ -111,104 +77,149 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
     }
   }, [refreshTimetables, loadDailyTimeTables, resetTimetablesRefresh]);
 
+  /**
+   * 한 timetable을 hour-row별 세그먼트로 분해
+   * 예) 07:00~13:00 → hour 7~12 각각 { hour, startCell, endCell }
+   * startCell: 그 행에서 색칠 시작 셀 (0~5)
+   * endCell: 그 행에서 색칠 끝 셀 (exclusive, 1~6)
+   */
+  const getSegments = (tt: DailyTimetableType) => {
+    const startMin = timeToMinutes(tt.start_time);
+    const endMin = timeToMinutes(tt.end_time);
+
+    const segments: {
+      hour: number;
+      startCell: number;
+      endCell: number;
+      isFirst: boolean;
+    }[] = [];
+
+    let current = startMin;
+    let isFirst = true;
+
+    while (current < endMin) {
+      const hour = Math.floor(current / 60);
+      const minuteInHour = current % 60;
+      const startCell = Math.floor(minuteInHour / MINUTES_PER_CELL);
+
+      // 이 행에서 끝나는 분: 다음 시 정각 or endMin 중 작은 값
+      const rowEndMin = Math.min((hour + 1) * 60, endMin);
+      const endCell = Math.ceil((rowEndMin - hour * 60) / MINUTES_PER_CELL);
+
+      segments.push({ hour, startCell, endCell, isFirst });
+      isFirst = false;
+      current = (hour + 1) * 60; // 다음 행으로
+    }
+
+    return segments;
+  };
+
   return (
-    <>
-      <Card className="flex flex-col h-full overflow-hidden shadow-lg border-1">
-        <CardHeader>
-          <CardTitle className="text-base">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2">
-                <CalendarClock /> Timetable
-              </div>
-
-              <CreateDailyTimetableModal
-                dailyLogId={dailyLogId}
-                timetables={timetables}
-              />
+    <Card className="flex flex-col h-full overflow-hidden shadow-lg border-1">
+      <CardHeader>
+        <CardTitle className="text-base">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <CalendarClock /> Timetable
             </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent ref={scrollRef} className="flex-grow overflow-y-auto">
-          <div className="grid grid-cols-[56px_1fr]">
-            {hours.flatMap((hour) =>
-              [0, 1].map((halfIndex) => {
-                const isSecondHalf = halfIndex === 1;
-                const timetable = getTimetableForHalfHour(hour, isSecondHalf);
-                const isStart = isStartSlot(hour, isSecondHalf, timetable);
-                const showDeleteButton =
-                  timetable && hoveredTimetableId === timetable.id;
+            <CreateDailyTimetableModal
+              dailyLogId={dailyLogId}
+              timetables={timetables}
+            />
+          </div>
+        </CardTitle>
+      </CardHeader>
 
-                return (
-                  <div key={`${hour}-${halfIndex}`} className="contents">
-                    {/* 시간 컬럼 */}
-                    {halfIndex === 0 ? (
-                      <div
-                        className="row-span-2 border-r border-b text-xs flex items-center p-2"
-                        style={{ height: ROW_HEIGHT * 2 }}
-                      >
-                        {String(hour).padStart(2, "0")}:00
-                      </div>
-                    ) : null}
+      <CardContent ref={scrollRef} className="flex-grow overflow-y-auto">
+        <div className="relative">
+          <div
+            className="grid"
+            style={{
+              gridTemplateColumns: `${TIME_COL_WIDTH}px repeat(${CELLS_PER_HOUR}, 1fr)`,
+            }}
+          >
+            {hours.map((hour) => (
+              <>
+                <div
+                  key={`label-${hour}`}
+                  className="border-r border-b text-xs flex items-center justify-center text-gray-600 font-medium"
+                  style={{
+                    height: ROW_HEIGHT,
+                    borderBottom: hour === 23 ? "none" : undefined,
+                  }}
+                >
+                  {String(hour).padStart(2, "0")}:00
+                </div>
+                {Array.from({ length: CELLS_PER_HOUR }, (_, cellIndex) => (
+                  <div
+                    key={`cell-${hour}-${cellIndex}`}
+                    className="border-r border-b"
+                    style={{
+                      height: ROW_HEIGHT,
+                      borderRight:
+                        cellIndex === CELLS_PER_HOUR - 1 ? "none" : undefined,
+                      borderBottom: hour === 23 ? "none" : undefined,
+                    }}
+                  />
+                ))}
+              </>
+            ))}
+          </div>
 
-                    {/* 슬롯 */}
-                    <div
-                      className={`relative ${
-                        halfIndex === 1 ? "border-b" : ""
-                      }`}
-                      style={{ height: ROW_HEIGHT }}
-                      onMouseEnter={() =>
-                        timetable && setHoveredTimetableId(timetable.id)
-                      }
-                      onMouseLeave={() => setHoveredTimetableId(null)}
-                    >
-                      {/* 배경 */}
-                      {timetable && (
-                        <div
-                          className="absolute inset-0 border-l-4"
-                          style={
-                            timetable.category
-                              ? {
-                                  backgroundColor: timetable.category.color,
-                                  borderLeftColor: increaseSaturationAndDarken(
-                                    timetable.category.color,
-                                  ),
-                                }
-                              : {
-                                  backgroundColor: "#f1f5f9",
-                                  borderLeftColor: "#cbd5e1",
-                                }
-                          }
-                        />
-                      )}
+          {/* ── 2) timetable 오버레이 레이어 ── */}
+          {timetables.map((tt) => {
+            const segments = getSegments(tt);
+            const bgColor = tt.category?.color ?? "#f1f5f9";
+            const isHovered = hoveredTimetableId === tt.id;
 
-                      {/* 타임테이블 컨텐츠 오버레이 */}
-                      {isStart && timetable && (
-                        <div className="absolute inset-x-2 -top-2 z-10 flex items-center justify-between pointer-events-none">
-                          <span className="text-sm font-medium truncate max-w-[80%] p-4">
-                            {timetable.content}
-                          </span>
+            return segments.map(({ hour, startCell, endCell, isFirst }) => {
+              // left: TIME_COL_WIDTH + startCell 비율
+              // width: (endCell - startCell) 비율
+              // 전체 content 영역(6칸) 중 몇 칸인지
+              const leftPercent = (startCell / CELLS_PER_HOUR) * 100;
+              const widthPercent =
+                ((endCell - startCell) / CELLS_PER_HOUR) * 100;
 
-                          {showDeleteButton && (
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-5 w-5 rounded-full bg-white pointer-events-auto border-slate-400"
-                              onClick={() => deleteTimetable(timetable.id)}
-                            >
-                              <X size={12} />
-                            </Button>
-                          )}
-                        </div>
+              return (
+                <div
+                  key={`${tt.id}-${hour}`}
+                  className="absolute flex items-center overflow-hidden"
+                  style={{
+                    top: hour * ROW_HEIGHT,
+                    height: ROW_HEIGHT,
+                    left: `calc(${TIME_COL_WIDTH}px + (100% - ${TIME_COL_WIDTH}px) * ${leftPercent / 100})`,
+                    width: `calc((100% - ${TIME_COL_WIDTH}px) * ${widthPercent / 100})`,
+                    backgroundColor: withAlpha(bgColor, 0.7),
+                    zIndex: 10,
+                  }}
+                  onMouseEnter={() => setHoveredTimetableId(tt.id)}
+                  onMouseLeave={() => setHoveredTimetableId(null)}
+                >
+                  {isFirst && (
+                    <div className="flex items-center justify-between w-full px-2 overflow-hidden">
+                      <span className="text-xs font-medium truncate flex-1">
+                        {tt.content}
+                      </span>
+                      {isHovered && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-5 w-5 rounded-full bg-white border-slate-400 flex-shrink-0 ml-1 shadow-md"
+                          onClick={() => deleteTimetable(tt.id)}
+                        >
+                          <X size={12} />
+                        </Button>
                       )}
                     </div>
-                  </div>
-                );
-              }),
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </>
+                  )}
+                </div>
+              );
+            });
+          })}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
+
 export default DailyTimetablePanel;
