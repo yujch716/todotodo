@@ -1,31 +1,19 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 
-export const getDailyTodoByDailyLogId = async (dailyLogId: string) => {
+export const createDailyTodo = async (
+  dailyLogId: string,
+  groupId: string,
+  content: string,
+) => {
   const { data, error } = await supabase
     .from("daily_todo")
-    .select()
-    .eq("daily_log_id", dailyLogId)
-    .order("created_at", { ascending: true });
-
-  if (error) toast.error("조회에 실패했습니다.");
-
-  const totalCount = data?.length;
-  const checkedCount = data?.filter(
-    (item: { is_checked: boolean }) => item.is_checked,
-  ).length;
-
-  return {
-    items: data,
-    totalCount,
-    checkedCount,
-  };
-};
-
-export const createDailyTodo = async (dailyLogId: string, content: string) => {
-  const { data, error } = await supabase
-    .from("daily_todo")
-    .insert({ daily_log_id: dailyLogId, content, is_checked: false })
+    .insert({
+      daily_log_id: dailyLogId,
+      group_id: groupId,
+      content,
+      is_checked: false,
+    })
     .select()
     .single();
 
@@ -37,29 +25,44 @@ export const createDailyTodo = async (dailyLogId: string, content: string) => {
 export const updateDailyTodoContent = async (
   id: string,
   content: string,
-): Promise<void> => {
+): Promise<boolean> => {
   const { error } = await supabase
     .from("daily_todo")
     .update({ content })
     .eq("id", id);
 
-  if (error) toast.error("수정에 실패했습니다.");
+  if (error) {
+    toast.error("투두 수정에 실패했습니다.");
+    return false;
+  }
+
+  return true;
 };
 
 export const toggleDailyTodo = async (
   id: string,
   isChecked: boolean,
-): Promise<void> => {
+): Promise<boolean> => {
   const { error } = await supabase
     .from("daily_todo")
     .update({ is_checked: isChecked })
     .eq("id", id);
 
-  if (error) toast.error("수정에 실패했습니다.");
+  if (error) {
+    toast.error("투두 상태 변경에 실패했습니다.");
+    return false;
+  }
+
+  return true;
 };
 
-export const deleteDailyTodo = async (id: string): Promise<void> => {
+export const deleteDailyTodo = async (id: string): Promise<boolean> => {
   const { error } = await supabase.from("daily_todo").delete().eq("id", id);
 
-  if (error) toast.error("삭제에 실패했습니다.");
+  if (error) {
+    toast.error("투두 삭제에 실패했습니다.");
+    return false;
+  }
+
+  return true;
 };
