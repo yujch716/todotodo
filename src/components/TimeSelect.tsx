@@ -28,7 +28,7 @@ const TimeSelect = ({
     hours = [...hours, "24"];
   }
 
-  const minutes = ["00", "30"];
+  const minutes = ["00", "10", "20", "30", "40", "50"];
 
   const handleHourChange = (newHour: string) => {
     onValueChange(`${newHour}:${minute}`);

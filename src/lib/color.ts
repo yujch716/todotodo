@@ -62,3 +62,10 @@ export const increaseSaturationAndDarken = (
     .toString(16)
     .padStart(2, "0")}`;
 };
+
+export const withAlpha = (color: string, alpha: number): string => {
+  const r = parseInt(color.slice(1, 3), 16);
+  const g = parseInt(color.slice(3, 5), 16);
+  const b = parseInt(color.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
