@@ -72,7 +72,6 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
 
     const newGroup = await createDailyTodoGroup(
       dailyLogId,
-      "새 그룹",
       null,
       groups.length,
     );

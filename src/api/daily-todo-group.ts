@@ -3,6 +3,24 @@ import { toast } from "sonner";
 import type { DailyTodoGroupType } from "@/types/daily-log.ts";
 import { getAuthenticatedUser } from "@/api/auth.ts";
 
+export const getDailyTodoGroups = async (dailyLogId: string) => {
+  const { data, error } = await supabase
+    .from("daily_todo_group")
+    .select(
+      `
+      *,
+    `,
+    )
+    .eq("daily_log_id", dailyLogId);
+
+  if (error) {
+    toast.error("투두 그룹 조회에 실패했습니다.");
+    return [];
+  }
+
+  return data || [];
+};
+
 export const getDailyTodoGroupsWithTodos = async (dailyLogId: string) => {
   const { data, error } = await supabase
     .from("daily_todo_group")
@@ -25,7 +43,6 @@ export const getDailyTodoGroupsWithTodos = async (dailyLogId: string) => {
 
 export const createDailyTodoGroup = async (
   dailyLogId: string,
-  title: string,
   categoryId?: string | null,
   sortOrder?: number,
 ) => {
@@ -36,7 +53,7 @@ export const createDailyTodoGroup = async (
     .insert({
       user_id: user.id,
       daily_log_id: dailyLogId,
-      title,
+      title: "새 그룹",
       category_id: categoryId || null,
       sort_order: sortOrder || 0,
     })
