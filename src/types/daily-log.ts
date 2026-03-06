@@ -21,7 +21,7 @@ export interface DailyTodoGroupType {
 
 export interface DailyTodoType {
   id: string;
-  daily_todo_group_id?: string;
+  group_id?: string;
   content: string;
   is_checked: boolean;
   totalCount: number;

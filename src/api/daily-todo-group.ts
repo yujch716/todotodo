@@ -1,7 +1,6 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import type { DailyTodoGroupType } from "@/types/daily-log.ts";
-import { getAuthenticatedUser } from "@/api/auth.ts";
 
 export const getDailyTodoGroups = async (dailyLogId: string) => {
   const { data, error } = await supabase
@@ -38,7 +37,15 @@ export const getDailyTodoGroupsWithTodos = async (dailyLogId: string) => {
     return [];
   }
 
-  return data || [];
+  return (data || []).map((group) => ({
+    ...group,
+    todos: (group.todos || []).sort(
+      (
+        a: { created_at: string | number | Date },
+        b: { created_at: string | number | Date },
+      ) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+    ),
+  }));
 };
 
 export const createDailyTodoGroup = async (
@@ -46,12 +53,9 @@ export const createDailyTodoGroup = async (
   categoryId?: string | null,
   sortOrder?: number,
 ) => {
-  const user = await getAuthenticatedUser();
-
   const { data, error } = await supabase
     .from("daily_todo_group")
     .insert({
-      user_id: user.id,
       daily_log_id: dailyLogId,
       title: "새 그룹",
       category_id: categoryId || null,
@@ -99,21 +103,4 @@ export const deleteDailyTodoGroup = async (id: string): Promise<boolean> => {
   }
 
   return true;
-};
-
-export const getTotalTodoStats = async (dailyLogId: string) => {
-  const { data, error } = await supabase
-    .from("daily_todo")
-    .select("is_checked")
-    .eq("daily_log_id", dailyLogId);
-
-  if (error) {
-    console.error("투두 통계 조회 실패:", error);
-    return { totalCount: 0, checkedCount: 0 };
-  }
-
-  const totalCount = data?.length || 0;
-  const checkedCount = data?.filter((todo) => todo.is_checked).length || 0;
-
-  return { totalCount, checkedCount };
 };

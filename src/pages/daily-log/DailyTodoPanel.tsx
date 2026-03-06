@@ -5,7 +5,6 @@ import type { DailyTodoGroupType } from "@/types/daily-log.ts";
 import {
   getDailyTodoGroupsWithTodos,
   createDailyTodoGroup,
-  getTotalTodoStats,
 } from "@/api/daily-todo-group.ts";
 import { useDailyLogSidebarStore } from "@/store/dailyLogSidebarStore.ts";
 import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";
@@ -19,6 +18,10 @@ import {
 } from "@/components/ui/card.tsx";
 import { SquareCheckBig, FolderPlus } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
+import {
+  getDailyTodoCheckedCount,
+  getDailyTodoTotalCount,
+} from "@/api/daily-todo.ts";
 
 interface Props {
   dailyLogId: string;
@@ -46,14 +49,15 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
   const loadData = useCallback(async () => {
     if (!dailyLogId) return;
 
-    const [todoGroups, stats] = await Promise.all([
+    const [todoGroups, totalCount, checkedCount] = await Promise.all([
       getDailyTodoGroupsWithTodos(dailyLogId),
-      getTotalTodoStats(dailyLogId),
+      getDailyTodoTotalCount(dailyLogId),
+      getDailyTodoCheckedCount(dailyLogId),
     ]);
 
     setGroups(todoGroups);
-    setTotalCount(stats.totalCount);
-    setCheckedCount(stats.checkedCount);
+    setTotalCount(totalCount);
+    setCheckedCount(checkedCount);
   }, [dailyLogId]);
 
   useEffect(() => {
@@ -77,8 +81,7 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
     );
 
     if (newGroup) {
-      const groupWithTodos = { ...newGroup, todos: [] };
-      setGroups((prev) => [...prev, groupWithTodos]);
+      loadData();
       triggerSidebarRefresh();
     }
   };

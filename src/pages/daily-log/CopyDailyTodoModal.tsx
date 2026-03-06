@@ -26,6 +26,7 @@ import {
   createDailyTodoGroup,
   getDailyTodoGroups,
 } from "@/api/daily-todo-group.ts";
+import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";
 
 interface CopyDailyTodoModalProps {
   content: string;
@@ -37,6 +38,9 @@ const CopyDailTodoModal = ({ content, onClose }: CopyDailyTodoModalProps) => {
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
+  );
+  const triggerDailyLogDetailRefresh = useDailyLogDetailStore(
+    (state) => state.triggerDailyLogRefresh,
   );
 
   const handleSubmit = async () => {
@@ -57,6 +61,7 @@ const CopyDailTodoModal = ({ content, onClose }: CopyDailyTodoModalProps) => {
     await createDailyTodo(dailyLog.id, dailyTodoGroup.id, content);
 
     triggerSidebarRefresh();
+    triggerDailyLogDetailRefresh();
 
     setDate(undefined);
     onClose();
