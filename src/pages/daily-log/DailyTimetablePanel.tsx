@@ -36,8 +36,7 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   // 04시부터 다음날 04시까지 24시간
   const timeSlots = Array.from({ length: 24 }, (_, i) => {
     const hour = (START_HOUR + i) % 24;
-    const isNextDay = START_HOUR + i >= 24;
-    return { hour, isNextDay };
+    return { hour };
   });
 
   const triggerTimeTableRefresh = useDailyTimetableStore(
