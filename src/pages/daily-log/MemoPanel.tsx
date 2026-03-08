@@ -15,15 +15,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { NotebookPen } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
+import { NotebookPen, ChevronDown, ChevronRight } from "lucide-react";
 
 interface Props {
   dailyLogId: string;
   memo: string;
   setMemo: (value: string) => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: (collapsed: boolean) => void;
 }
 
-const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
+const MemoPanel = ({
+  dailyLogId,
+  memo,
+  setMemo,
+  isCollapsed = false,
+  onToggleCollapse,
+}: Props) => {
   const [textColor, setTextColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [heading, setHeading] = useState("paragraph");
@@ -91,6 +100,10 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
     editor?.chain().focus().setColor(color).run();
   };
 
+  const handleToggleCollapse = () => {
+    onToggleCollapse?.(!isCollapsed);
+  };
+
   useEffect(() => {
     if (!editor) return;
     if (editor.getHTML() !== memo) {
@@ -124,14 +137,33 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
   if (!editor) return null;
 
   return (
-    <>
-      <Card className="flex flex-col h-full overflow-hidden shadow-lg border-1">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+    <Card
+      className={`flex flex-col overflow-hidden shadow-lg border-1 transition-all duration-300 ${
+        isCollapsed ? "h-auto" : "h-full"
+      }`}
+    >
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <div className="flex items-center gap-2 flex-grow">
             <NotebookPen />
             Memo
-          </CardTitle>
-        </CardHeader>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-6 h-6"
+            onClick={handleToggleCollapse}
+          >
+            {isCollapsed ? (
+              <ChevronRight className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </Button>
+        </CardTitle>
+      </CardHeader>
+
+      {!isCollapsed && (
         <CardContent className="flex-grow flex flex-col overflow-hidden">
           <div className="flex flex-col h-full border rounded-lg overflow-hidden">
             <TiptapToolbar
@@ -157,8 +189,8 @@ const MemoPanel = ({ dailyLogId, memo, setMemo }: Props) => {
             </div>
           </div>
         </CardContent>
-      </Card>
-    </>
+      )}
+    </Card>
   );
 };
 
