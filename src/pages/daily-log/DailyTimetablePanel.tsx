@@ -24,6 +24,7 @@ const MINUTES_PER_CELL = 10;
 const CELLS_PER_HOUR = 6;
 const ROW_HEIGHT = 40;
 const TIME_COL_WIDTH = 56;
+const START_HOUR = 4;
 
 const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   const [timetables, setTimetables] = useState<DailyTimetableType[]>([]);
@@ -32,7 +33,12 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   );
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const hours = Array.from({ length: 24 }, (_, i) => i);
+  // 04시부터 다음날 04시까지 24시간
+  const timeSlots = Array.from({ length: 24 }, (_, i) => {
+    const hour = (START_HOUR + i) % 24;
+    const isNextDay = START_HOUR + i >= 24;
+    return { hour, isNextDay };
+  });
 
   const triggerTimeTableRefresh = useDailyTimetableStore(
     (state) => state.triggerDailyTimetableRefresh,
@@ -51,20 +57,14 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
 
   const timeToMinutes = (time: string): number => {
     const [h, m] = time.split(":").map(Number);
-    return h * 60 + m;
+    const adjustedHour = h < START_HOUR ? h + 24 : h;
+    return (adjustedHour - START_HOUR) * 60 + m;
   };
 
   const deleteTimetable = async (id: string) => {
     await deleteDailyTimetableById(id);
     triggerTimeTableRefresh();
   };
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (el && el.scrollTop === 0) {
-      el.scrollTop = 7 * ROW_HEIGHT;
-    }
-  }, [timetables]);
 
   useEffect(() => {
     loadDailyTimeTables();
@@ -79,16 +79,17 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
 
   /**
    * 한 timetable을 hour-row별 세그먼트로 분해
-   * 예) 07:00~13:00 → hour 7~12 각각 { hour, startCell, endCell }
-   * startCell: 그 행에서 색칠 시작 셀 (0~5)
-   * endCell: 그 행에서 색칠 끝 셀 (exclusive, 1~6)
+   * 04시 기준으로 계산된 시간을 사용
    */
   const getSegments = (tt: DailyTimetableType) => {
     const startMin = timeToMinutes(tt.start_time);
     const endMin = timeToMinutes(tt.end_time);
 
+    // 시간이 다음날로 넘어가는 경우 처리
+    const actualEndMin = endMin <= startMin ? endMin + 24 * 60 : endMin;
+
     const segments: {
-      hour: number;
+      rowIndex: number;
       startCell: number;
       endCell: number;
       isFirst: boolean;
@@ -97,18 +98,22 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
     let current = startMin;
     let isFirst = true;
 
-    while (current < endMin) {
-      const hour = Math.floor(current / 60);
+    while (current < actualEndMin) {
+      const rowIndex = Math.floor(current / 60);
       const minuteInHour = current % 60;
       const startCell = Math.floor(minuteInHour / MINUTES_PER_CELL);
 
-      // 이 행에서 끝나는 분: 다음 시 정각 or endMin 중 작은 값
-      const rowEndMin = Math.min((hour + 1) * 60, endMin);
-      const endCell = Math.ceil((rowEndMin - hour * 60) / MINUTES_PER_CELL);
+      // 이 행에서 끝나는 분: 다음 시 정각 or actualEndMin 중 작은 값
+      const rowEndMin = Math.min((rowIndex + 1) * 60, actualEndMin);
+      const endCell = Math.ceil((rowEndMin - rowIndex * 60) / MINUTES_PER_CELL);
 
-      segments.push({ hour, startCell, endCell, isFirst });
+      // 24시간 범위 내에서만 표시
+      if (rowIndex < 24) {
+        segments.push({ rowIndex, startCell, endCell, isFirst });
+      }
+
       isFirst = false;
-      current = (hour + 1) * 60; // 다음 행으로
+      current = (rowIndex + 1) * 60; // 다음 행으로
     }
 
     return segments;
@@ -138,27 +143,29 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
               gridTemplateColumns: `${TIME_COL_WIDTH}px repeat(${CELLS_PER_HOUR}, 1fr)`,
             }}
           >
-            {hours.map((hour) => (
+            {timeSlots.map(({ hour }, index) => (
               <>
                 <div
-                  key={`label-${hour}`}
-                  className="border-r border-b text-xs flex items-center justify-center text-gray-600 font-medium"
+                  key={`label-${index}`}
+                  className="border-r border-b text-xs flex items-center justify-center text-gray-600 font-medium relative"
                   style={{
                     height: ROW_HEIGHT,
-                    borderBottom: hour === 23 ? "none" : undefined,
+                    borderBottom: index === 23 ? "none" : undefined,
                   }}
                 >
-                  {String(hour).padStart(2, "0")}:00
+                  <div className="flex flex-col items-center">
+                    <span>{String(hour).padStart(2, "0")}:00</span>
+                  </div>
                 </div>
                 {Array.from({ length: CELLS_PER_HOUR }, (_, cellIndex) => (
                   <div
-                    key={`cell-${hour}-${cellIndex}`}
+                    key={`cell-${index}-${cellIndex}`}
                     className="border-r border-b"
                     style={{
                       height: ROW_HEIGHT,
                       borderRight:
                         cellIndex === CELLS_PER_HOUR - 1 ? "none" : undefined,
-                      borderBottom: hour === 23 ? "none" : undefined,
+                      borderBottom: index === 23 ? "none" : undefined,
                     }}
                   />
                 ))}
@@ -166,26 +173,22 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
             ))}
           </div>
 
-          {/* ── 2) timetable 오버레이 레이어 ── */}
           {timetables.map((tt) => {
             const segments = getSegments(tt);
             const bgColor = tt.category?.color ?? "#f1f5f9";
             const isHovered = hoveredTimetableId === tt.id;
 
-            return segments.map(({ hour, startCell, endCell, isFirst }) => {
-              // left: TIME_COL_WIDTH + startCell 비율
-              // width: (endCell - startCell) 비율
-              // 전체 content 영역(6칸) 중 몇 칸인지
+            return segments.map(({ rowIndex, startCell, endCell, isFirst }) => {
               const leftPercent = (startCell / CELLS_PER_HOUR) * 100;
               const widthPercent =
                 ((endCell - startCell) / CELLS_PER_HOUR) * 100;
 
               return (
                 <div
-                  key={`${tt.id}-${hour}`}
+                  key={`${tt.id}-${rowIndex}`}
                   className="absolute flex items-center overflow-hidden"
                   style={{
-                    top: hour * ROW_HEIGHT,
+                    top: rowIndex * ROW_HEIGHT,
                     height: ROW_HEIGHT,
                     left: `calc(${TIME_COL_WIDTH}px + (100% - ${TIME_COL_WIDTH}px) * ${leftPercent / 100})`,
                     width: `calc((100% - ${TIME_COL_WIDTH}px) * ${widthPercent / 100})`,
