@@ -35,6 +35,7 @@ const DailyLogPage = () => {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isMemoCollapsed, setIsMemoCollapsed] = useState(false);
   const isValidLog = dailyLogId && dailyLogId !== "new" && date;
+  const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
@@ -46,7 +47,12 @@ const DailyLogPage = () => {
   }, []);
 
   const loadDailyLog = useCallback(async () => {
-    if (!dailyLogId || dailyLogId === "new") return;
+    if (!dailyLogId) return;
+
+    if (dailyLogId === "new") {
+      if (!date) setDate(new Date());
+      return;
+    }
 
     const dailyLog = await getDailyLogById(dailyLogId);
 
@@ -55,9 +61,16 @@ const DailyLogPage = () => {
   }, [dailyLogId]);
 
   const loadDailyLogs = useCallback(async () => {
-    if (!date) return;
-    const start = new Date(date.getFullYear(), date.getMonth(), 1);
-    const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const start = new Date(
+      displayMonth.getFullYear(),
+      displayMonth.getMonth(),
+      1,
+    );
+    const end = new Date(
+      displayMonth.getFullYear(),
+      displayMonth.getMonth() + 1,
+      0,
+    );
 
     const dailyLogs = await getDailyLogsByDate(start, end);
 
@@ -68,7 +81,7 @@ const DailyLogPage = () => {
     });
 
     setLogsByDate(map);
-  }, [date, toYMD]);
+  }, [displayMonth, toYMD]);
 
   const handleDelete = async () => {
     if (!dailyLogId) return;
@@ -157,7 +170,7 @@ const DailyLogPage = () => {
                 selected={date}
                 onSelect={handleDateSelect}
                 autoFocus={false}
-                className="w-full rounded-lg border bg-white shadow-lg border-1 [&_table]:min-h-[300px]"
+                className="w-full rounded-lg border bg-white shadow-lg border-1 overflow-hidden"
                 buttonVariant="ghost"
                 modifiers={{
                   hasLog: (day) => {
@@ -169,6 +182,8 @@ const DailyLogPage = () => {
                   hasLog:
                     "relative after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:rounded-full after:bg-blue-500",
                 }}
+                month={displayMonth}
+                onMonthChange={setDisplayMonth}
               />
 
               {isValidLog ? (
@@ -226,6 +241,8 @@ const DailyLogPage = () => {
                     hasLog:
                       "relative after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:rounded-full after:bg-blue-500",
                   }}
+                  month={displayMonth}
+                  onMonthChange={setDisplayMonth}
                 />
                 {date && (
                   <div className="flex w-full min-w-0">
