@@ -50,7 +50,7 @@ const DailyLogPage = () => {
     if (!dailyLogId) return;
 
     if (dailyLogId === "new") {
-      setDate(new Date());
+      if (!date) setDate(new Date());
       return;
     }
 
