@@ -77,15 +77,10 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
     }
   }, [refreshTimetables, loadDailyTimeTables, resetTimetablesRefresh]);
 
-  /**
-   * 한 timetable을 hour-row별 세그먼트로 분해
-   * 04시 기준으로 계산된 시간을 사용
-   */
   const getSegments = (tt: DailyTimetableType) => {
     const startMin = timeToMinutes(tt.start_time);
     const endMin = timeToMinutes(tt.end_time);
 
-    // 시간이 다음날로 넘어가는 경우 처리
     const actualEndMin = endMin <= startMin ? endMin + 24 * 60 : endMin;
 
     const segments: {
@@ -103,17 +98,15 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
       const minuteInHour = current % 60;
       const startCell = Math.floor(minuteInHour / MINUTES_PER_CELL);
 
-      // 이 행에서 끝나는 분: 다음 시 정각 or actualEndMin 중 작은 값
       const rowEndMin = Math.min((rowIndex + 1) * 60, actualEndMin);
       const endCell = Math.ceil((rowEndMin - rowIndex * 60) / MINUTES_PER_CELL);
 
-      // 24시간 범위 내에서만 표시
       if (rowIndex < 24) {
         segments.push({ rowIndex, startCell, endCell, isFirst });
       }
 
       isFirst = false;
-      current = (rowIndex + 1) * 60; // 다음 행으로
+      current = (rowIndex + 1) * 60;
     }
 
     return segments;
