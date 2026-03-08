@@ -121,10 +121,10 @@ const DailyTodoPanel = ({ dailyLogId }: Props) => {
               <Button
                 variant="outline"
                 size="icon"
-                className="w-8 h-8"
+                className="flex w-6 h-6 p-4 [&>svg]:!w-5 [&>svg]:!h-5 flex-shrink-0"
                 onClick={createEmptyGroup}
               >
-                <FolderPlus className="w-4 h-4" />
+                <FolderPlus />
               </Button>
             </div>
           </div>
