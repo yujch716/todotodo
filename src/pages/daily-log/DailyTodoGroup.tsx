@@ -51,7 +51,6 @@ const DailyTodoGroup = ({
   const [title, setTitle] = useState(group.title);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 그룹의 todos가 변경되면 로컬 상태 업데이트
   useEffect(() => {
     setTodos(group.todos || []);
   }, [group.todos]);

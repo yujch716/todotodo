@@ -33,6 +33,7 @@ const DailyLogPage = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [memo, setMemo] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isMemoCollapsed, setIsMemoCollapsed] = useState(false);
   const isValidLog = dailyLogId && dailyLogId !== "new" && date;
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
@@ -238,15 +239,27 @@ const DailyLogPage = () => {
                     <DailyTimetablePanel dailyLogId={dailyLogId} />
                   </div>
                   <div className="w-2/5 h-full flex flex-col min-h-0 gap-6">
-                    <div className="flex-[3] min-h-0 flex flex-col">
+                    <div
+                      className={cn(
+                        "min-h-0 flex flex-col",
+                        isMemoCollapsed ? "flex-1" : "flex-[3]",
+                      )}
+                    >
                       <DailyTodoPanel dailyLogId={dailyLogId} />
                     </div>
 
-                    <div className="flex-[2] min-h-0 flex flex-col">
+                    <div
+                      className={cn(
+                        "min-h-0 flex flex-col",
+                        isMemoCollapsed ? "flex-none" : "flex-[2]",
+                      )}
+                    >
                       <MemoPanel
                         dailyLogId={dailyLogId}
                         memo={memo}
                         setMemo={setMemo}
+                        isCollapsed={isMemoCollapsed}
+                        onToggleCollapse={setIsMemoCollapsed}
                       />
                     </div>
                   </div>
