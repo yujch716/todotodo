@@ -9,7 +9,7 @@ import {
 interface TimeSelectProps {
   value: string; // "09:00" 형식
   onValueChange: (value: string) => void;
-  disabledTimes?: string[]; // ["09:00", "09:30", "10:00"] 형식
+  disabledTimes?: string[]; // ["09:00", "09:10", "10:00"] 형식
   placeholder?: string;
   isEnd?: boolean;
 }
@@ -22,7 +22,11 @@ const TimeSelect = ({
 }: TimeSelectProps) => {
   const [hour, minute] = value.split(":");
 
-  let hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+  // 04시부터 시작하여 다음날 04시까지 (04, 05, 06, ..., 23, 00, 01, 02, 03)
+  let hours = Array.from({ length: 24 }, (_, i) => {
+    const hourValue = (4 + i) % 24;
+    return String(hourValue).padStart(2, "0");
+  });
 
   if (isEnd) {
     hours = [...hours, "24"];
@@ -51,9 +55,15 @@ const TimeSelect = ({
         <SelectContent className="max-h-60">
           {hours.map((h) => {
             const isDisabled = minutes.every((m) => isTimeDisabled(h, m));
+            const hourNum = parseInt(h);
+            const isNextDay = hourNum >= 0 && hourNum <= 3;
+            
             return (
               <SelectItem key={h} value={h} disabled={isDisabled}>
                 {h}시
+                {isNextDay && (
+                  <span className="text-xs text-muted-foreground ml-1">(다음날)</span>
+                )}
               </SelectItem>
             );
           })}
