@@ -50,7 +50,6 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     setCategories(data);
   }, []);
 
-  // 시간을 분으로 변환 (04시 기준으로 다음날 처리)
   const timeToMinutesFromStart = (time: string): number => {
     const [hour, minute] = time.split(":").map(Number);
     // 00시~04시는 다음날로 처리 (24시간 추가)
@@ -58,15 +57,13 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     return adjustedHour * 60 + minute;
   };
 
-  // 기존 타임테이블과 겹치는 시간대를 계산
   const getOccupiedTimeSlots = () => {
     const occupiedSlots = new Set<string>();
     
     timetables.forEach((tt) => {
       const startMinutes = timeToMinutesFromStart(tt.start_time);
       const endMinutes = timeToMinutesFromStart(tt.end_time);
-      
-      // 10분 단위로 점유된 시간 슬롯 생성
+
       for (let minutes = startMinutes; minutes < endMinutes; minutes += 10) {
         const hour = Math.floor(minutes / 60) % 24;
         const minute = minutes % 60;

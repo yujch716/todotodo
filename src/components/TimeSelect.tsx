@@ -22,7 +22,6 @@ const TimeSelect = ({
 }: TimeSelectProps) => {
   const [hour, minute] = value.split(":");
 
-  // 04시부터 시작하여 다음날 04시까지 (04, 05, 06, ..., 23, 00, 01, 02, 03)
   let hours = Array.from({ length: 24 }, (_, i) => {
     const hourValue = (4 + i) % 24;
     return String(hourValue).padStart(2, "0");
