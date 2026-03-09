@@ -56,12 +56,14 @@ const TimeSelect = ({
             const isDisabled = minutes.every((m) => isTimeDisabled(h, m));
             const hourNum = parseInt(h);
             const isNextDay = hourNum >= 0 && hourNum <= 3;
-            
+
             return (
               <SelectItem key={h} value={h} disabled={isDisabled}>
                 {h}시
                 {isNextDay && (
-                  <span className="text-xs text-muted-foreground ml-1">(다음날)</span>
+                  <span className="text-xs text-muted-foreground ml-1">
+                    (다음날)
+                  </span>
                 )}
               </SelectItem>
             );

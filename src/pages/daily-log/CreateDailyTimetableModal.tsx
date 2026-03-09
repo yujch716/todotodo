@@ -59,7 +59,7 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
 
   const getOccupiedTimeSlots = () => {
     const occupiedSlots = new Set<string>();
-    
+
     timetables.forEach((tt) => {
       const startMinutes = timeToMinutesFromStart(tt.start_time);
       const endMinutes = timeToMinutesFromStart(tt.end_time);
@@ -71,7 +71,7 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
         occupiedSlots.add(timeSlot);
       }
     });
-    
+
     return Array.from(occupiedSlots);
   };
 
@@ -82,27 +82,29 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
   const getDisabledEndTimes = () => {
     const startTotalMinutes = timeToMinutesFromStart(startTime);
     const occupiedSlots = getOccupiedTimeSlots();
-    
+
     const disabledTimes: string[] = [];
-    
+
     // 시작시간 이전의 모든 시간 비활성화
     for (let minutes = 0; minutes < 24 * 60; minutes += 10) {
       const adjustedMinutes = minutes >= 4 * 60 ? minutes : minutes + 24 * 60;
       if (adjustedMinutes <= startTotalMinutes) {
         const hour = Math.floor(minutes / 60);
         const minute = minutes % 60;
-        disabledTimes.push(`${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`);
+        disabledTimes.push(
+          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+        );
       }
     }
-    
+
     // 점유된 시간대 중에서 현재 선택된 시작 시간 이후의 시간들만 비활성화
-    occupiedSlots.forEach(timeSlot => {
+    occupiedSlots.forEach((timeSlot) => {
       const slotMinutes = timeToMinutesFromStart(timeSlot);
       if (slotMinutes > startTotalMinutes) {
         disabledTimes.push(timeSlot);
       }
     });
-    
+
     return [...new Set(disabledTimes)];
   };
 
@@ -123,18 +125,21 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     // 시간 겹침 검증
     const newStartMinutes = timeToMinutesFromStart(startTime);
     const newEndMinutes = timeToMinutesFromStart(endTime);
-    
-    const hasConflict = timetables.some(tt => {
+
+    const hasConflict = timetables.some((tt) => {
       const existingStartMinutes = timeToMinutesFromStart(tt.start_time);
       const existingEndMinutes = timeToMinutesFromStart(tt.end_time);
-      
+
       return (
-        (newStartMinutes >= existingStartMinutes && newStartMinutes < existingEndMinutes) ||
-        (newEndMinutes > existingStartMinutes && newEndMinutes <= existingEndMinutes) ||
-        (newStartMinutes <= existingStartMinutes && newEndMinutes >= existingEndMinutes)
+        (newStartMinutes >= existingStartMinutes &&
+          newStartMinutes < existingEndMinutes) ||
+        (newEndMinutes > existingStartMinutes &&
+          newEndMinutes <= existingEndMinutes) ||
+        (newStartMinutes <= existingStartMinutes &&
+          newEndMinutes >= existingEndMinutes)
       );
     });
-    
+
     if (hasConflict) {
       toast.error("선택한 시간이 기존 일정과 겹칩니다");
       return;
