@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -11,7 +10,7 @@ import {
 import { SquarePlus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input.tsx";
 import { toast } from "sonner";
 import { createDailyTimetable } from "@/api/daily-timetable.ts";
@@ -57,55 +56,51 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     return adjustedHour * 60 + minute;
   };
 
-  const getOccupiedTimeSlots = () => {
-    const occupiedSlots = new Set<string>();
-
+  const occupiedSlots = useMemo(() => {
+    const slots = new Set<string>();
     timetables.forEach((tt) => {
       const startMinutes = timeToMinutesFromStart(tt.start_time);
       const endMinutes = timeToMinutesFromStart(tt.end_time);
-
       for (let minutes = startMinutes; minutes < endMinutes; minutes += 10) {
         const hour = Math.floor(minutes / 60) % 24;
         const minute = minutes % 60;
-        const timeSlot = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-        occupiedSlots.add(timeSlot);
+        slots.add(
+          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+        );
       }
     });
-
-    return Array.from(occupiedSlots);
-  };
+    return Array.from(slots);
+  }, [timetables]);
 
   const getDisabledStartTimes = () => {
-    return getOccupiedTimeSlots();
+    return occupiedSlots;
   };
 
   const getDisabledEndTimes = () => {
     const startTotalMinutes = timeToMinutesFromStart(startTime);
-    const occupiedSlots = getOccupiedTimeSlots();
+    const nextOccupiedMinutes = occupiedSlots
+      .map((slot) => timeToMinutesFromStart(slot))
+      .filter((m) => m > startTotalMinutes)
+      .sort((a, b) => a - b)[0];
 
     const disabledTimes: string[] = [];
 
-    // 시작시간 이전의 모든 시간 비활성화
     for (let minutes = 0; minutes < 24 * 60; minutes += 10) {
-      const adjustedMinutes = minutes >= 4 * 60 ? minutes : minutes + 24 * 60;
-      if (adjustedMinutes <= startTotalMinutes) {
-        const hour = Math.floor(minutes / 60);
-        const minute = minutes % 60;
-        disabledTimes.push(
-          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
-        );
+      const adjustedMinutes = minutes < 4 * 60 ? minutes + 24 * 60 : minutes;
+      const hour = Math.floor(minutes / 60);
+      const minute = minutes % 60;
+      const timeStr = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
+      if (
+        adjustedMinutes <= startTotalMinutes ||
+        (nextOccupiedMinutes !== undefined &&
+          adjustedMinutes >= nextOccupiedMinutes)
+      ) {
+        disabledTimes.push(timeStr);
       }
     }
 
-    // 점유된 시간대 중에서 현재 선택된 시작 시간 이후의 시간들만 비활성화
-    occupiedSlots.forEach((timeSlot) => {
-      const slotMinutes = timeToMinutesFromStart(timeSlot);
-      if (slotMinutes > startTotalMinutes) {
-        disabledTimes.push(timeSlot);
-      }
-    });
-
-    return [...new Set(disabledTimes)];
+    return disabledTimes;
   };
 
   const handleSubmit = async () => {
@@ -180,9 +175,6 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
           <DialogTitle>타임테이블 만들기</DialogTitle>
-          <DialogDescription>
-            00시~04시는 다음날 일정으로 처리됩니다
-          </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4">
