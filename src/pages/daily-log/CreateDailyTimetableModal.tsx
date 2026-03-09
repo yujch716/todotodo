@@ -72,11 +72,9 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     return Array.from(slots);
   }, [timetables]);
 
-  const getDisabledStartTimes = () => {
-    return occupiedSlots;
-  };
+  const disabledStartTimes = occupiedSlots;
 
-  const getDisabledEndTimes = () => {
+  const disabledEndTimes = useMemo(() => {
     const startTotalMinutes = timeToMinutesFromStart(startTime);
     const nextOccupiedMinutes = occupiedSlots
       .map((slot) => timeToMinutesFromStart(slot))
@@ -101,7 +99,7 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     }
 
     return disabledTimes;
-  };
+  }, [startTime, occupiedSlots]);
 
   const handleSubmit = async () => {
     if (!content.trim()) {
@@ -174,7 +172,7 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
 
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
-          <DialogTitle>타임테이블 만들기</DialogTitle>
+          <DialogTitle>일정 생성</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4">
@@ -198,7 +196,7 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
             <TimeSelect
               value={startTime}
               onValueChange={setStartTime}
-              disabledTimes={getDisabledStartTimes()}
+              disabledTimes={disabledStartTimes}
               placeholder="시작 시간 선택"
               isEnd={false}
             />
@@ -211,7 +209,7 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
             <TimeSelect
               value={endTime}
               onValueChange={setEndTime}
-              disabledTimes={getDisabledEndTimes()}
+              disabledTimes={disabledEndTimes}
               placeholder="종료 시간 선택"
               isEnd={true}
             />

@@ -54,7 +54,6 @@ const EditDailyTimetableModal = ({
     setCategories(data);
   }, []);
 
-  // 현재 편집 중인 타임테이블을 제외한 다른 타임테이블들
   const otherTimetables = useMemo(() => {
     return allTimetables.filter((tt) => tt.id !== timetable?.id);
   }, [allTimetables, timetable?.id]);
@@ -81,11 +80,9 @@ const EditDailyTimetableModal = ({
     return Array.from(slots);
   }, [otherTimetables]);
 
-  const getDisabledStartTimes = () => {
-    return occupiedSlots;
-  };
+  const disabledStartTimes = occupiedSlots; // 이미 useMemo라 그대로 사용
 
-  const getDisabledEndTimes = () => {
+  const disabledEndTimes = useMemo(() => {
     const startTotalMinutes = timeToMinutesFromStart(startTime);
     const nextOccupiedMinutes = occupiedSlots
       .map((slot) => timeToMinutesFromStart(slot))
@@ -110,7 +107,7 @@ const EditDailyTimetableModal = ({
     }
 
     return disabledTimes;
-  };
+  }, [startTime, occupiedSlots]);
 
   const handleSubmit = async () => {
     if (!timetable) return;
@@ -183,7 +180,7 @@ const EditDailyTimetableModal = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
-          <DialogTitle>타임테이블 수정</DialogTitle>
+          <DialogTitle>일정 수정</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4">
@@ -207,7 +204,7 @@ const EditDailyTimetableModal = ({
             <TimeSelect
               value={startTime}
               onValueChange={setStartTime}
-              disabledTimes={getDisabledStartTimes()}
+              disabledTimes={disabledStartTimes}
               placeholder="시작 시간 선택"
               isEnd={false}
             />
@@ -220,7 +217,7 @@ const EditDailyTimetableModal = ({
             <TimeSelect
               value={endTime}
               onValueChange={setEndTime}
-              disabledTimes={getDisabledEndTimes()}
+              disabledTimes={disabledEndTimes}
               placeholder="종료 시간 선택"
               isEnd={true}
             />
