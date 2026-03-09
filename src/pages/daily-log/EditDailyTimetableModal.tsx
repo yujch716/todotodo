@@ -5,15 +5,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog.tsx";
-import { SquarePlus, Tag } from "lucide-react";
+import { Tag } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input.tsx";
 import { toast } from "sonner";
-import { createDailyTimetable } from "@/api/daily-timetable.ts";
+import { updateDailyTimetable } from "@/api/daily-timetable.ts";
 import type { DailyTimetableType } from "@/types/daily-log";
 import TimeSelect from "@/components/TimeSelect";
 import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
@@ -28,12 +27,18 @@ import {
 } from "@/components/ui/select.tsx";
 
 interface Props {
-  dailyLogId: string;
-  timetables: DailyTimetableType[];
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  timetable: DailyTimetableType | null;
+  allTimetables: DailyTimetableType[];
 }
 
-const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
-  const [open, setOpen] = useState(false);
+const EditDailyTimetableModal = ({
+  open,
+  onOpenChange,
+  timetable,
+  allTimetables,
+}: Props) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [startTime, setStartTime] = useState<string>("09:00");
   const [endTime, setEndTime] = useState<string>("10:00");
@@ -49,16 +54,19 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     setCategories(data);
   }, []);
 
+  const otherTimetables = useMemo(() => {
+    return allTimetables.filter((tt) => tt.id !== timetable?.id);
+  }, [allTimetables, timetable?.id]);
+
   const timeToMinutesFromStart = (time: string): number => {
     const [hour, minute] = time.split(":").map(Number);
-    // 00시~04시는 다음날로 처리 (24시간 추가)
     const adjustedHour = hour >= 0 && hour < 4 ? hour + 24 : hour;
     return adjustedHour * 60 + minute;
   };
 
   const occupiedSlots = useMemo(() => {
     const slots = new Set<string>();
-    timetables.forEach((tt) => {
+    otherTimetables.forEach((tt) => {
       const startMinutes = timeToMinutesFromStart(tt.start_time);
       const endMinutes = timeToMinutesFromStart(tt.end_time);
       for (let minutes = startMinutes; minutes < endMinutes; minutes += 10) {
@@ -70,9 +78,9 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
       }
     });
     return Array.from(slots);
-  }, [timetables]);
+  }, [otherTimetables]);
 
-  const disabledStartTimes = occupiedSlots;
+  const disabledStartTimes = occupiedSlots; // 이미 useMemo라 그대로 사용
 
   const disabledEndTimes = useMemo(() => {
     const startTotalMinutes = timeToMinutesFromStart(startTime);
@@ -102,6 +110,8 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
   }, [startTime, occupiedSlots]);
 
   const handleSubmit = async () => {
+    if (!timetable) return;
+
     if (!content.trim()) {
       toast.error("내용을 입력하세요");
       return;
@@ -115,11 +125,11 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
       return;
     }
 
-    // 시간 겹침 검증
+    // 시간 겹침 검증 (현재 편집 중인 타임테이블 제외)
     const newStartMinutes = timeToMinutesFromStart(startTime);
     const newEndMinutes = timeToMinutesFromStart(endTime);
 
-    const hasConflict = timetables.some((tt) => {
+    const hasConflict = otherTimetables.some((tt) => {
       const existingStartMinutes = timeToMinutesFromStart(tt.start_time);
       const existingEndMinutes = timeToMinutesFromStart(tt.end_time);
 
@@ -138,41 +148,39 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
       return;
     }
 
-    await createDailyTimetable(
-      dailyLogId,
+    await updateDailyTimetable(
+      timetable.id,
       content,
       startTime,
       endTime,
       category,
     );
 
-    setOpen(false);
-    setContent("");
-    setStartTime("09:00");
-    setEndTime("10:00");
-    setCategory(null);
-
+    onOpenChange(false);
     triggerTimeTableRefresh();
   };
+
+  // 모달이 열릴 때 기존 데이터로 초기화
+  useEffect(() => {
+    if (open && timetable) {
+      setContent(timetable.content);
+      setStartTime(timetable.start_time);
+      setEndTime(timetable.end_time);
+      setCategory(timetable.category?.id || null);
+    }
+  }, [open, timetable]);
 
   useEffect(() => {
     loadCategories();
   }, [loadCategories]);
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="flex w-6 h-6 p-4 [&>svg]:!w-5 [&>svg]:!h-5"
-        >
-          <SquarePlus />
-        </Button>
-      </DialogTrigger>
+  if (!timetable) return null;
 
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
-          <DialogTitle>일정 생성</DialogTitle>
+          <DialogTitle>일정 수정</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4">
@@ -253,4 +261,5 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     </Dialog>
   );
 };
-export default CreateDailyTimetableModal;
+
+export default EditDailyTimetableModal;
