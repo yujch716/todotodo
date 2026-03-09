@@ -14,7 +14,7 @@ import type { DailyTimetableType } from "@/types/daily-log.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
 import { Button } from "@/components/ui/button.tsx";
-import { withAlpha } from "@/lib/color.ts";
+import { withAlpha, increaseSaturation } from "@/lib/color.ts";
 
 interface Props {
   dailyLogId: string;
@@ -170,6 +170,10 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
             const bgColor = tt.category?.color ?? "#f1f5f9";
             const isHovered = hoveredTimetableId === tt.id;
 
+            const hoveredBgColor = isHovered
+              ? withAlpha(increaseSaturation(bgColor, 0.4), 0.9)
+              : withAlpha(bgColor, 0.7);
+
             return segments.map(({ rowIndex, startCell, endCell, isFirst }) => {
               const leftPercent = (startCell / CELLS_PER_HOUR) * 100;
               const widthPercent =
@@ -178,14 +182,14 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
               return (
                 <div
                   key={`${tt.id}-${rowIndex}`}
-                  className="absolute flex items-center overflow-hidden"
+                  className="absolute flex items-center overflow-hidden transition-all duration-200 cursor-pointer"
                   style={{
                     top: rowIndex * ROW_HEIGHT,
                     height: ROW_HEIGHT,
                     left: `calc(${TIME_COL_WIDTH}px + (100% - ${TIME_COL_WIDTH}px) * ${leftPercent / 100})`,
                     width: `calc((100% - ${TIME_COL_WIDTH}px) * ${widthPercent / 100})`,
-                    backgroundColor: withAlpha(bgColor, 0.7),
-                    zIndex: 10,
+                    backgroundColor: hoveredBgColor,
+                    zIndex: isHovered ? 20 : 10,
                   }}
                   onMouseEnter={() => setHoveredTimetableId(tt.id)}
                   onMouseLeave={() => setHoveredTimetableId(null)}

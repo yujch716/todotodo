@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -11,7 +10,7 @@ import {
 import { SquarePlus, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input.tsx";
 import { toast } from "sonner";
 import { createDailyTimetable } from "@/api/daily-timetable.ts";
@@ -50,68 +49,58 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     setCategories(data);
   }, []);
 
-  const getDisabledStartTimes = () => {
-    const occupiedSlots: string[] = [];
+  const timeToMinutesFromStart = (time: string): number => {
+    const [hour, minute] = time.split(":").map(Number);
+    // 00시~04시는 다음날로 처리 (24시간 추가)
+    const adjustedHour = hour >= 0 && hour < 4 ? hour + 24 : hour;
+    return adjustedHour * 60 + minute;
+  };
 
+  const occupiedSlots = useMemo(() => {
+    const slots = new Set<string>();
     timetables.forEach((tt) => {
-      const [startHour, startMinute] = tt.start_time.split(":").map(Number);
-      const [endHour, endMinute] = tt.end_time.split(":").map(Number);
-
-      const startTotalMinutes = startHour * 60 + startMinute;
-      const endTotalMinutes = endHour * 60 + endMinute;
-
-      for (
-        let minutes = startTotalMinutes;
-        minutes < endTotalMinutes;
-        minutes += 30
-      ) {
-        const hour = Math.floor(minutes / 60);
+      const startMinutes = timeToMinutesFromStart(tt.start_time);
+      const endMinutes = timeToMinutesFromStart(tt.end_time);
+      for (let minutes = startMinutes; minutes < endMinutes; minutes += 10) {
+        const hour = Math.floor(minutes / 60) % 24;
         const minute = minutes % 60;
-        occupiedSlots.push(
+        slots.add(
           `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
         );
       }
     });
+    return Array.from(slots);
+  }, [timetables]);
 
+  const getDisabledStartTimes = () => {
     return occupiedSlots;
   };
 
   const getDisabledEndTimes = () => {
-    const [startHour, startMinute] = startTime.split(":").map(Number);
-    const startTotalMinutes = startHour * 60 + startMinute;
+    const startTotalMinutes = timeToMinutesFromStart(startTime);
+    const nextOccupiedMinutes = occupiedSlots
+      .map((slot) => timeToMinutesFromStart(slot))
+      .filter((m) => m > startTotalMinutes)
+      .sort((a, b) => a - b)[0];
 
     const disabledTimes: string[] = [];
-    // 시작시간 이전 비활성화
-    for (let minutes = 0; minutes < startTotalMinutes; minutes += 30) {
+
+    for (let minutes = 0; minutes < 24 * 60; minutes += 10) {
+      const adjustedMinutes = minutes < 4 * 60 ? minutes + 24 * 60 : minutes;
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
-      disabledTimes.push(
-        `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
-      );
+      const timeStr = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
+      if (
+        adjustedMinutes <= startTotalMinutes ||
+        (nextOccupiedMinutes !== undefined &&
+          adjustedMinutes >= nextOccupiedMinutes)
+      ) {
+        disabledTimes.push(timeStr);
+      }
     }
 
-    // 기존 타임테이블과 겹치는 시간 비활성화
-    timetables.forEach((tt) => {
-      const [ttStartHour, ttStartMinute] = tt.start_time.split(":").map(Number);
-      const [ttEndHour, ttEndMinute] = tt.end_time.split(":").map(Number);
-
-      const ttStartTotalMinutes = ttStartHour * 60 + ttStartMinute;
-      const ttEndTotalMinutes = ttEndHour * 60 + ttEndMinute;
-
-      for (
-        let minutes = ttStartTotalMinutes + 30;
-        minutes < ttEndTotalMinutes;
-        minutes += 30
-      ) {
-        const hour = Math.floor(minutes / 60);
-        const minute = minutes % 60;
-        disabledTimes.push(
-          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
-        );
-      }
-    });
-
-    return [...new Set(disabledTimes)];
+    return disabledTimes;
   };
 
   const handleSubmit = async () => {
@@ -125,6 +114,29 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     }
     if (!endTime) {
       toast.error("종료시간을 입력하세요");
+      return;
+    }
+
+    // 시간 겹침 검증
+    const newStartMinutes = timeToMinutesFromStart(startTime);
+    const newEndMinutes = timeToMinutesFromStart(endTime);
+
+    const hasConflict = timetables.some((tt) => {
+      const existingStartMinutes = timeToMinutesFromStart(tt.start_time);
+      const existingEndMinutes = timeToMinutesFromStart(tt.end_time);
+
+      return (
+        (newStartMinutes >= existingStartMinutes &&
+          newStartMinutes < existingEndMinutes) ||
+        (newEndMinutes > existingStartMinutes &&
+          newEndMinutes <= existingEndMinutes) ||
+        (newStartMinutes <= existingStartMinutes &&
+          newEndMinutes >= existingEndMinutes)
+      );
+    });
+
+    if (hasConflict) {
+      toast.error("선택한 시간이 기존 일정과 겹칩니다");
       return;
     }
 
@@ -163,7 +175,6 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
           <DialogTitle>타임테이블 만들기</DialogTitle>
-          <DialogDescription />
         </DialogHeader>
 
         <div className="grid gap-4">
