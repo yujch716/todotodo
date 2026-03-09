@@ -46,3 +46,26 @@ export const deleteDailyTimetableById = async (id: string): Promise<void> => {
 
   if (error) toast.error("삭제에 실패했습니다.");
 };
+
+export const updateDailyTimetable = async (
+  id: string,
+  content: string,
+  startTime: string,
+  endTime: string,
+  category_id: string | null,
+): Promise<void> => {
+  const { error } = await supabase
+    .from("daily_timetable")
+    .update({
+      content,
+      start_time: startTime,
+      end_time: endTime,
+      category_id: category_id ?? null,
+    })
+    .eq("id", id);
+
+  if (error) {
+    toast.error("수정에 실패했습니다.");
+    throw error;
+  }
+};

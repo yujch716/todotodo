@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/card.tsx";
 import { CalendarClock, X } from "lucide-react";
 import CreateDailyTimetableModal from "@/pages/daily-log/CreateDailyTimetableModal.tsx";
+import EditDailyTimetableModal from "@/pages/daily-log/EditDailyTimetableModal.tsx";
 import {
   deleteDailyTimetableById,
   getDailyTimeTables,
@@ -31,6 +32,9 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   const [hoveredTimetableId, setHoveredTimetableId] = useState<string | null>(
     null,
   );
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedTimetable, setSelectedTimetable] =
+    useState<DailyTimetableType | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // 04시부터 다음날 04시까지 24시간
@@ -63,6 +67,11 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
   const deleteTimetable = async (id: string) => {
     await deleteDailyTimetableById(id);
     triggerTimeTableRefresh();
+  };
+
+  const handleTimetableClick = (timetable: DailyTimetableType) => {
+    setSelectedTimetable(timetable);
+    setEditModalOpen(true);
   };
 
   useEffect(() => {
@@ -193,6 +202,7 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
                   }}
                   onMouseEnter={() => setHoveredTimetableId(tt.id)}
                   onMouseLeave={() => setHoveredTimetableId(null)}
+                  onClick={() => handleTimetableClick(tt)}
                 >
                   {isFirst && (
                     <div className="flex items-center justify-between w-full px-2 overflow-hidden">
@@ -204,7 +214,10 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
                           variant="outline"
                           size="icon"
                           className="h-5 w-5 rounded-full bg-white border-slate-400 flex-shrink-0 ml-1 shadow-md"
-                          onClick={() => deleteTimetable(tt.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteTimetable(tt.id);
+                          }}
                         >
                           <X size={12} />
                         </Button>
@@ -217,6 +230,13 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
           })}
         </div>
       </CardContent>
+
+      <EditDailyTimetableModal
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        timetable={selectedTimetable}
+        allTimetables={timetables}
+      />
     </Card>
   );
 };
