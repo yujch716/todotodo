@@ -50,7 +50,6 @@ const CopyDailTodoModal = ({ content, onClose }: CopyDailyTodoModalProps) => {
     if (!dailyLog) {
       dailyLog = await createDailyLog(date);
     }
-
     const dailyTodoGroups = await getDailyTodoGroups(dailyLog.id);
     const dailyTodoGroup = await createDailyTodoGroup(
       dailyLog.id,

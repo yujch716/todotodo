@@ -5,11 +5,7 @@ import type { DailyTodoGroupType } from "@/types/daily-log.ts";
 export const getDailyTodoGroups = async (dailyLogId: string) => {
   const { data, error } = await supabase
     .from("daily_todo_group")
-    .select(
-      `
-      *,
-    `,
-    )
+    .select("*")
     .eq("daily_log_id", dailyLogId);
 
   if (error) {
