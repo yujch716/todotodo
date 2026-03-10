@@ -21,8 +21,8 @@ interface GoalProps {
 const MilestoneGoalCard = ({ goal }: GoalProps) => {
   const logs: GoalLog[] = goal.goal_log || [];
   const targetValue = goal.target_value!;
-  const completeValue = logs.reduce((acc, log) => acc + log.value, 0);
-  const progressValue = Math.floor((completeValue / targetValue) * 100);
+  const completedValue = logs.reduce((acc, log) => acc + log.value, 0);
+  const progressValue = Math.floor((completedValue / targetValue) * 100);
   const isComplete = goal.status === GoalStatus.completed;
 
   const [showInput, setShowInput] = useState(false);
@@ -39,13 +39,14 @@ const MilestoneGoalCard = ({ goal }: GoalProps) => {
       return;
     }
 
-    if (completeValue + value > targetValue) {
-      toast.error("목표수치보다 큰 값은 입력할 수 없습니다.");
+    if (completedValue + value > targetValue || value < completedValue) {
+      toast.error("입력할 수 없는 수치입니다.");
       return;
     }
 
-    await createGoalLog({ goal_id: goal.id, date, value });
-    if (completeValue + value === targetValue) {
+    const completeValue = value - completedValue;
+    await createGoalLog({ goal_id: goal.id, date, value: completeValue });
+    if (completedValue + value === targetValue) {
       await updateGoalStatus(goal.id, GoalStatus.completed);
 
       showCelebration();
@@ -66,9 +67,9 @@ const MilestoneGoalCard = ({ goal }: GoalProps) => {
               <Progress value={progressValue} className="w-full border-2" />
               <div
                 className="absolute -top-9 transform -translate-x-1/2 bg-white border border-gray-300 text-xs px-2 py-1 rounded-full shadow-md"
-                style={{ left: `${(completeValue / targetValue) * 100}%` }}
+                style={{ left: `${(completedValue / targetValue) * 100}%` }}
               >
-                {completeValue}
+                {completedValue}
 
                 <ChevronDown className="w-3 h-3 absolute top-full left-1/2 -translate-x-1/2" />
               </div>
