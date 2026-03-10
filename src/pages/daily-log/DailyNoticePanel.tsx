@@ -11,6 +11,8 @@ import {
   getOngoingMilestoneGoalsByDate,
 } from "@/api/goal.ts";
 import DailyNoticeMilestoneGoalCard from "@/pages/daily-log/DailyNoticeMilestoneGoalCard.tsx";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";
+import GoalDetailPage from "@/pages/goal/GoalDetailPage.tsx";
 
 interface Props {
   dailyLogDate: Date;
@@ -19,7 +21,9 @@ interface Props {
 export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
   const [schedules, setSchedules] = useState<CalendarEventType[]>([]);
   const [dailyGoals, setDailyGoals] = useState<Goal[]>([]);
-  const [goalGoals, setGoalGoals] = useState<Goal[]>([]);
+  const [milestoneGoals, setMilestoneGoals] = useState<Goal[]>([]);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
 
   const refreshCalendar = useCalendarStore((state) => state.refreshCalendar);
   const resetCalendarRefresh = useCalendarStore(
@@ -33,11 +37,16 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
 
   const loadDailyGoals = useCallback(async () => {
     const dailyGoals = await getOngoingDailyGoalsByDate(dailyLogDate);
-    const goalGoals = await getOngoingMilestoneGoalsByDate();
+    const milestoneGoals = await getOngoingMilestoneGoalsByDate();
 
     setDailyGoals(dailyGoals);
-    setGoalGoals(goalGoals);
+    setMilestoneGoals(milestoneGoals);
   }, [dailyLogDate]);
+
+  const handleGoalSelect = (goalId: string) => {
+    setSelectedGoalId(goalId);
+    setIsSheetOpen(true);
+  };
 
   useEffect(() => {
     if (refreshCalendar) {
@@ -71,15 +80,27 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
                 key={goal.id}
                 goal={goal}
                 date={dailyLogDate}
+                onClick={() => handleGoalSelect(goal.id)}
               />
             ))}
 
-            {goalGoals.map((goal) => (
-              <DailyNoticeMilestoneGoalCard key={goal.id} goal={goal} />
+            {milestoneGoals.map((goal) => (
+              <DailyNoticeMilestoneGoalCard
+                key={goal.id}
+                goal={goal}
+                onClick={() => handleGoalSelect(goal.id)}
+              />
             ))}
           </div>
         </div>
       </Card>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetTrigger className="hidden" />
+        <SheetContent className="!w-[50vw] !max-w-none">
+          <GoalDetailPage goalId={selectedGoalId} />
+        </SheetContent>
+      </Sheet>
     </>
   );
 };
