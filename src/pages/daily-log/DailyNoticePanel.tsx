@@ -11,12 +11,7 @@ import {
   getOngoingMilestoneGoalsByDate,
 } from "@/api/goal.ts";
 import DailyNoticeMilestoneGoalCard from "@/pages/daily-log/DailyNoticeMilestoneGoalCard.tsx";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet.tsx";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";
 import GoalDetailPage from "@/pages/goal/GoalDetailPage.tsx";
 
 interface Props {
@@ -102,8 +97,7 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger className="hidden" />
-        <SheetContent style={{ width: "50vw", maxWidth: "none" }}>
-          <SheetTitle />
+        <SheetContent className="!w-[50vw] !max-w-none">
           <GoalDetailPage goalId={selectedGoalId} />
         </SheetContent>
       </Sheet>
