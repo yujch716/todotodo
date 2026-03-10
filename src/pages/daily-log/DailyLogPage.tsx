@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import DailyTimetablePanel from "@/pages/daily-log/DailyTimetablePanel.tsx";
 import DailyEmptyPage from "@/pages/daily-log/DailyEmptyPage.tsx";
 import { cn } from "@/lib/utils.ts";
+import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";
 
 const DailyLogPage = () => {
   const navigate = useNavigate();
@@ -39,6 +40,12 @@ const DailyLogPage = () => {
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
     (state) => state.triggerSidebarRefresh,
+  );
+  const refreshDailyLog = useDailyLogDetailStore(
+    (state) => state.refreshDailyLog,
+  );
+  const resetDailyLogRefresh = useDailyLogDetailStore(
+    (state) => state.resetDailyLogRefresh,
   );
 
   const toYMD = useCallback((d: Date | string) => {
@@ -136,6 +143,12 @@ const DailyLogPage = () => {
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
+
+  useEffect(() => {
+    if (!refreshDailyLog) return;
+    loadDailyLogs();
+    resetDailyLogRefresh();
+  }, [refreshDailyLog, loadDailyLogs, resetDailyLogRefresh]);
 
   return (
     <>
