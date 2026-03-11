@@ -147,8 +147,8 @@ const DailyTodoGroup = ({
   };
 
   return (
-    <Card className="mb-4 shadow-sm">
-      <CardHeader className="pb-2">
+    <Card className="shadow-sm">
+      <CardHeader className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 flex-grow">
             <Button
@@ -225,7 +225,7 @@ const DailyTodoGroup = ({
       </CardHeader>
 
       {!isCollapsed && (
-        <CardContent className="pt-0">
+        <CardContent className="p-4 pt-0">
           <div className="space-y-2">
             {todos.map((todo) => (
               <DailyTodoItem
