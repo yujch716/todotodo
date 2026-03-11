@@ -24,6 +24,7 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
   const [milestoneGoals, setMilestoneGoals] = useState<Goal[]>([]);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
+  const [isSmall, setIsSmall] = useState(false);
 
   const refreshCalendar = useCalendarStore((state) => state.refreshCalendar);
   const resetCalendarRefresh = useCalendarStore(
@@ -66,6 +67,16 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
     loadDailyGoals();
   }, [loadDailySchedule, loadDailyGoals]);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const handleChange = () => setIsSmall(mediaQuery.matches);
+
+    handleChange();
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
   return (
     <>
       <Card className="flex flex-col w-full p-3 bg-transparent items-center min-w-0">
@@ -97,7 +108,12 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger className="hidden" />
-        <SheetContent className="!w-[50vw] !max-w-none">
+        <SheetContent
+          style={{
+            width: isSmall ? "100vw" : "50vw",
+            maxWidth: "none",
+          }}
+        >
           <GoalDetailPage goalId={selectedGoalId} />
         </SheetContent>
       </Sheet>
