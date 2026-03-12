@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { updateGoalStatus } from "@/api/goal.ts";
 import { showCelebration } from "@/lib/effects";
 import { GoalStatus } from "@/types/goal.ts";
+import { useDailyNoticeStore } from "@/store/dailyNoticeStore.ts";
 
 interface ModalProps {
   open: boolean;
@@ -38,6 +39,9 @@ const CompleteGoalModal = ({
   const [memo, setMemo] = useState("");
 
   const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
+  const triggerDailyNoticeRefresh = useDailyNoticeStore(
+    (state) => state.triggerDailyNoticeRefresh,
+  );
 
   const handleSubmit = async () => {
     await createGoalLog({
@@ -52,6 +56,7 @@ const CompleteGoalModal = ({
     }
 
     triggerGoalRefresh();
+    triggerDailyNoticeRefresh();
 
     setMemo("");
     onOpenChange(false);
