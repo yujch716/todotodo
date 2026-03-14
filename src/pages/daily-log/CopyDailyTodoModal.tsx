@@ -34,7 +34,7 @@ interface CopyDailyTodoModalProps {
   onClose: () => void;
 }
 
-const CopyDailTodoModal = ({
+const CopyDailyTodoModal = ({
   content,
   groupTitle,
   onClose,
@@ -123,4 +123,4 @@ const CopyDailTodoModal = ({
   );
 };
 
-export default CopyDailTodoModal;
+export default CopyDailyTodoModal;
