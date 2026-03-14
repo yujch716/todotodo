@@ -21,6 +21,7 @@ const TimeSelect = ({
   isEnd,
 }: TimeSelectProps) => {
   const [hour, minute] = value.split(":");
+  const END_TIME_MAX_HOUR_STRING = "28";
 
   let hours = Array.from({ length: 24 }, (_, i) => {
     const hourValue = (4 + i) % 24;
@@ -28,14 +29,14 @@ const TimeSelect = ({
   });
 
   if (isEnd) {
-    hours = [...hours, "28"]; // ← "24" 대신 "28" (다음날 04:00)
+    hours = [...hours, END_TIME_MAX_HOUR_STRING];
   }
 
   const minutes = ["00", "10", "20", "30", "40", "50"];
 
   const handleHourChange = (newHour: string) => {
-    if (newHour === "28") {
-      onValueChange("28:00");
+    if (newHour === END_TIME_MAX_HOUR_STRING) {
+      onValueChange(`${END_TIME_MAX_HOUR_STRING}:00`);
     } else {
       onValueChange(`${newHour}:${minute}`);
     }
@@ -87,7 +88,7 @@ const TimeSelect = ({
       <Select
         value={minute}
         onValueChange={handleMinuteChange}
-        disabled={hour === "28"}
+        disabled={hour === END_TIME_MAX_HOUR_STRING}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="분" />
