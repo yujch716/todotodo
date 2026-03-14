@@ -101,6 +101,12 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     return disabledTimes;
   }, [startTime, occupiedSlots]);
 
+  const normalizeTimeForApi = (time: string): string => {
+    const [hour, minute] = time.split(":").map(Number);
+    const normalizedHour = hour >= 24 ? hour - 24 : hour;
+    return `${String(normalizedHour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  };
+
   const handleSubmit = async () => {
     if (!content.trim()) {
       toast.error("내용을 입력하세요");
@@ -141,8 +147,8 @@ const CreateDailyTimetableModal = ({ dailyLogId, timetables }: Props) => {
     await createDailyTimetable(
       dailyLogId,
       content,
-      startTime,
-      endTime,
+      normalizeTimeForApi(startTime),
+      normalizeTimeForApi(endTime),
       category,
     );
 
