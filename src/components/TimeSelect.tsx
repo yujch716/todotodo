@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/select.tsx";
 
 interface TimeSelectProps {
-  value: string; // "09:00" 형식
+  value: string;
   onValueChange: (value: string) => void;
-  disabledTimes?: string[]; // ["09:00", "09:10", "10:00"] 형식
+  disabledTimes?: string[];
   placeholder?: string;
   isEnd?: boolean;
 }
@@ -21,6 +21,7 @@ const TimeSelect = ({
   isEnd,
 }: TimeSelectProps) => {
   const [hour, minute] = value.split(":");
+  const END_TIME_MAX_HOUR_STRING = "28";
 
   let hours = Array.from({ length: 24 }, (_, i) => {
     const hourValue = (4 + i) % 24;
@@ -28,13 +29,17 @@ const TimeSelect = ({
   });
 
   if (isEnd) {
-    hours = [...hours, "24"];
+    hours = [...hours, END_TIME_MAX_HOUR_STRING];
   }
 
   const minutes = ["00", "10", "20", "30", "40", "50"];
 
   const handleHourChange = (newHour: string) => {
-    onValueChange(`${newHour}:${minute}`);
+    if (newHour === END_TIME_MAX_HOUR_STRING) {
+      onValueChange(`${END_TIME_MAX_HOUR_STRING}:00`);
+    } else {
+      onValueChange(`${newHour}:${minute}`);
+    }
   };
 
   const handleMinuteChange = (newMinute: string) => {
@@ -43,6 +48,17 @@ const TimeSelect = ({
 
   const isTimeDisabled = (h: string, m: string) => {
     return disabledTimes.includes(`${h}:${m}`);
+  };
+
+  const getHourLabel = (h: string) => {
+    const n = parseInt(h);
+    if (n >= 24) return `${String(n - 24).padStart(2, "0")}시`;
+    return `${h}시`;
+  };
+
+  const isNextDay = (h: string) => {
+    const n = parseInt(h);
+    return (n >= 0 && n <= 3) || n >= 24;
   };
 
   return (
@@ -54,13 +70,11 @@ const TimeSelect = ({
         <SelectContent className="max-h-60">
           {hours.map((h) => {
             const isDisabled = minutes.every((m) => isTimeDisabled(h, m));
-            const hourNum = parseInt(h);
-            const isNextDay = hourNum >= 0 && hourNum <= 3;
 
             return (
               <SelectItem key={h} value={h} disabled={isDisabled}>
-                {h}시
-                {isNextDay && (
+                {getHourLabel(h)}
+                {isNextDay(h) && (
                   <span className="text-xs text-muted-foreground ml-1">
                     (다음날)
                   </span>
@@ -71,19 +85,20 @@ const TimeSelect = ({
         </SelectContent>
       </Select>
 
-      <Select value={minute} onValueChange={handleMinuteChange}>
+      <Select
+        value={minute}
+        onValueChange={handleMinuteChange}
+        disabled={hour === END_TIME_MAX_HOUR_STRING}
+      >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="분" />
         </SelectTrigger>
         <SelectContent>
-          {minutes.map((m) => {
-            const isDisabled = isTimeDisabled(hour, m);
-            return (
-              <SelectItem key={m} value={m} disabled={isDisabled}>
-                {m}분
-              </SelectItem>
-            );
-          })}
+          {minutes.map((m) => (
+            <SelectItem key={m} value={m} disabled={isTimeDisabled(hour, m)}>
+              {m}분
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
