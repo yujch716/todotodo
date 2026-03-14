@@ -260,7 +260,7 @@ const DailyTodoGroup = ({
 
       <AlertConfirmModal
         open={isAlertOpen}
-        message="이 데일리 로그를 삭제하시겠습니까?"
+        message="이 그룹을 삭제하시겠습니까?"
         onConfirm={handleDeleteGroup}
         onCancel={() => setIsAlertOpen(false)}
       />
