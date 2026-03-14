@@ -31,12 +31,14 @@ import {
 interface CopyDailyTodoModalProps {
   id: string;
   content: string;
+  groupTitle: string;
   onClose: () => void;
 }
 
 const MoveDailyTodoModal = ({
   id,
   content,
+  groupTitle,
   onClose,
 }: CopyDailyTodoModalProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -59,6 +61,7 @@ const MoveDailyTodoModal = ({
     const dailyTodoGroups = await getDailyTodoGroups(dailyLog.id);
     const dailyTodoGroup = await createDailyTodoGroup(
       dailyLog.id,
+      groupTitle,
       null,
       dailyTodoGroups.length,
     );

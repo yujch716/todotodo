@@ -231,6 +231,7 @@ const DailyTodoGroup = ({
               <DailyTodoItem
                 key={todo.id}
                 item={todo}
+                group={group}
                 onToggle={handleToggleTodo}
                 onUpdateContent={handleUpdateTodoContent}
                 isEditing={editingItemId === todo.id}
