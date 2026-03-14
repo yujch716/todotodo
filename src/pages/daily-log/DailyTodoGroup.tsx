@@ -30,7 +30,7 @@ import {
   updateDailyTodoGroup,
   deleteDailyTodoGroup,
 } from "@/api/daily-todo-group.ts";
-import { toast } from "sonner";
+import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 
 interface Props {
   group: DailyTodoGroupType;
@@ -49,6 +49,7 @@ const DailyTodoGroup = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [title, setTitle] = useState(group.title);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -80,13 +81,12 @@ const DailyTodoGroup = ({
     setIsEditingTitle(false);
   };
 
+  const handleDelete = async () => {
+    setIsAlertOpen(true);
+  };
+
   const handleDeleteGroup = async () => {
-    if (todos.length > 0) {
-      toast.error(
-        "투두가 있는 그룹은 삭제할 수 없습니다. 먼저 투두를 모두 삭제해주세요.",
-      );
-      return;
-    }
+    setIsAlertOpen(false);
 
     const success = await deleteDailyTodoGroup(group.id);
     if (success) {
@@ -147,114 +147,124 @@ const DailyTodoGroup = ({
   };
 
   return (
-    <Card className="shadow-sm">
-      <CardHeader className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 flex-grow">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="w-6 h-6"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-            >
-              {isCollapsed ? (
-                <ChevronRight className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </Button>
-
-            {isCollapsed ? (
-              <Folder className="w-4 h-4 text-blue-600" />
-            ) : (
-              <FolderOpen className="w-4 h-4 text-blue-600" />
-            )}
-
-            {isEditingTitle ? (
-              <Input
-                ref={inputRef}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                onBlur={handleTitleSave}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleTitleSave();
-                  }
-                  if (e.key === "Escape") {
-                    setTitle(group.title);
-                    setIsEditingTitle(false);
-                  }
-                }}
-                className="text-sm font-medium h-6 border-0 p-0 focus-visible:ring-0"
-              />
-            ) : (
-              <span
-                className="text-sm font-medium cursor-pointer hover:text-blue-600"
-                onClick={() => setIsEditingTitle(true)}
+    <>
+      <Card className="shadow-sm">
+        <CardHeader className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 flex-grow">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-6 h-6"
+                onClick={() => setIsCollapsed(!isCollapsed)}
               >
-                {group.title}
-              </span>
-            )}
-          </div>
+                {isCollapsed ? (
+                  <ChevronRight className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+              </Button>
 
-          <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="w-6 h-6">
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleAddTodo}>
-                  <Plus /> 투두 추가
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsEditingTitle(true)}>
-                  그룹명 수정
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="text-red-600"
-                  onClick={handleDeleteGroup}
+              {isCollapsed ? (
+                <Folder className="w-4 h-4 text-blue-600" />
+              ) : (
+                <FolderOpen className="w-4 h-4 text-blue-600" />
+              )}
+
+              {isEditingTitle ? (
+                <Input
+                  ref={inputRef}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onBlur={handleTitleSave}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleTitleSave();
+                    }
+                    if (e.key === "Escape") {
+                      setTitle(group.title);
+                      setIsEditingTitle(false);
+                    }
+                  }}
+                  className="text-sm font-medium h-6 border-0 p-0 focus-visible:ring-0"
+                />
+              ) : (
+                <span
+                  className="text-sm font-medium cursor-pointer hover:text-blue-600"
+                  onClick={() => setIsEditingTitle(true)}
                 >
-                  그룹 삭제
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </CardHeader>
+                  {group.title}
+                </span>
+              )}
+            </div>
 
-      {!isCollapsed && (
-        <CardContent className="p-4 pt-0">
-          <div className="space-y-2">
-            {todos.map((todo) => (
-              <DailyTodoItem
-                key={todo.id}
-                item={todo}
-                onToggle={handleToggleTodo}
-                onUpdateContent={handleUpdateTodoContent}
-                isEditing={editingItemId === todo.id}
-                setEditingItemId={setEditingItemId}
-                onAddEmptyItem={handleAddTodo}
-              />
-            ))}
-
-            {todos.length === 0 && (
-              <div className="flex justify-center py-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="w-8 h-8"
-                  onClick={handleAddTodo}
-                >
-                  <SquarePlus className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="w-6 h-6">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleAddTodo}>
+                    <Plus /> 투두 추가
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsEditingTitle(true)}>
+                    그룹명 수정
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-red-600"
+                    onClick={handleDelete}
+                  >
+                    그룹 삭제
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-        </CardContent>
-      )}
-    </Card>
+        </CardHeader>
+
+        {!isCollapsed && (
+          <CardContent className="p-4 pt-0">
+            <div className="space-y-2">
+              {todos.map((todo) => (
+                <DailyTodoItem
+                  key={todo.id}
+                  item={todo}
+                  group={group}
+                  onToggle={handleToggleTodo}
+                  onUpdateContent={handleUpdateTodoContent}
+                  isEditing={editingItemId === todo.id}
+                  setEditingItemId={setEditingItemId}
+                  onAddEmptyItem={handleAddTodo}
+                />
+              ))}
+
+              {todos.length === 0 && (
+                <div className="flex justify-center py-4">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="w-8 h-8"
+                    onClick={handleAddTodo}
+                  >
+                    <SquarePlus className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
+      <AlertConfirmModal
+        open={isAlertOpen}
+        message="이 데일리 로그를 삭제하시겠습니까?"
+        onConfirm={handleDeleteGroup}
+        onCancel={() => setIsAlertOpen(false)}
+      />
+    </>
   );
 };
 

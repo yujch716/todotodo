@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useState, useRef, useEffect } from "react";
 import { showCelebration } from "@/lib/effects";
-import type { DailyTodoType } from "@/types/daily-log.ts";
+import type { DailyTodoGroupType, DailyTodoType } from "@/types/daily-log.ts";
 import { updateDailyTodoContent } from "@/api/daily-todo.ts";
 import { Card } from "@/components/ui/card.tsx";
 import {
@@ -18,6 +18,7 @@ import MoveDailyTodoModal from "@/pages/daily-log/MoveDailyTodoModal.tsx";
 
 interface Props {
   item: DailyTodoType;
+  group: DailyTodoGroupType;
   onToggle: (id: string) => void;
   onUpdateContent: (id: string, newContent: string) => void;
   isEditing: boolean;
@@ -27,6 +28,7 @@ interface Props {
 
 const DailyTodoItem = ({
   item,
+  group,
   onToggle,
   onUpdateContent,
   isEditing,
@@ -154,6 +156,7 @@ const DailyTodoItem = ({
       {openCopyModal && (
         <CopyDailyTodoModal
           content={item.content}
+          groupTitle={group.title}
           onClose={() => setOpenCopyModal(false)}
         />
       )}
@@ -161,6 +164,7 @@ const DailyTodoItem = ({
         <MoveDailyTodoModal
           id={item.id}
           content={item.content}
+          groupTitle={group.title}
           onClose={() => setOpenMoveModal(false)}
         />
       )}

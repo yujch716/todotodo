@@ -13,6 +13,7 @@ import { useGoalStore } from "@/store/goalStore.ts";
 import { toast } from "sonner";
 import { updateGoalStatus } from "@/api/goal.ts";
 import { showCelebration } from "@/lib/effects";
+import { useDailyNoticeStore } from "@/store/dailyNoticeStore.ts";
 
 interface GoalProps {
   goal: Goal;
@@ -29,6 +30,9 @@ const MilestoneGoalCard = ({ goal }: GoalProps) => {
   const [inputValue, setInputValue] = useState("");
 
   const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
+  const triggerDailyNoticeRefresh = useDailyNoticeStore(
+    (state) => state.triggerDailyNoticeRefresh,
+  );
 
   const handleSave = async () => {
     const value = parseInt(inputValue);
@@ -53,6 +57,7 @@ const MilestoneGoalCard = ({ goal }: GoalProps) => {
     }
 
     triggerGoalRefresh();
+    triggerDailyNoticeRefresh();
 
     setShowInput(false);
     setInputValue("");

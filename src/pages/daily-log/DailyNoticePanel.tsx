@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/card.tsx";
 import { getCalendarEventByDate } from "@/api/calendar-event.ts";
 import { useCallback, useEffect, useState } from "react";
 import type { CalendarEventType } from "@/types/calendar-event.ts";
-import { useCalendarStore } from "@/store/calendarStore.ts";
 import DailyNoticeScheduleCard from "@/pages/daily-log/DailyNoticeScheduleCard.tsx";
 import type { Goal } from "@/types/goal.ts";
 import DailyNoticeDailyGoalCard from "@/pages/daily-log/DailyNoticeDailyGoalCard.tsx";
@@ -13,6 +12,7 @@ import {
 import DailyNoticeMilestoneGoalCard from "@/pages/daily-log/DailyNoticeMilestoneGoalCard.tsx";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";
 import GoalDetailPage from "@/pages/goal/GoalDetailPage.tsx";
+import { useDailyNoticeStore } from "@/store/dailyNoticeStore.ts";
 
 interface Props {
   dailyLogDate: Date;
@@ -26,9 +26,11 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
   const [isSmall, setIsSmall] = useState(false);
 
-  const refreshCalendar = useCalendarStore((state) => state.refreshCalendar);
-  const resetCalendarRefresh = useCalendarStore(
-    (state) => state.resetCalendarRefresh,
+  const refreshDailyNotice = useDailyNoticeStore(
+    (state) => state.refreshDailyNotice,
+  );
+  const resetDailyNoticeRefresh = useDailyNoticeStore(
+    (state) => state.resetDailyNoticeRefresh,
   );
 
   const loadDailySchedule = useCallback(async () => {
@@ -50,16 +52,16 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
   };
 
   useEffect(() => {
-    if (refreshCalendar) {
+    if (refreshDailyNotice) {
       loadDailySchedule();
       loadDailyGoals();
-      resetCalendarRefresh();
+      resetDailyNoticeRefresh();
     }
   }, [
-    refreshCalendar,
+    refreshDailyNotice,
     loadDailySchedule,
     loadDailyGoals,
-    resetCalendarRefresh,
+    resetDailyNoticeRefresh,
   ]);
 
   useEffect(() => {

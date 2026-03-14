@@ -28,17 +28,19 @@ import {
   getDailyTodoGroups,
 } from "@/api/daily-todo-group.ts";
 
-interface CopyDailyTodoModalProps {
+interface MoveDailyTodoModalProps {
   id: string;
   content: string;
+  groupTitle: string;
   onClose: () => void;
 }
 
 const MoveDailyTodoModal = ({
   id,
   content,
+  groupTitle,
   onClose,
-}: CopyDailyTodoModalProps) => {
+}: MoveDailyTodoModalProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
@@ -59,6 +61,7 @@ const MoveDailyTodoModal = ({
     const dailyTodoGroups = await getDailyTodoGroups(dailyLog.id);
     const dailyTodoGroup = await createDailyTodoGroup(
       dailyLog.id,
+      groupTitle,
       null,
       dailyTodoGroups.length,
     );

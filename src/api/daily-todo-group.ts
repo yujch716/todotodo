@@ -46,6 +46,7 @@ export const getDailyTodoGroupsWithTodos = async (dailyLogId: string) => {
 
 export const createDailyTodoGroup = async (
   dailyLogId: string,
+  title: string,
   categoryId?: string | null,
   sortOrder?: number,
 ) => {
@@ -53,7 +54,7 @@ export const createDailyTodoGroup = async (
     .from("daily_todo_group")
     .insert({
       daily_log_id: dailyLogId,
-      title: "새 그룹",
+      title,
       category_id: categoryId || null,
       sort_order: sortOrder || 0,
     })

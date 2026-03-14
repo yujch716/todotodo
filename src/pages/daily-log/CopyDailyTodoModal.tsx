@@ -30,10 +30,15 @@ import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";
 
 interface CopyDailyTodoModalProps {
   content: string;
+  groupTitle: string;
   onClose: () => void;
 }
 
-const CopyDailTodoModal = ({ content, onClose }: CopyDailyTodoModalProps) => {
+const CopyDailyTodoModal = ({
+  content,
+  groupTitle,
+  onClose,
+}: CopyDailyTodoModalProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const triggerSidebarRefresh = useDailyLogSidebarStore(
@@ -53,6 +58,7 @@ const CopyDailTodoModal = ({ content, onClose }: CopyDailyTodoModalProps) => {
     const dailyTodoGroups = await getDailyTodoGroups(dailyLog.id);
     const dailyTodoGroup = await createDailyTodoGroup(
       dailyLog.id,
+      groupTitle,
       null,
       dailyTodoGroups.length,
     );
@@ -117,4 +123,4 @@ const CopyDailTodoModal = ({ content, onClose }: CopyDailyTodoModalProps) => {
   );
 };
 
-export default CopyDailTodoModal;
+export default CopyDailyTodoModal;

@@ -25,6 +25,7 @@ import { useGoalStore } from "@/store/goalStore.ts";
 import { CalendarIcon, PartyPopper } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
 import { updateGoalStatus } from "@/api/goal.ts";
+import { useDailyNoticeStore } from "@/store/dailyNoticeStore.ts";
 
 interface GoalProps {
   goal: Goal;
@@ -47,6 +48,9 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
 
   const triggerGoalRefresh = useGoalStore((state) => state.triggerGoalRefresh);
+  const triggerDailyNoticeRefresh = useDailyNoticeStore(
+    (state) => state.triggerDailyNoticeRefresh,
+  );
 
   const generateHeatmapData = ({
     startDate,
@@ -141,6 +145,7 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
     setSelectedLogId(null);
 
     triggerGoalRefresh();
+    triggerDailyNoticeRefresh();
   };
 
   return (
