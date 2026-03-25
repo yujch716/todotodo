@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
 import { getAuthenticatedUser } from "@/api/auth.ts";
-import type {Memo} from "@/types/memo.ts";
+import type { Memo } from "@/types/memo.ts";
 
 export const getMemos = async (): Promise<Memo[]> => {
   const user = await getAuthenticatedUser();
@@ -20,7 +20,10 @@ export const getMemos = async (): Promise<Memo[]> => {
   return data ?? [];
 };
 
-export const createMemo = async (title: string, content: string): Promise<Memo | null> => {
+export const createMemo = async (
+  title: string,
+  content: string,
+): Promise<Memo | null> => {
   const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
@@ -51,10 +54,10 @@ export const updateMemo = async (
 ): Promise<void> => {
   const { error } = await supabase
     .from("memo")
-    .update({ 
-      title, 
+    .update({
+      title,
       content,
-      updated_at: new Date().toISOString() 
+      updated_at: new Date().toISOString(),
     })
     .eq("id", id);
 
@@ -65,10 +68,7 @@ export const updateMemo = async (
 };
 
 export const deleteMemo = async (id: string): Promise<void> => {
-  const { error } = await supabase
-    .from("memo")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("memo").delete().eq("id", id);
 
   if (error) {
     toast.error("메모 삭제에 실패했습니다.");
