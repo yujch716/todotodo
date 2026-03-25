@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { FileText, Trash2 } from "lucide-react";
@@ -12,7 +12,6 @@ import Color from "@tiptap/extension-color";
 import TiptapToolbar from "@/components/tiptap/TiptapToolbar";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import debounce from "lodash.debounce";
 import type { Memo } from "@/types/memo";
 
 interface MemoDetailProps {
@@ -31,13 +30,6 @@ const MemoDetail = ({
   const [heading, setHeading] = useState("paragraph");
   const [title, setTitle] = useState("");
 
-  const debouncedUpdateMemo = useCallback(
-    debounce((memoId: string, title: string, content: string) => {
-      onMemoUpdate(memoId, title, content);
-    }, 1000),
-    [onMemoUpdate],
-  );
-
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -55,7 +47,7 @@ const MemoDetail = ({
     onUpdate({ editor }) {
       if (selectedMemo) {
         const newContent = editor.getHTML();
-        debouncedUpdateMemo(selectedMemo.id, title, newContent);
+        onMemoUpdate(selectedMemo.id, title, newContent);
       }
     },
   });
@@ -66,7 +58,7 @@ const MemoDetail = ({
 
     if (selectedMemo) {
       const currentContent = editor?.getHTML() || selectedMemo.content;
-      debouncedUpdateMemo(selectedMemo.id, newTitle, currentContent);
+      onMemoUpdate(selectedMemo.id, newTitle, currentContent);
     }
   };
 
