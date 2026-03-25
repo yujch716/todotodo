@@ -6,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { Calendar, BookText, Flag, Settings } from "lucide-react";
+import { Calendar, BookText, Flag, Settings, NotebookPen } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { DailyLogType } from "@/types/daily-log.ts";
 
@@ -57,6 +57,17 @@ const SidebarContentSection = ({ dailyLog }: Props) => {
               >
                 <Flag className="w-12 h-12 shrink-0" />
                 <span className="text-base">Goal</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={location.pathname.startsWith("/memos")}
+                onClick={() => navigate("/memos", { replace: true })}
+                className="h-auto min-h-9 p-3 flex items-center gap-3 hover:bg-sky-200 [&_svg]:size-auto data-[active=true]:bg-white data-[active=true]:shadow-md data-[active=true]:border-l-4 data-[active=true]:border-sky-300"
+              >
+                <NotebookPen className="w-12 h-12 shrink-0" />
+                <span className="text-base">Memo</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
 

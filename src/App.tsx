@@ -13,6 +13,7 @@ import CategoryPage from "@/pages/setting/category/CategoryPage.tsx";
 import DefaultContentLayout from "@/layouts/DefaultContentLayout.tsx";
 import SettingContentLayout from "@/layouts/SettingContentLayout.tsx";
 import PrivateRoute from "@/pages/auth/PrivateRoute.tsx";
+import MemoPage from "@/pages/memo/MemoPage.tsx";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/daily/:id" element={<DailyLogPage />} />
             <Route path="/goal-groups" element={<GoalGroupPage />} />
             <Route path="/goal-groups/:id" element={<GoalGroupDetailPage />} />
+            <Route path="/memos" element={<MemoPage />} />
           </Route>
 
           <Route path="/setting" element={<SettingContentLayout />}>
