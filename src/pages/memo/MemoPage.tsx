@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
+import { format } from "date-fns";
 import debounce from "lodash.debounce";
-import { getMemos, createMemo, updateMemo } from "@/api/memo.ts";
+import { getMemos, createMemo, updateMemo, deleteMemo } from "@/api/memo.ts";
 import type { Memo } from "@/types/memo";
 import MemoList from "@/pages/memo/MemoList.tsx";
 import MemoDetail from "@/pages/memo/MemoDetail.tsx";
@@ -24,7 +25,7 @@ const MemoPage = () => {
 
   const handleCreateMemo = async () => {
     try {
-      const title = `새 메모`;
+      const title = `새 메모 ${format(new Date(), "MM/dd HH:mm")}`;
       const content = "<p></p>";
 
       const newMemo = await createMemo(title, content);
@@ -72,6 +73,20 @@ const MemoPage = () => {
     }
   };
 
+  const handleMemoDelete = async (memoId: string) => {
+    try {
+      await deleteMemo(memoId);
+
+      setMemos((prev) => prev.filter((memo) => memo.id !== memoId));
+
+      if (selectedMemo?.id === memoId) {
+        setSelectedMemo(null);
+      }
+    } catch (error) {
+      console.error("메모 삭제 실패:", error);
+    }
+  };
+
   const debouncedUpdateMemoHandler = useCallback(
     debounce((memoId: string, title: string, content: string) => {
       updateMemoHandler(memoId, title, content);
@@ -109,7 +124,11 @@ const MemoPage = () => {
         onCreateMemo={handleCreateMemo}
         loading={loading}
       />
-      <MemoDetail selectedMemo={selectedMemo} onMemoUpdate={handleMemoUpdate} />
+      <MemoDetail
+        selectedMemo={selectedMemo}
+        onMemoUpdate={handleMemoUpdate}
+        onMemoDelete={handleMemoDelete}
+      />
     </div>
   );
 };

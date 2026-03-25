@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, type ChangeEvent } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { FileText } from "lucide-react";
+import { FileText, Trash2 } from "lucide-react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -18,9 +18,14 @@ import type { Memo } from "@/types/memo";
 interface MemoDetailProps {
   selectedMemo: Memo | null;
   onMemoUpdate: (memoId: string, title: string, content: string) => void;
+  onMemoDelete: (memoId: string) => void;
 }
 
-const MemoDetail = ({ selectedMemo, onMemoUpdate }: MemoDetailProps) => {
+const MemoDetail = ({
+  selectedMemo,
+  onMemoUpdate,
+  onMemoDelete,
+}: MemoDetailProps) => {
   const [textColor, setTextColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [heading, setHeading] = useState("paragraph");
@@ -65,6 +70,12 @@ const MemoDetail = ({ selectedMemo, onMemoUpdate }: MemoDetailProps) => {
     }
   };
 
+  const handleDelete = () => {
+    if (selectedMemo && window.confirm("정말로 이 메모를 삭제하시겠습니까?")) {
+      onMemoDelete(selectedMemo.id);
+    }
+  };
+
   const handleFontFamilyChange = (family: string) => {
     setFontFamily(family);
     editor?.chain().focus().setFontFamily(family).run();
@@ -106,12 +117,20 @@ const MemoDetail = ({ selectedMemo, onMemoUpdate }: MemoDetailProps) => {
       {selectedMemo ? (
         <>
           <CardHeader className="space-y-3">
-            <Input
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="메모 제목을 입력하세요..."
-              className="text-lg font-medium border-none shadow-none px-0 focus-visible:ring-0"
-            />
+            <div className="flex items-center gap-4">
+              <Input
+                value={title}
+                onChange={handleTitleChange}
+                placeholder="메모 제목을 입력하세요..."
+                className="text-lg font-medium border-none px-0 focus-visible:ring-0 flex-1"
+              />
+              <div
+                className="ml-auto cursor-pointer hover:text-red-600"
+                onClick={handleDelete}
+              >
+                <Trash2 />
+              </div>
+            </div>
             <div className="text-sm text-gray-500">
               마지막 수정:{" "}
               {format(
