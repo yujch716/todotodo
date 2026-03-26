@@ -5,7 +5,7 @@ import type { Memo } from "@/types/memo";
 import MemoList from "@/pages/memo/MemoList.tsx";
 import MemoDetail from "@/pages/memo/MemoDetail.tsx";
 import { useIsMobile } from "@/hooks/use-mobile.tsx";
-import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.tsx";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";
 
 const MemoPage = () => {
   const [memos, setMemos] = useState<Memo[]>([]);

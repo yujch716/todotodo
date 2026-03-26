@@ -1,7 +1,7 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {Calendar, FileText, Trash2} from "lucide-react";
+import { Calendar, FileText, Trash2 } from "lucide-react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -32,27 +32,27 @@ const MemoDetail = ({
   const [title, setTitle] = useState("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-      }),
-      Underline,
-      TextStyle,
-      TextAlign.configure({ types: ["heading", "paragraph", "listItem"] }),
-      FontFamily.configure({ types: ["textStyle"] }),
-      Color.configure({ types: ["textStyle"] }),
-    ],
-    content: selectedMemo?.content || "",
-    onUpdate({ editor }) {
-      if (selectedMemo) {
-        const newContent = editor.getHTML();
-        onMemoUpdate(selectedMemo.id, title, newContent);
-      }
+  const editor = useEditor(
+    {
+      extensions: [
+        StarterKit.configure({
+          heading: { levels: [1, 2, 3] },
+        }),
+        Underline,
+        TextStyle,
+        TextAlign.configure({ types: ["heading", "paragraph", "listItem"] }),
+        FontFamily.configure({ types: ["textStyle"] }),
+        Color.configure({ types: ["textStyle"] }),
+      ],
+      content: "", // 🔥 항상 빈값
+      onUpdate({ editor }) {
+        if (selectedMemo) {
+          onMemoUpdate(selectedMemo.id, title, editor.getHTML());
+        }
+      },
     },
-  });
+    [selectedMemo?.id], // 🔥 이거 추가
+  );
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
@@ -90,11 +90,12 @@ const MemoDetail = ({
   useEffect(() => {
     if (selectedMemo) {
       setTitle(selectedMemo.title);
+
       if (editor) {
-        editor.commands.setContent(selectedMemo.content);
+        editor.commands.setContent(selectedMemo.content, false); // 🔥 false 중요
       }
     }
-  }, [selectedMemo, editor]);
+  }, [selectedMemo?.id, editor]);
 
   useEffect(() => {
     const handleFocusOut = () => {
@@ -141,7 +142,7 @@ const MemoDetail = ({
                 )}
               </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col min-h-0l">
+            <CardContent className="flex-1 flex flex-col min-h-0">
               {editor && (
                 <div className="flex flex-col h-full border rounded-lg overflow-hidden">
                   <TiptapToolbar
@@ -153,10 +154,10 @@ const MemoDetail = ({
                     textColor={textColor}
                     handleColorChange={handleColorChange}
                   />
-                  <div className="flex-1 overflow-y-auto bg-white">
+                  <div className="flex-1 overflow-y-auto bg-white p-4">
                     <EditorContent
                       editor={editor}
-                      className="tiptap prose h-full p-4 overflow-y-auto [&>div]:min-h-full [&>p]:min-h-full [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:my-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:my-2 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:my-1"
+                      className="tiptap h-full focus:outline-none [&_.ProseMirror]:outline-none overflow-y-auto [&>div]:min-h-full [&>p]:min-h-full [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_li]:my-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:my-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:my-2 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:my-1"
                       style={{
                         outline: "none",
                         boxShadow: "none",
