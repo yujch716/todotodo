@@ -31,7 +31,7 @@ const MemoList: React.FC<MemoListProps> = ({
 
   if (loading) {
     return (
-      <Card className="w-1/3 min-w-[300px] m-4 flex flex-col">
+      <Card className="w-full h-full flex flex-col">
         <CardContent className="flex-1 flex items-center justify-center">
           <div>로딩 중...</div>
         </CardContent>
@@ -40,7 +40,7 @@ const MemoList: React.FC<MemoListProps> = ({
   }
 
   return (
-    <Card className="w-1/3 min-w-[300px] m-4 flex flex-col">
+    <Card className="w-full h-full flex flex-col">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2">

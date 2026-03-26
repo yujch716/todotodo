@@ -4,11 +4,15 @@ import { getMemos, createMemo, updateMemo, deleteMemo } from "@/api/memo.ts";
 import type { Memo } from "@/types/memo";
 import MemoList from "@/pages/memo/MemoList.tsx";
 import MemoDetail from "@/pages/memo/MemoDetail.tsx";
+import { useIsMobile } from "@/hooks/use-mobile.tsx";
+import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.tsx";
 
 const MemoPage = () => {
   const [memos, setMemos] = useState<Memo[]>([]);
   const [selectedMemo, setSelectedMemo] = useState<Memo | null>(null);
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const fetchMemos = useCallback(async () => {
     try {
@@ -32,6 +36,10 @@ const MemoPage = () => {
       if (newMemo) {
         setMemos((prev) => [newMemo, ...prev]);
         setSelectedMemo(newMemo);
+
+        if (isMobile) {
+          setIsSheetOpen(true);
+        }
       }
     } catch (error) {
       console.error("메모 생성 실패:", error);
@@ -95,6 +103,10 @@ const MemoPage = () => {
 
   const handleMemoSelect = (memo: Memo) => {
     setSelectedMemo(memo);
+
+    if (isMobile) {
+      setIsSheetOpen(true);
+    }
   };
 
   const handleMemoUpdate = (memoId: string, title: string, content: string) => {
@@ -114,21 +126,60 @@ const MemoPage = () => {
     );
   }
 
-  return (
-    <div className="flex h-screen bg-gray-50">
-      <MemoList
-        memos={memos}
-        selectedMemo={selectedMemo}
-        onMemoSelect={handleMemoSelect}
-        onCreateMemo={handleCreateMemo}
-        loading={loading}
-      />
-      <MemoDetail
-        selectedMemo={selectedMemo}
-        onMemoUpdate={handleMemoUpdate}
-        onMemoDelete={handleMemoDelete}
-      />
-    </div>
+  return isMobile ? (
+    <>
+      <div className="flex h-screen bg-gray-50">
+        <div className="w-full">
+          <MemoList
+            memos={memos}
+            selectedMemo={selectedMemo}
+            onMemoSelect={handleMemoSelect}
+            onCreateMemo={handleCreateMemo}
+            loading={loading}
+          />
+        </div>
+      </div>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetTrigger className="hidden" />
+        <SheetContent
+          side="right"
+          className="p-0 h-[100dvh] flex flex-col"
+          style={{
+            width: "100vw",
+            maxWidth: "none",
+          }}
+        >
+          <MemoDetail
+            selectedMemo={selectedMemo}
+            onMemoUpdate={handleMemoUpdate}
+            onMemoDelete={handleMemoDelete}
+          />
+        </SheetContent>
+      </Sheet>
+    </>
+  ) : (
+    <>
+      <div className="flex h-screen bg-gray-50">
+        <div className="w-1/3">
+          <MemoList
+            memos={memos}
+            selectedMemo={selectedMemo}
+            onMemoSelect={handleMemoSelect}
+            onCreateMemo={handleCreateMemo}
+            loading={loading}
+          />
+        </div>
+
+        <div className="w-2/3 flex h-screen bg-gray-50 min-h-0 ml-4">
+          <MemoDetail
+            selectedMemo={selectedMemo}
+            onMemoUpdate={handleMemoUpdate}
+            onMemoDelete={handleMemoDelete}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

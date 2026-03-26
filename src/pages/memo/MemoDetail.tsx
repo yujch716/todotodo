@@ -1,7 +1,7 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { FileText, Trash2 } from "lucide-react";
+import {Calendar, FileText, Trash2} from "lucide-react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -114,7 +114,7 @@ const MemoDetail = ({
 
   return (
     <>
-      <Card className="flex-1 m-4 ml-0 flex flex-col">
+      <Card className="h-full w-full flex flex-col min-h-0">
         {selectedMemo ? (
           <>
             <CardHeader className="space-y-3">
@@ -123,7 +123,7 @@ const MemoDetail = ({
                   value={title}
                   onChange={handleTitleChange}
                   placeholder="메모 제목을 입력하세요..."
-                  className="text-lg font-medium border-none px-0 focus-visible:ring-0 flex-1"
+                  className="text-lg font-medium focus-visible:ring-0 flex-1"
                 />
                 <div
                   className="ml-auto cursor-pointer hover:text-red-600"
@@ -132,8 +132,8 @@ const MemoDetail = ({
                   <Trash2 />
                 </div>
               </div>
-              <div className="text-sm text-gray-500">
-                마지막 수정:{" "}
+              <div className="flex text-xs items-center text-gray-500">
+                <Calendar className="w-3 h-3 mr-1" />
                 {format(
                   new Date(selectedMemo.updated_at),
                   "yyyy년 MM월 dd일 HH:mm",
@@ -141,7 +141,7 @@ const MemoDetail = ({
                 )}
               </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col">
+            <CardContent className="flex-1 flex flex-col min-h-0l">
               {editor && (
                 <div className="flex flex-col h-full border rounded-lg overflow-hidden">
                   <TiptapToolbar
