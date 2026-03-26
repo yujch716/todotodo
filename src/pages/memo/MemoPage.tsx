@@ -126,18 +126,28 @@ const MemoPage = () => {
     );
   }
 
+  const memoListComponent = (
+    <MemoList
+      memos={memos}
+      selectedMemo={selectedMemo}
+      onMemoSelect={handleMemoSelect}
+      onCreateMemo={handleCreateMemo}
+      loading={loading}
+    />
+  );
+
+  const memoDetailComponent = (
+    <MemoDetail
+      selectedMemo={selectedMemo}
+      onMemoUpdate={handleMemoUpdate}
+      onMemoDelete={handleMemoDelete}
+    />
+  );
+
   return isMobile ? (
     <>
       <div className="flex h-screen bg-gray-50">
-        <div className="w-full">
-          <MemoList
-            memos={memos}
-            selectedMemo={selectedMemo}
-            onMemoSelect={handleMemoSelect}
-            onCreateMemo={handleCreateMemo}
-            loading={loading}
-          />
-        </div>
+        <div className="w-full">{memoListComponent}</div>
       </div>
 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -150,33 +160,17 @@ const MemoPage = () => {
             maxWidth: "none",
           }}
         >
-          <MemoDetail
-            selectedMemo={selectedMemo}
-            onMemoUpdate={handleMemoUpdate}
-            onMemoDelete={handleMemoDelete}
-          />
+          {memoDetailComponent}
         </SheetContent>
       </Sheet>
     </>
   ) : (
     <>
       <div className="flex h-screen bg-gray-50">
-        <div className="w-1/3">
-          <MemoList
-            memos={memos}
-            selectedMemo={selectedMemo}
-            onMemoSelect={handleMemoSelect}
-            onCreateMemo={handleCreateMemo}
-            loading={loading}
-          />
-        </div>
+        <div className="w-1/3">{memoListComponent}</div>
 
-        <div className="w-2/3 flex h-screen bg-gray-50 min-h-0 ml-4">
-          <MemoDetail
-            selectedMemo={selectedMemo}
-            onMemoUpdate={handleMemoUpdate}
-            onMemoDelete={handleMemoDelete}
-          />
+        <div className="w-2/3 flex h-full bg-gray-50 min-h-0 ml-4">
+          {memoDetailComponent}
         </div>
       </div>
     </>
