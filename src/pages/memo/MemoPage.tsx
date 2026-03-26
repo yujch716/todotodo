@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { format } from "date-fns";
 import debounce from "lodash.debounce";
 import { getMemos, createMemo, updateMemo, deleteMemo } from "@/api/memo.ts";
 import type { Memo } from "@/types/memo";
@@ -25,7 +24,7 @@ const MemoPage = () => {
 
   const handleCreateMemo = async () => {
     try {
-      const title = `새 메모 ${format(new Date(), "MM/dd HH:mm")}`;
+      const title = `새 메모`;
       const content = "<p></p>";
 
       const newMemo = await createMemo(title, content);
