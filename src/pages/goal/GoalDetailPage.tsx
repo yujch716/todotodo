@@ -8,13 +8,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { deleteGoalById, getGoalById } from "@/api/goal.ts";
 import { useCallback, useEffect, useState } from "react";
 import { Smile, Trash2 } from "lucide-react";
-import DailyGoalCard from "@/pages/goal/DailyGoalCard.tsx";
-import type { Goal, GoalLog } from "@/types/goal.ts";
+import RoutineGoalSheet from "@/pages/goal/RoutineGoalSheet.tsx";
+import {type Goal, type GoalLog, GoalType} from "@/types/goal.ts";
 import { useGoalStore } from "@/store/goalStore.ts";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 import GoalLogCard from "@/pages/goal/GoalLogCard.tsx";
 import UpdateGoalModal from "@/pages/goal/UpdateGoalModal.tsx";
-import MilestoneGoalCard from "@/pages/goal/MilestoneGoalCard.tsx";
+import ProgressGoalSheet from "@/pages/goal/ProgressGoalSheet.tsx";
+import ChecklistGoalSheet from "@/pages/goal/ChecklistGoalSheet.tsx";
 
 interface GoalDetailProps {
   goalId: string | null;
@@ -87,6 +88,12 @@ const GoalDetailPage = ({ goalId: propGoalId }: GoalDetailProps) => {
     );
   }
 
+  const goalSheetMap = {
+    [GoalType.routine]: <RoutineGoalSheet goal={goal} />,
+    [GoalType.progress]: <ProgressGoalSheet goal={goal} />,
+    [GoalType.checklist]: <ChecklistGoalSheet goal={goal} />,
+  };
+
   return (
     <>
       <Card className="flex flex-col h-full w-full">
@@ -107,15 +114,11 @@ const GoalDetailPage = ({ goalId: propGoalId }: GoalDetailProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-grow flex flex-col h-full w-full overflow-hidden gap-6">
-          {type === "daily" ? (
-            <DailyGoalCard goal={goal} />
-          ) : (
-            <>
-              <MilestoneGoalCard goal={goal} />
-            </>
-          )}
+          {goalSheetMap[type]}
 
-          <GoalLogCard type={goal.type} logs={goalLogs} />
+          {type !== GoalType.checklist && (
+            <GoalLogCard type={goal.type} logs={goalLogs} />
+          )}
         </CardContent>
       </Card>
 

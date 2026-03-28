@@ -48,19 +48,20 @@ export const getGoalById = async (goalId: string): Promise<Goal> => {
     .select(
       `
       *,
-      goal_log (*)
+      goal_log (*),
+      goal_checklist_item (*)
     `,
     )
     .eq("id", goalId)
     .order("created_at", { ascending: false, referencedTable: "goal_log" })
     .single();
 
-  if (error) toast.error("조회에 실패했습니다.");
+  if (error || !data) toast.error("조회에 실패했습니다.");
 
   return data;
 };
 
-export const getOngoingDailyGoalsByDate = async (
+export const getOngoingRoutineGoalsByDate = async (
   date: Date,
 ): Promise<Goal[]> => {
   const user = await getAuthenticatedUser();
@@ -81,7 +82,7 @@ export const getOngoingDailyGoalsByDate = async (
     .from("goal")
     .select(`*, goal_log(*)`)
     .eq("user_id", user.id)
-    .eq("type", "daily")
+    .eq("type", "routine")
     .lte("start_date", format(date, "yyyy-MM-dd"))
     .gte("end_date", format(date, "yyyy-MM-dd"))
     .contains("repeat_days", [dayString]);
@@ -91,14 +92,14 @@ export const getOngoingDailyGoalsByDate = async (
   return data ?? [];
 };
 
-export const getOngoingMilestoneGoalsByDate = async (): Promise<Goal[]> => {
+export const getOngoingProgressGoalsByDate = async (): Promise<Goal[]> => {
   const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("goal")
     .select(`*, goal_log(*)`)
     .eq("user_id", user.id)
-    .eq("type", "milestone")
+    .eq("type", "progress")
     .eq("status", GoalStatus.inProgress);
 
   if (error) toast.error("조회에 실패했습니다.");
