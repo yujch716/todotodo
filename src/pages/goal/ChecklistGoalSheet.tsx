@@ -226,8 +226,8 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
           </div>
         </Card>
 
-        <Card className="flex flex-col h-full p-4 overflow-hidden">
-          <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-col h-full overflow-hidden border rounded-lg shadow-sm">
+          <div className="flex justify-between items-center mb-4 px-5 pt-4">
             <h3 className="text-lg font-semibold">Checklist</h3>
             <Button
               onClick={handleCreateItem}
@@ -239,12 +239,12 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
             </Button>
           </div>
 
-          <ScrollArea className="h-full">
-            <div className="space-y-3">
+          <ScrollArea className="h-full px-4 pb-4">
+            <div className="space-y-3 p-1">
               {sortedItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 p-3 border rounded-lg shadow-md"
+                  className="flex items-center gap-3 py-2 px-4 border rounded-lg shadow"
                 >
                   <Checkbox
                     checked={item.is_checked}
@@ -282,7 +282,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
               )}
             </div>
           </ScrollArea>
-        </Card>
+        </div>
       </div>
     </>
   );
