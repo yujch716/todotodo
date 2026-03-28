@@ -128,37 +128,58 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
     if (e.key === "Enter") {
       e.preventDefault();
 
-      if (isCreating) return;
+      const sortedItems = [...goalChecklistItems].sort(
+        (a, b) => a.order_index - b.order_index,
+      );
+      const currentIndex = sortedItems.findIndex(
+        (sortedItem) => sortedItem.id === item.id,
+      );
+      const isLastItem = currentIndex === sortedItems.length - 1;
 
-      setIsCreating(true);
-      try {
-        const newOrderIndex = item.order_index + 1;
-        const updatedItems = goalChecklistItems.map((existingItem) =>
-          existingItem.order_index >= newOrderIndex
-            ? { ...existingItem, order_index: existingItem.order_index + 1 }
-            : existingItem,
-        );
+      if (isLastItem) {
+        if (isCreating) return;
 
-        const newItem = await createGoalChecklistItem(
-          goal.id,
-          newOrderIndex,
-          "",
-        );
-        const newItems = [...updatedItems, newItem].sort(
-          (a, b) => a.order_index - b.order_index,
-        );
-        setGoalChecklistItems(newItems);
+        setIsCreating(true);
+        try {
+          const newOrderIndex = item.order_index + 1;
+          const updatedItems = goalChecklistItems.map((existingItem) =>
+            existingItem.order_index >= newOrderIndex
+              ? { ...existingItem, order_index: existingItem.order_index + 1 }
+              : existingItem,
+          );
 
-        setTimeout(() => {
-          const input = inputRefs.current[newItem.id];
-          if (input) {
-            input.focus();
-          }
-        }, 100);
-      } catch (error) {
-        console.error("Failed to create new checklist item:", error);
-      } finally {
-        setIsCreating(false);
+          const newItem = await createGoalChecklistItem(
+            goal.id,
+            newOrderIndex,
+            "",
+          );
+          const newItems = [...updatedItems, newItem].sort(
+            (a, b) => a.order_index - b.order_index,
+          );
+          setGoalChecklistItems(newItems);
+
+          setTimeout(() => {
+            const input = inputRefs.current[newItem.id];
+            if (input) {
+              input.focus();
+            }
+          }, 100);
+        } catch (error) {
+          console.error("Failed to create new checklist item:", error);
+        } finally {
+          setIsCreating(false);
+        }
+      } else {
+        const nextItem = sortedItems[currentIndex + 1];
+        if (nextItem) {
+          setTimeout(() => {
+            const input = inputRefs.current[nextItem.id];
+            if (input) {
+              input.focus();
+              input.setSelectionRange(0, input.value.length);
+            }
+          }, 0);
+        }
       }
     }
   };
@@ -207,7 +228,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
 
   return (
     <>
-      <div className="w-full h-screen flex flex-col gap-6">
+      <div className="w-full flex flex-col flex-1 min-h-0 gap-6">
         <Card className="w-full flex-none p-6">
           <div className="flex items-center gap-3 relative pt-8 pb-2">
             <div className="relative w-full">
@@ -244,7 +265,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
           </div>
         </Card>
 
-        <div className="flex flex-col h-full overflow-hidden border rounded-lg shadow-sm">
+        <Card className="flex flex-col h-full overflow-hidden">
           <div className="flex justify-between items-center mb-4 px-5 pt-4">
             <h3 className="flex items-center gap-2 text-lg font-semibold">
               <SquareCheckBig />
@@ -304,7 +325,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
               )}
             </div>
           </ScrollArea>
-        </div>
+        </Card>
       </div>
     </>
   );
