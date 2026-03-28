@@ -19,7 +19,7 @@ interface GoalProps {
   goal: Goal;
 }
 
-const MilestoneGoalCard = ({ goal }: GoalProps) => {
+const ProgressGoalSheet = ({ goal }: GoalProps) => {
   const logs: GoalLog[] = goal.goal_log || [];
   const targetValue = goal.target_value!;
   const completedValue = logs.reduce((acc, log) => acc + log.value, 0);
@@ -135,4 +135,4 @@ const MilestoneGoalCard = ({ goal }: GoalProps) => {
     </>
   );
 };
-export default MilestoneGoalCard;
+export default ProgressGoalSheet;

@@ -5,8 +5,8 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { CalendarClock, X } from "lucide-react";
-import CreateDailyTimetableModal from "@/pages/daily-log/CreateDailyTimetableModal.tsx";
-import EditDailyTimetableModal from "@/pages/daily-log/EditDailyTimetableModal.tsx";
+import CreateDailyTimetableModal from "@/pages/daily-log/timetable/CreateDailyTimetableModal.tsx";
+import EditDailyTimetableModal from "@/pages/daily-log/timetable/EditDailyTimetableModal.tsx";
 import {
   deleteDailyTimetableById,
   getDailyTimeTables,

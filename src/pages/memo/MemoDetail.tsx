@@ -44,14 +44,14 @@ const MemoDetail = ({
         FontFamily.configure({ types: ["textStyle"] }),
         Color.configure({ types: ["textStyle"] }),
       ],
-      content: "", // 🔥 항상 빈값
+      content: "",
       onUpdate({ editor }) {
         if (selectedMemo) {
           onMemoUpdate(selectedMemo.id, title, editor.getHTML());
         }
       },
     },
-    [selectedMemo?.id], // 🔥 이거 추가
+    [selectedMemo?.id],
   );
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +92,7 @@ const MemoDetail = ({
       setTitle(selectedMemo.title);
 
       if (editor) {
-        editor.commands.setContent(selectedMemo.content, false); // 🔥 false 중요
+        editor.commands.setContent(selectedMemo.content, false);
       }
     }
   }, [selectedMemo?.id, editor]);

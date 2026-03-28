@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import { createGoal } from "@/api/goal.ts";
 import EmojiPicker from "emoji-picker-react";
 import { useGoalStore } from "@/store/goalStore.ts";
+import { GoalType } from "@/types/goal.ts";
 
 const days = [
   { label: "일", value: "sun" },
@@ -50,7 +51,7 @@ interface Props {
 
 const CreateGoalModal = ({ groupId }: Props) => {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"daily" | "milestone">("daily");
+  const [activeTab, setActiveTab] = useState<GoalType>(GoalType.routine);
 
   const [emoji, setEmoji] = useState("✨");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -70,21 +71,28 @@ const CreateGoalModal = ({ groupId }: Props) => {
       toast.error("제목을 입력하세요.");
       return;
     }
-    if (activeTab === "daily" && (!dateRange?.from || !dateRange?.to)) {
+    if (
+      activeTab === GoalType.routine &&
+      (!dateRange?.from || !dateRange?.to)
+    ) {
       toast.error("기간을 선택하세요.");
       return;
     }
-    if (activeTab === "milestone" && targetValue === undefined) {
+    if (activeTab === GoalType.progress && targetValue === undefined) {
       toast.error("목표 수치를 1 이상 입력하세요.");
       return;
     }
-    if (activeTab === "daily" && !isEveryDay && repeatDays.length === 0) {
+    if (
+      activeTab === GoalType.routine &&
+      !isEveryDay &&
+      repeatDays.length === 0
+    ) {
       toast.error("반복 요일을 선택하세요.");
       return;
     }
 
     const repeat_days =
-      activeTab === "daily"
+      activeTab === GoalType.routine
         ? isEveryDay
           ? days.map((d) => d.value)
           : repeatDays
@@ -95,7 +103,7 @@ const CreateGoalModal = ({ groupId }: Props) => {
       emoji,
       title,
       type: activeTab,
-      ...(activeTab === "daily" && {
+      ...(activeTab === GoalType.routine && {
         start_date: dateRange?.from
           ? format(dateRange.from, "yyyy-MM-dd")
           : undefined,
@@ -104,7 +112,9 @@ const CreateGoalModal = ({ groupId }: Props) => {
           : undefined,
         repeat_days,
       }),
-      ...(activeTab === "milestone" && { target_value: Number(targetValue) }),
+      ...(activeTab === GoalType.progress && {
+        target_value: Number(targetValue),
+      }),
     };
 
     await createGoal(goalPayload);
@@ -130,65 +140,71 @@ const CreateGoalModal = ({ groupId }: Props) => {
       </DialogTrigger>
       <DialogContent className="w-full max-w-md sm:mx-auto z-50">
         <DialogHeader>
-          <DialogTitle>챌린지 만들기</DialogTitle>
+          <DialogTitle>목표 만들기</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
 
         <Tabs
-          defaultValue="daily"
+          defaultValue="routine"
           value={activeTab}
-          onValueChange={(val) => setActiveTab(val as "daily" | "milestone")}
+          onValueChange={(val) =>
+            setActiveTab(val as "routine" | "progress" | "checklist")
+          }
           className="flex flex-col w-full h-full"
         >
           <div className="flex flex-row gap-3 item-center">
             <TabsList className="flex w-fit">
-              <TabsTrigger value="daily">일일 챌린지</TabsTrigger>
-              <TabsTrigger value="milestone">목표 달성 챌린지</TabsTrigger>
+              <TabsTrigger value={GoalType.routine}>습관형</TabsTrigger>
+              <TabsTrigger value={GoalType.progress}>달성형</TabsTrigger>
+              <TabsTrigger value={GoalType.checklist}>완료형</TabsTrigger>
             </TabsList>
 
             <Popover>
               <PopoverTrigger>
-                <CircleHelp className="w-6 h-6 text-muted-foreground" />
+                <CircleHelp className="w-4 h-4 text-muted-foreground" />
               </PopoverTrigger>
               <PopoverContent side="top" className="p-3 w-auto">
-                {activeTab === "daily" ? (
+                {activeTab === GoalType.routine ? (
                   <p>예시: 🏃‍♂️매주 월,수, 금 운동하기</p>
-                ) : (
+                ) : activeTab === GoalType.progress ? (
                   <p>예시: 📖 250p 책 읽기</p>
+                ) : (
+                  <p>예시: 📚독서 리스트</p>
                 )}
               </PopoverContent>
             </Popover>
           </div>
-          <TabsContent value="daily">
+
+          <div className="flex items-center mt-4 gap-2 relative">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xl"
+              onClick={() => setShowEmojiPicker((v) => !v)}
+            >
+              {emoji}
+            </Button>
+            <Input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="제목"
+            />
+          </div>
+
+          {showEmojiPicker && (
+            <div className="absolute z-50">
+              <EmojiPicker
+                onEmojiClick={(emojiData) => {
+                  setEmoji(emojiData.emoji);
+                  setShowEmojiPicker(false);
+                }}
+              />
+            </div>
+          )}
+
+          <TabsContent value={GoalType.routine}>
             <div className="grid gap-4 mt-2">
-              <div className="flex items-center gap-2 relative">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-xl"
-                  onClick={() => setShowEmojiPicker((v) => !v)}
-                >
-                  {emoji}
-                </Button>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="제목"
-                />
-              </div>
-
-              {showEmojiPicker && (
-                <div className="absolute z-50">
-                  <EmojiPicker
-                    onEmojiClick={(emojiData) => {
-                      setEmoji(emojiData.emoji);
-                      setShowEmojiPicker(false);
-                    }}
-                  />
-                </div>
-              )}
-
               <div className="flex items-center gap-2">
                 <CalendarIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <Popover>
@@ -243,36 +259,8 @@ const CreateGoalModal = ({ groupId }: Props) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="milestone">
+          <TabsContent value={GoalType.progress}>
             <div className="grid gap-4 mt-2">
-              <div className="flex items-center gap-2 relative">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-xl"
-                  onClick={() => setShowEmojiPicker((v) => !v)}
-                >
-                  {emoji}
-                </Button>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="제목"
-                />
-              </div>
-
-              {showEmojiPicker && (
-                <div className="absolute z-50">
-                  <EmojiPicker
-                    onEmojiClick={(emojiData) => {
-                      setEmoji(emojiData.emoji);
-                      setShowEmojiPicker(false);
-                    }}
-                  />
-                </div>
-              )}
-
               <div className="flex items-center gap-2">
                 <Flag className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <Input
@@ -282,6 +270,12 @@ const CreateGoalModal = ({ groupId }: Props) => {
                   onChange={(e) => setTargetValue(e.target.value)}
                 />
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value={GoalType.checklist}>
+            <div className="grid gap-4 mt-2">
+              <div className="flex items-center gap-2"></div>
             </div>
           </TabsContent>
         </Tabs>

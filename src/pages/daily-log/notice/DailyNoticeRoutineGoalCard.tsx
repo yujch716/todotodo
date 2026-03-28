@@ -10,7 +10,7 @@ interface DailyNoticeDailyGoalProps {
   onClick?: () => void;
 }
 
-const DailyNoticeDailyGoalCard = ({
+const DailyNoticeRoutineGoalCard = ({
   goal,
   date,
   onClick,
@@ -56,4 +56,4 @@ const DailyNoticeDailyGoalCard = ({
     </Card>
   );
 };
-export default DailyNoticeDailyGoalCard;
+export default DailyNoticeRoutineGoalCard;

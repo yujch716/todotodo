@@ -1,7 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card.tsx";
-import { type GoalLog, GoalStatus } from "@/types/goal.ts";
+import { type GoalLog, GoalStatus, GoalType } from "@/types/goal.ts";
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import { useGoalStore } from "@/store/goalStore.ts";
 import { updateGoalStatus } from "@/api/goal.ts";
 
 interface GoalLogCardProps {
-  type: "daily" | "milestone";
+  type: GoalType;
   logs: GoalLog[];
 }
 

@@ -3,15 +3,21 @@ export const GoalStatus = {
   inProgress: "in_progress",
   completed: "completed",
 } as const;
-
 export type GoalStatusType = (typeof GoalStatus)[keyof typeof GoalStatus];
+
+export const GoalType = {
+  routine: "routine",
+  progress: "progress",
+  checklist: "checklist",
+};
+export type GoalType = (typeof GoalType)[keyof typeof GoalType];
 
 export interface Goal {
   id: string;
   user_id: string;
   title: string;
   emoji: string;
-  type: "daily" | "milestone";
+  type: GoalType;
   start_date: Date;
   end_date: Date;
   repeat_days: string[] | null;
@@ -21,12 +27,13 @@ export interface Goal {
   updated_at: Date;
 
   goal_log?: GoalLog[];
+  goal_checklist_item?: GoalChecklistItem[];
 }
 
 export interface CreateGoalDto {
   emoji: string;
   title: string;
-  type: "daily" | "milestone";
+  type: GoalType;
   start_date?: string;
   end_date?: string;
   repeat_days?: string[] | null;
@@ -57,6 +64,16 @@ export interface CreateGoalLogDto {
   date: string;
   memo?: string | null;
   value?: number | null;
+}
+
+export interface GoalChecklistItem {
+  id: string;
+  goal_id: string;
+  user_id: string;
+  content: string;
+  is_checked: boolean;
+  order_index: number;
+  created_at: Date;
 }
 
 export interface GoalGroup {

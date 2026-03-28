@@ -37,7 +37,7 @@ interface HeatmapDay {
   completed: boolean;
 }
 
-const DailyGoalCard = ({ goal }: GoalProps) => {
+const RoutineGoalSheet = ({ goal }: GoalProps) => {
   const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   const logs: GoalLog[] = goal.goal_log || [];
 
@@ -248,4 +248,4 @@ const DailyGoalCard = ({ goal }: GoalProps) => {
     </>
   );
 };
-export default DailyGoalCard;
+export default RoutineGoalSheet;

@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import DailyTodoPanel from "@/pages/daily-log/DailyTodoPanel.tsx";
+import DailyTodoPanel from "@/pages/daily-log/todo/DailyTodoPanel.tsx";
 import MemoPanel from "@/pages/daily-log/MemoPanel.tsx";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -16,10 +16,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs.tsx";
-import DailyNoticePanel from "@/pages/daily-log/DailyNoticePanel.tsx";
+import DailyNoticePanel from "@/pages/daily-log/notice/DailyNoticePanel.tsx";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { format } from "date-fns";
-import DailyTimetablePanel from "@/pages/daily-log/DailyTimetablePanel.tsx";
+import DailyTimetablePanel from "@/pages/daily-log/timetable/DailyTimetablePanel.tsx";
 import DailyEmptyPage from "@/pages/daily-log/DailyEmptyPage.tsx";
 import { cn } from "@/lib/utils.ts";
 import { useDailyLogDetailStore } from "@/store/dailyLogDetailStore.ts";

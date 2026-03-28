@@ -2,14 +2,14 @@ import { Card } from "@/components/ui/card.tsx";
 import { getCalendarEventByDate } from "@/api/calendar-event.ts";
 import { useCallback, useEffect, useState } from "react";
 import type { CalendarEventType } from "@/types/calendar-event.ts";
-import DailyNoticeScheduleCard from "@/pages/daily-log/DailyNoticeScheduleCard.tsx";
+import DailyNoticeScheduleCard from "@/pages/daily-log/notice/DailyNoticeScheduleCard.tsx";
 import type { Goal } from "@/types/goal.ts";
-import DailyNoticeDailyGoalCard from "@/pages/daily-log/DailyNoticeDailyGoalCard.tsx";
+import DailyNoticeRoutineGoalCard from "@/pages/daily-log/notice/DailyNoticeRoutineGoalCard.tsx";
 import {
-  getOngoingDailyGoalsByDate,
-  getOngoingMilestoneGoalsByDate,
+  getOngoingProgressGoalsByDate,
+  getOngoingRoutineGoalsByDate,
 } from "@/api/goal.ts";
-import DailyNoticeMilestoneGoalCard from "@/pages/daily-log/DailyNoticeMilestoneGoalCard.tsx";
+import DailyNoticeProgressGoalCard from "@/pages/daily-log/notice/DailyNoticeProgressGoalCard.tsx";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";
 import GoalDetailPage from "@/pages/goal/GoalDetailPage.tsx";
 import { useDailyNoticeStore } from "@/store/dailyNoticeStore.ts";
@@ -39,8 +39,8 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
   }, [dailyLogDate]);
 
   const loadDailyGoals = useCallback(async () => {
-    const dailyGoals = await getOngoingDailyGoalsByDate(dailyLogDate);
-    const milestoneGoals = await getOngoingMilestoneGoalsByDate();
+    const dailyGoals = await getOngoingRoutineGoalsByDate(dailyLogDate);
+    const milestoneGoals = await getOngoingProgressGoalsByDate();
 
     setDailyGoals(dailyGoals);
     setMilestoneGoals(milestoneGoals);
@@ -89,7 +89,7 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
             ))}
 
             {dailyGoals.map((goal) => (
-              <DailyNoticeDailyGoalCard
+              <DailyNoticeRoutineGoalCard
                 key={goal.id}
                 goal={goal}
                 date={dailyLogDate}
@@ -98,7 +98,7 @@ export const DailyNoticePanel = ({ dailyLogDate }: Props) => {
             ))}
 
             {milestoneGoals.map((goal) => (
-              <DailyNoticeMilestoneGoalCard
+              <DailyNoticeProgressGoalCard
                 key={goal.id}
                 goal={goal}
                 onClick={() => handleGoalSelect(goal.id)}
