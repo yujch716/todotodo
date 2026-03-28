@@ -24,6 +24,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
     GoalChecklistItem[]
   >(goal.goal_checklist_item || []);
   const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
   const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const targetValue = goalChecklistItems.length;
@@ -35,9 +36,11 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
   const isComplete = goal.status === GoalStatus.completed;
 
   const handleCreateItem = async () => {
+    if (isCreating) return;
+    
+    setIsCreating(true);
     try {
-      const newOrderIndex =
-        Math.max(...goalChecklistItems.map((item) => item.order_index), 0) + 1;
+      const newOrderIndex = goalChecklistItems.length;
       const newItem = await createGoalChecklistItem(goal.id, newOrderIndex, "");
       setGoalChecklistItems((prev) => [...prev, newItem]);
 
@@ -49,6 +52,8 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
       }, 100);
     } catch (error) {
       console.error("Failed to create checklist item:", error);
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -115,6 +120,10 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
 
     if (e.key === "Enter") {
       e.preventDefault();
+      
+      if (isCreating) return;
+      
+      setIsCreating(true);
       try {
         const newOrderIndex = item.order_index + 1;
         const updatedItems = goalChecklistItems.map((existingItem) =>
@@ -141,6 +150,8 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
         }, 100);
       } catch (error) {
         console.error("Failed to create new checklist item:", error);
+      } finally {
+        setIsCreating(false);
       }
     }
   };
@@ -233,7 +244,8 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
               onClick={handleCreateItem}
               variant="outline"
               size="icon"
-              className="flex items-center gap-2 bg-sky-200 hover:bg-sky-300 text-black"
+              disabled={isCreating}
+              className="flex items-center gap-2 bg-sky-200 hover:bg-sky-300 text-black disabled:opacity-50"
             >
               <Plus className="w-4 h-4" />
             </Button>
