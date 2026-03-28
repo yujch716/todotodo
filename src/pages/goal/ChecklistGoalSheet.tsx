@@ -207,7 +207,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
 
   return (
     <>
-      <div className="w-full h-screen flex flex-col gap-6">
+      <div className="w-full flex flex-col flex-1 min-h-0 gap-6">
         <Card className="w-full flex-none p-6">
           <div className="flex items-center gap-3 relative pt-8 pb-2">
             <div className="relative w-full">
@@ -244,7 +244,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
           </div>
         </Card>
 
-        <div className="flex flex-col h-full overflow-hidden border rounded-lg shadow-sm">
+        <Card className="flex flex-col h-full overflow-hidden">
           <div className="flex justify-between items-center mb-4 px-5 pt-4">
             <h3 className="flex items-center gap-2 text-lg font-semibold">
               <SquareCheckBig />
@@ -304,7 +304,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
               )}
             </div>
           </ScrollArea>
-        </div>
+        </Card>
       </div>
     </>
   );
