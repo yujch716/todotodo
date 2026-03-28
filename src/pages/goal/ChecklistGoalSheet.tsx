@@ -128,37 +128,58 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
     if (e.key === "Enter") {
       e.preventDefault();
 
-      if (isCreating) return;
+      const sortedItems = [...goalChecklistItems].sort(
+        (a, b) => a.order_index - b.order_index,
+      );
+      const currentIndex = sortedItems.findIndex(
+        (sortedItem) => sortedItem.id === item.id,
+      );
+      const isLastItem = currentIndex === sortedItems.length - 1;
 
-      setIsCreating(true);
-      try {
-        const newOrderIndex = item.order_index + 1;
-        const updatedItems = goalChecklistItems.map((existingItem) =>
-          existingItem.order_index >= newOrderIndex
-            ? { ...existingItem, order_index: existingItem.order_index + 1 }
-            : existingItem,
-        );
+      if (isLastItem) {
+        if (isCreating) return;
 
-        const newItem = await createGoalChecklistItem(
-          goal.id,
-          newOrderIndex,
-          "",
-        );
-        const newItems = [...updatedItems, newItem].sort(
-          (a, b) => a.order_index - b.order_index,
-        );
-        setGoalChecklistItems(newItems);
+        setIsCreating(true);
+        try {
+          const newOrderIndex = item.order_index + 1;
+          const updatedItems = goalChecklistItems.map((existingItem) =>
+            existingItem.order_index >= newOrderIndex
+              ? { ...existingItem, order_index: existingItem.order_index + 1 }
+              : existingItem,
+          );
 
-        setTimeout(() => {
-          const input = inputRefs.current[newItem.id];
-          if (input) {
-            input.focus();
-          }
-        }, 100);
-      } catch (error) {
-        console.error("Failed to create new checklist item:", error);
-      } finally {
-        setIsCreating(false);
+          const newItem = await createGoalChecklistItem(
+            goal.id,
+            newOrderIndex,
+            "",
+          );
+          const newItems = [...updatedItems, newItem].sort(
+            (a, b) => a.order_index - b.order_index,
+          );
+          setGoalChecklistItems(newItems);
+
+          setTimeout(() => {
+            const input = inputRefs.current[newItem.id];
+            if (input) {
+              input.focus();
+            }
+          }, 100);
+        } catch (error) {
+          console.error("Failed to create new checklist item:", error);
+        } finally {
+          setIsCreating(false);
+        }
+      } else {
+        const nextItem = sortedItems[currentIndex + 1];
+        if (nextItem) {
+          setTimeout(() => {
+            const input = inputRefs.current[nextItem.id];
+            if (input) {
+              input.focus();
+              input.setSelectionRange(0, input.value.length);
+            }
+          }, 0);
+        }
       }
     }
   };
