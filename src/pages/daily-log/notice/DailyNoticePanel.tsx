@@ -6,7 +6,8 @@ import DailyNoticeScheduleCard from "@/pages/daily-log/notice/DailyNoticeSchedul
 import type { Goal } from "@/types/goal.ts";
 import DailyNoticeRoutineGoalCard from "@/pages/daily-log/notice/DailyNoticeRoutineGoalCard.tsx";
 import {
-   getOngoingProgressGoalsByDate, getOngoingRoutineGoalsByDate,
+  getOngoingProgressGoalsByDate,
+  getOngoingRoutineGoalsByDate,
 } from "@/api/goal.ts";
 import DailyNoticeProgressGoalCard from "@/pages/daily-log/notice/DailyNoticeProgressGoalCard.tsx";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";

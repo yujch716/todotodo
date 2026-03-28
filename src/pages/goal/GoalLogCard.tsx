@@ -1,7 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card.tsx";
-import {type GoalLog, GoalStatus, GoalType} from "@/types/goal.ts";
+import { type GoalLog, GoalStatus, GoalType } from "@/types/goal.ts";
 import {
   Table,
   TableBody,

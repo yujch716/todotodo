@@ -49,8 +49,9 @@ const MemoList: React.FC<MemoListProps> = ({
           </span>
           <Button
             onClick={onCreateMemo}
-            size="sm"
-            className="flex items-center gap-1"
+            variant="outline"
+            size="icon"
+            className="flex items-center gap-1 bg-sky-200 hover:bg-sky-300 text-black"
           >
             <Plus className="w-4 h-4" />
           </Button>

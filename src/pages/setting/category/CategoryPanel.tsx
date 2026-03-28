@@ -83,7 +83,12 @@ const CategoryPanel = () => {
             onChange={(e) => setName(e.target.value)}
             className="flex-1"
           />
-          <Button onClick={handleCreate} className="h-10">
+          <Button
+            onClick={handleCreate}
+            variant="outline"
+            size="icon"
+            className="bg-sky-200 hover:bg-sky-300 text-black"
+          >
             <Plus className="w-4 h-4" />
           </Button>
         </Card>

@@ -33,7 +33,7 @@ import { toast } from "sonner";
 import { createGoal } from "@/api/goal.ts";
 import EmojiPicker from "emoji-picker-react";
 import { useGoalStore } from "@/store/goalStore.ts";
-import {GoalType} from "@/types/goal.ts";
+import { GoalType } from "@/types/goal.ts";
 
 const days = [
   { label: "일", value: "sun" },
@@ -71,7 +71,10 @@ const CreateGoalModal = ({ groupId }: Props) => {
       toast.error("제목을 입력하세요.");
       return;
     }
-    if (activeTab === GoalType.routine && (!dateRange?.from || !dateRange?.to)) {
+    if (
+      activeTab === GoalType.routine &&
+      (!dateRange?.from || !dateRange?.to)
+    ) {
       toast.error("기간을 선택하세요.");
       return;
     }
@@ -79,7 +82,11 @@ const CreateGoalModal = ({ groupId }: Props) => {
       toast.error("목표 수치를 1 이상 입력하세요.");
       return;
     }
-    if (activeTab === GoalType.routine && !isEveryDay && repeatDays.length === 0) {
+    if (
+      activeTab === GoalType.routine &&
+      !isEveryDay &&
+      repeatDays.length === 0
+    ) {
       toast.error("반복 요일을 선택하세요.");
       return;
     }
@@ -105,7 +112,9 @@ const CreateGoalModal = ({ groupId }: Props) => {
           : undefined,
         repeat_days,
       }),
-      ...(activeTab === GoalType.progress && { target_value: Number(targetValue) }),
+      ...(activeTab === GoalType.progress && {
+        target_value: Number(targetValue),
+      }),
     };
 
     await createGoal(goalPayload);
@@ -138,7 +147,9 @@ const CreateGoalModal = ({ groupId }: Props) => {
         <Tabs
           defaultValue="routine"
           value={activeTab}
-          onValueChange={(val) => setActiveTab(val as "routine" | "progress" | "checklist")}
+          onValueChange={(val) =>
+            setActiveTab(val as "routine" | "progress" | "checklist")
+          }
           className="flex flex-col w-full h-full"
         >
           <div className="flex flex-row gap-3 item-center">
@@ -262,8 +273,7 @@ const CreateGoalModal = ({ groupId }: Props) => {
 
           <TabsContent value={GoalType.checklist}>
             <div className="grid gap-4 mt-2">
-              <div className="flex items-center gap-2">
-              </div>
+              <div className="flex items-center gap-2"></div>
             </div>
           </TabsContent>
         </Tabs>

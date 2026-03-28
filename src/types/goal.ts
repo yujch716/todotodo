@@ -9,7 +9,7 @@ export const GoalType = {
   routine: "routine",
   progress: "progress",
   checklist: "checklist",
-}
+};
 export type GoalType = (typeof GoalType)[keyof typeof GoalType];
 
 export interface Goal {

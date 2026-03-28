@@ -9,7 +9,7 @@ import { deleteGoalById, getGoalById } from "@/api/goal.ts";
 import { useCallback, useEffect, useState } from "react";
 import { Smile, Trash2 } from "lucide-react";
 import RoutineGoalSheet from "@/pages/goal/RoutineGoalSheet.tsx";
-import {type Goal, type GoalLog, GoalType} from "@/types/goal.ts";
+import { type Goal, type GoalLog, GoalType } from "@/types/goal.ts";
 import { useGoalStore } from "@/store/goalStore.ts";
 import AlertConfirmModal from "@/components/AlertConfirmModal.tsx";
 import GoalLogCard from "@/pages/goal/GoalLogCard.tsx";
