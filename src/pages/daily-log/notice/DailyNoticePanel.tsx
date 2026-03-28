@@ -2,14 +2,14 @@ import { Card } from "@/components/ui/card.tsx";
 import { getCalendarEventByDate } from "@/api/calendar-event.ts";
 import { useCallback, useEffect, useState } from "react";
 import type { CalendarEventType } from "@/types/calendar-event.ts";
-import DailyNoticeScheduleCard from "@/pages/daily-log/DailyNoticeScheduleCard.tsx";
+import DailyNoticeScheduleCard from "@/pages/daily-log/notice/DailyNoticeScheduleCard.tsx";
 import type { Goal } from "@/types/goal.ts";
-import DailyNoticeDailyGoalCard from "@/pages/daily-log/DailyNoticeDailyGoalCard.tsx";
+import DailyNoticeDailyGoalCard from "@/pages/daily-log/notice/DailyNoticeDailyGoalCard.tsx";
 import {
   getOngoingDailyGoalsByDate,
   getOngoingMilestoneGoalsByDate,
 } from "@/api/goal.ts";
-import DailyNoticeMilestoneGoalCard from "@/pages/daily-log/DailyNoticeMilestoneGoalCard.tsx";
+import DailyNoticeMilestoneGoalCard from "@/pages/daily-log/notice/DailyNoticeMilestoneGoalCard.tsx";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet.tsx";
 import GoalDetailPage from "@/pages/goal/GoalDetailPage.tsx";
 import { useDailyNoticeStore } from "@/store/dailyNoticeStore.ts";

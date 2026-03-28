@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
-import CopyDailyTodoModal from "@/pages/daily-log/CopyDailyTodoModal.tsx";
-import MoveDailyTodoModal from "@/pages/daily-log/MoveDailyTodoModal.tsx";
+import CopyDailyTodoModal from "@/pages/daily-log/todo/CopyDailyTodoModal.tsx";
+import MoveDailyTodoModal from "@/pages/daily-log/todo/MoveDailyTodoModal.tsx";
 
 interface Props {
   item: DailyTodoType;
