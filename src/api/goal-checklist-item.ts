@@ -25,6 +25,7 @@ export const createGoalChecklistItem = async (
 
   if (error) {
     toast.error("체크 항목 생성에 실패했습니다.");
+    throw error;
   }
 
   return data;
@@ -41,6 +42,7 @@ export const updateGoalChecklistItem = async (
 
   if (error) {
     toast.error("체크 항목 수정에 실패했습니다.");
+    throw error;
   }
 };
 
@@ -55,6 +57,7 @@ export const checkItem = async (
 
   if (error) {
     toast.error("항목 체크에 실패했습니다.");
+    throw error;
   }
 };
 
@@ -66,6 +69,6 @@ export const deleteGoalChecklistItem = async (id: string): Promise<void> => {
 
   if (error) {
     toast.error("체크 항목 삭제에 실패했습니다.");
-    return;
+    throw error;
   }
 };

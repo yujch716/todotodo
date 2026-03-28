@@ -166,8 +166,10 @@ const CreateGoalModal = ({ groupId }: Props) => {
               <PopoverContent side="top" className="p-3 w-auto">
                 {activeTab === GoalType.routine ? (
                   <p>예시: 🏃‍♂️매주 월,수, 금 운동하기</p>
-                ) : (
+                ) : activeTab === GoalType.progress ? (
                   <p>예시: 📖 250p 책 읽기</p>
+                ) : (
+                  <p>예시: 📚독서 리스트</p>
                 )}
               </PopoverContent>
             </Popover>

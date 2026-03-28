@@ -1,7 +1,14 @@
 import { type Goal, type GoalChecklistItem, GoalStatus } from "@/types/goal.ts";
 import { Card } from "@/components/ui/card.tsx";
 import { Progress } from "@/components/ui/progress.tsx";
-import { ChevronDown, Flag, PartyPopper, Plus, X } from "lucide-react";
+import {
+  ChevronDown,
+  Flag,
+  PartyPopper,
+  Plus,
+  SquareCheckBig,
+  X,
+} from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -37,7 +44,7 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
 
   const handleCreateItem = async () => {
     if (isCreating) return;
-    
+
     setIsCreating(true);
     try {
       const newOrderIndex = goalChecklistItems.length;
@@ -120,9 +127,9 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
 
     if (e.key === "Enter") {
       e.preventDefault();
-      
+
       if (isCreating) return;
-      
+
       setIsCreating(true);
       try {
         const newOrderIndex = item.order_index + 1;
@@ -239,7 +246,10 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
 
         <div className="flex flex-col h-full overflow-hidden border rounded-lg shadow-sm">
           <div className="flex justify-between items-center mb-4 px-5 pt-4">
-            <h3 className="text-lg font-semibold">Checklist</h3>
+            <h3 className="flex items-center gap-2 text-lg font-semibold">
+              <SquareCheckBig />
+              Checklist
+            </h3>
             <Button
               onClick={handleCreateItem}
               variant="outline"
