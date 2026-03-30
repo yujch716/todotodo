@@ -269,7 +269,7 @@ const DailyTodoGroup = ({
         {!isCollapsed && (
           <CardContent className="p-4 pt-0">
             <div className="space-y-2">
-              {todos.map((todo) => (
+              {todos.map((todo, index) => (
                 <DailyTodoItem
                   key={todo.id}
                   item={todo}
@@ -280,6 +280,7 @@ const DailyTodoGroup = ({
                   onDelete={handleDeleteTodoItem}
                   onCreateNext={handleCreateNextTodoItem}
                   setEditingItemId={setEditingItemId}
+                  isLast={index === todos.length - 1}
                 />
               ))}
 

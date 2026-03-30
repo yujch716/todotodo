@@ -26,6 +26,7 @@ interface Props {
   onCreateNext: (id: string) => Promise<void>;
 
   setEditingItemId: (id: string | null) => void;
+  isLast: boolean;
 }
 
 const DailyTodoItem = ({
@@ -37,6 +38,7 @@ const DailyTodoItem = ({
   onDelete,
   onCreateNext,
   setEditingItemId,
+  isLast,
 }: Props) => {
   const [content, setContent] = useState(item.content);
   const [openCopyModal, setOpenCopyModal] = useState(false);
@@ -75,7 +77,11 @@ const DailyTodoItem = ({
         await onUpdate(item.id, newContent);
       }
 
-      await onCreateNext(item.id);
+      if (isLast) {
+        await onCreateNext(item.id);
+      } else {
+        setEditingItemId(null);
+      }
     }
   };
 
