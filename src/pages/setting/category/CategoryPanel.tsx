@@ -19,7 +19,7 @@ import { ItemGroup } from "@/components/ui/item.tsx";
 const CategoryPanel = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState("");
-  const [color, setColor] = useState("#fecaca");
+  const [color, setColor] = useState("#fee2e2");
 
   const triggerCalendarCategoryRefresh = useCategoryStore(
     (state) => state.triggerCategoryRefresh,
@@ -39,7 +39,7 @@ const CategoryPanel = () => {
 
   const handleCreate = async () => {
     if (!name.trim()) return;
-    const finalColor = color === "#000000" ? "#fecaca" : color;
+    const finalColor = color === "#000000" ? "#fee2e2" : color;
 
     await createCategory(name, finalColor);
 

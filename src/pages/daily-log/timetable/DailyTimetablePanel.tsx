@@ -15,7 +15,7 @@ import type { DailyTimetableType } from "@/types/daily-log.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
 import { Button } from "@/components/ui/button.tsx";
-import { withAlpha, increaseSaturation } from "@/lib/color.ts";
+import { withAlpha, darken } from "@/lib/color.ts";
 
 interface Props {
   dailyLogId: string;
@@ -120,6 +120,64 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
     return segments;
   };
 
+  // getSegmentLayout 삭제하고 이걸로 교체
+  const getSegmentsWithLayout = (timetables: DailyTimetableType[]) => {
+    const allBaseSegs = timetables.flatMap((tt) =>
+      getSegments(tt).map((seg) => ({ ...seg, ttId: tt.id })),
+    );
+
+    const byRow: Record<number, typeof allBaseSegs> = {};
+    allBaseSegs.forEach((seg) => {
+      if (!byRow[seg.rowIndex]) byRow[seg.rowIndex] = [];
+      byRow[seg.rowIndex].push(seg);
+    });
+
+    type RenderSeg = {
+      ttId: string;
+      rowIndex: number;
+      startCell: number;
+      endCell: number;
+      isFirst: boolean;
+      lane: number;
+      totalLanes: number;
+    };
+
+    const result: RenderSeg[] = [];
+
+    Object.entries(byRow).forEach(([rowStr, segs]) => {
+      const rowIndex = Number(rowStr);
+
+      const boundaries = Array.from(
+        new Set(segs.flatMap((s) => [s.startCell, s.endCell])),
+      ).sort((a, b) => a - b);
+
+      for (let bi = 0; bi < boundaries.length - 1; bi++) {
+        const cellStart = boundaries[bi];
+        const cellEnd = boundaries[bi + 1];
+
+        const coveringSegs = segs
+          .filter((s) => s.startCell <= cellStart && s.endCell >= cellEnd)
+          .sort((a, b) => a.ttId.localeCompare(b.ttId)); // 안정적 lane 순서
+
+        const totalLanes = coveringSegs.length;
+
+        coveringSegs.forEach((seg, i) => {
+          result.push({
+            ttId: seg.ttId,
+            rowIndex,
+            startCell: cellStart,
+            endCell: cellEnd,
+            isFirst: seg.isFirst && cellStart === seg.startCell,
+            lane: i,
+            totalLanes,
+          });
+        });
+      }
+    });
+
+    return result;
+  };
+
   return (
     <Card className="flex flex-col h-full overflow-hidden shadow-lg border-1">
       <CardHeader>
@@ -128,10 +186,7 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
             <div className="flex items-center gap-2">
               <CalendarClock /> Timetable
             </div>
-            <CreateDailyTimetableModal
-              dailyLogId={dailyLogId}
-              timetables={timetables}
-            />
+            <CreateDailyTimetableModal dailyLogId={dailyLogId} />
           </div>
         </CardTitle>
       </CardHeader>
@@ -174,60 +229,74 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
             ))}
           </div>
 
-          {timetables.map((tt) => {
-            const segments = getSegments(tt);
-            const bgColor = tt.category?.color ?? "#f1f5f9";
-            const isHovered = hoveredTimetableId === tt.id;
+          {(() => {
+            const renderSegs = getSegmentsWithLayout(timetables);
 
-            const hoveredBgColor = isHovered
-              ? withAlpha(increaseSaturation(bgColor, 0.4), 0.9)
-              : withAlpha(bgColor, 0.7);
+            return renderSegs.map(
+              ({
+                ttId,
+                rowIndex,
+                startCell,
+                endCell,
+                isFirst,
+                lane,
+                totalLanes,
+              }) => {
+                const tt = timetables.find((t) => t.id === ttId)!;
+                const bgColor = tt.category?.color ?? "#ededed";
+                const isHovered = hoveredTimetableId === ttId;
 
-            return segments.map(({ rowIndex, startCell, endCell, isFirst }) => {
-              const leftPercent = (startCell / CELLS_PER_HOUR) * 100;
-              const widthPercent =
-                ((endCell - startCell) / CELLS_PER_HOUR) * 100;
+                const hoveredBgColor = isHovered
+                  ? withAlpha(darken(bgColor, 0.02), 0.8)
+                  : withAlpha(bgColor, 0.8);
 
-              return (
-                <div
-                  key={`${tt.id}-${rowIndex}`}
-                  className="absolute flex items-center overflow-hidden transition-all duration-200 cursor-pointer"
-                  style={{
-                    top: rowIndex * ROW_HEIGHT,
-                    height: ROW_HEIGHT,
-                    left: `calc(${TIME_COL_WIDTH}px + (100% - ${TIME_COL_WIDTH}px) * ${leftPercent / 100})`,
-                    width: `calc((100% - ${TIME_COL_WIDTH}px) * ${widthPercent / 100})`,
-                    backgroundColor: hoveredBgColor,
-                    zIndex: isHovered ? 20 : 10,
-                  }}
-                  onMouseEnter={() => setHoveredTimetableId(tt.id)}
-                  onMouseLeave={() => setHoveredTimetableId(null)}
-                  onClick={() => handleTimetableClick(tt)}
-                >
-                  {isFirst && (
-                    <div className="flex items-center justify-between w-full px-2 overflow-hidden">
-                      <span className="text-xs font-medium truncate flex-1">
-                        {tt.content}
-                      </span>
-                      {isHovered && (
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-5 w-5 rounded-full bg-white border-slate-400 flex-shrink-0 ml-1 shadow-md"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteTimetable(tt.id);
-                          }}
-                        >
-                          <X size={12} />
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            });
-          })}
+                const leftPercent = (startCell / CELLS_PER_HOUR) * 100;
+                const widthPercent =
+                  ((endCell - startCell) / CELLS_PER_HOUR) * 100;
+                const segHeight = ROW_HEIGHT / totalLanes;
+                const segTop = rowIndex * ROW_HEIGHT + lane * segHeight;
+
+                return (
+                  <div
+                    key={`${ttId}-${rowIndex}-${startCell}-${endCell}`}
+                    className="absolute flex items-center overflow-hidden transition-all duration-200 cursor-pointer"
+                    style={{
+                      top: segTop,
+                      height: segHeight,
+                      left: `calc(${TIME_COL_WIDTH}px + (100% - ${TIME_COL_WIDTH}px) * ${leftPercent / 100})`,
+                      width: `calc((100% - ${TIME_COL_WIDTH}px) * ${widthPercent / 100})`,
+                      backgroundColor: hoveredBgColor,
+                      zIndex: isHovered ? 20 : 10,
+                    }}
+                    onMouseEnter={() => setHoveredTimetableId(ttId)}
+                    onMouseLeave={() => setHoveredTimetableId(null)}
+                    onClick={() => handleTimetableClick(tt)}
+                  >
+                    {isFirst && (
+                      <div className="flex items-center justify-between w-full px-2 overflow-hidden">
+                        <span className="text-xs font-medium truncate flex-1">
+                          {tt.content}
+                        </span>
+                        {isHovered && (
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-5 w-5 rounded-full bg-white border-slate-400 flex-shrink-0 ml-1 shadow-md"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteTimetable(ttId);
+                            }}
+                          >
+                            <X size={12} />
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              },
+            );
+          })()}
         </div>
       </CardContent>
 
@@ -235,7 +304,6 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
         open={editModalOpen}
         onOpenChange={setEditModalOpen}
         timetable={selectedTimetable}
-        allTimetables={timetables}
       />
     </Card>
   );
