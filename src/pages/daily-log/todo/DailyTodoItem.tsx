@@ -2,7 +2,6 @@ import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useState, useRef, useEffect } from "react";
 import { showCelebration } from "@/lib/effects";
 import type { DailyTodoGroupType, DailyTodoType } from "@/types/daily-log.ts";
-import { updateDailyTodoContent } from "@/api/daily-todo.ts";
 import { Card } from "@/components/ui/card.tsx";
 import {
   DropdownMenu,
@@ -19,28 +18,35 @@ import MoveDailyTodoModal from "@/pages/daily-log/todo/MoveDailyTodoModal.tsx";
 interface Props {
   item: DailyTodoType;
   group: DailyTodoGroupType;
-  onToggle: (id: string) => void;
-  onUpdateContent: (id: string, newContent: string) => void;
   isEditing: boolean;
+
+  onToggle: (id: string) => void;
+  onUpdate: (id: string, content: string) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
+  onCreateNext: (id: string) => Promise<void>;
+
   setEditingItemId: (id: string | null) => void;
-  onAddEmptyItem: () => void;
 }
 
 const DailyTodoItem = ({
   item,
   group,
-  onToggle,
-  onUpdateContent,
   isEditing,
+  onToggle,
+  onUpdate,
+  onDelete,
+  onCreateNext,
   setEditingItemId,
-  onAddEmptyItem,
 }: Props) => {
   const [content, setContent] = useState(item.content);
-
   const [openCopyModal, setOpenCopyModal] = useState(false);
   const [openMoveModal, setOpenMoveModal] = useState(false);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setContent(item.content);
+  }, [item.content]);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -49,49 +55,35 @@ const DailyTodoItem = ({
   }, [isEditing]);
 
   const handleToggle = async () => {
-    if (!item.is_checked) {
-      showCelebration();
-    }
-
+    if (!item.is_checked) showCelebration();
     onToggle(item.id);
   };
 
-  const handleSaveContent = async () => {
-    const newContent = content.trim();
-
-    if (newContent === "") {
-      setEditingItemId(null);
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && content.trim() === "") {
+      e.preventDefault();
+      await onDelete(item.id);
       return;
     }
 
-    await updateDailyTodoContent(item.id, newContent);
-
-    onUpdateContent(item.id, newContent);
-    setEditingItemId(null);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (
-      (e.key === "Backspace" || e.key === "Delete") &&
-      content.trim() === ""
-    ) {
-      e.preventDefault();
-      onUpdateContent(item.id, "");
-    }
-
     if (e.key === "Enter") {
-      handleSaveContent();
-      onAddEmptyItem();
-      setEditingItemId(null);
+      e.preventDefault();
+
+      const newContent = content.trim();
+
+      if (newContent !== "") {
+        await onUpdate(item.id, newContent);
+      }
+
+      await onCreateNext(item.id);
     }
   };
 
-  const handleOpenCopyModal = () => {
-    setOpenCopyModal(true);
-  };
+  const handleBlur = async () => {
+    const newContent = content.trim();
+    if (newContent === "") return;
 
-  const handleOpenMoveModal = () => {
-    setOpenMoveModal(true);
+    await onUpdate(item.id, newContent);
   };
 
   return (
@@ -113,7 +105,7 @@ const DailyTodoItem = ({
                 type="text"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                onBlur={handleSaveContent}
+                onBlur={handleBlur}
                 onKeyDown={handleKeyDown}
                 className="w-full border-b border-gray-300 focus:outline-none text-sm leading-6"
               />
@@ -136,16 +128,16 @@ const DailyTodoItem = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="right" align="center">
-            <DropdownMenuItem onClick={handleOpenCopyModal}>
+            <DropdownMenuItem onClick={() => setOpenCopyModal(true)}>
               Copy
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleOpenMoveModal}>
+            <DropdownMenuItem onClick={() => setOpenMoveModal(true)}>
               Move
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-red-600"
-              onClick={() => onUpdateContent(item.id, "")}
+              onClick={() => onDelete(item.id)}
             >
               Delete
             </DropdownMenuItem>

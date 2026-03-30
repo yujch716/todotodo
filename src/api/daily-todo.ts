@@ -46,6 +46,7 @@ export const getDailyTodoCheckedCount = async (
 export const createDailyTodo = async (
   dailyLogId: string,
   groupId: string,
+  orderIndex: number,
   content: string,
 ) => {
   const { data, error } = await supabase
@@ -53,6 +54,7 @@ export const createDailyTodo = async (
     .insert({
       daily_log_id: dailyLogId,
       group_id: groupId,
+      order_index: orderIndex,
       content,
       is_checked: false,
     })

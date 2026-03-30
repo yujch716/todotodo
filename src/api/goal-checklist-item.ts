@@ -5,7 +5,7 @@ import type { GoalChecklistItem } from "@/types/goal.ts";
 
 export const createGoalChecklistItem = async (
   goalId: string,
-  order_index: number,
+  orderIndex: number,
   content: string,
 ): Promise<GoalChecklistItem> => {
   const user = await getAuthenticatedUser();
@@ -16,7 +16,7 @@ export const createGoalChecklistItem = async (
       {
         goal_id: goalId,
         user_id: user.id,
-        order_index,
+        order_index: orderIndex,
         content,
       },
     ])
