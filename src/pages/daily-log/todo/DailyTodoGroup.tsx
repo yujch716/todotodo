@@ -63,7 +63,7 @@ const DailyTodoGroup = ({
     }
   }, [isEditingTitle]);
 
-  const handleTitleSave = async () => {
+  const handleUpdateTodoGroupTitle = async () => {
     if (title.trim() === "") {
       setTitle(group.title);
       setIsEditingTitle(false);
@@ -81,11 +81,11 @@ const DailyTodoGroup = ({
     setIsEditingTitle(false);
   };
 
-  const handleDelete = async () => {
+  const handleDeleteTodoGroup = async () => {
     setIsAlertOpen(true);
   };
 
-  const handleDeleteGroup = async () => {
+  const deleteTodoGroup = async () => {
     setIsAlertOpen(false);
 
     const success = await deleteDailyTodoGroup(group.id);
@@ -94,8 +94,37 @@ const DailyTodoGroup = ({
     }
   };
 
-  const handleAddTodo = async () => {
-    const newTodo = await createDailyTodo(group.daily_log_id, group.id, "");
+  const handleTodoItemToggle = async (id: string) => {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) return;
+
+    const newChecked = !todo.is_checked;
+
+    setTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, is_checked: newChecked } : t)),
+    );
+
+    const success = await toggleDailyTodo(id, newChecked);
+
+    if (!success) {
+      setTodos((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, is_checked: !newChecked } : t)),
+      );
+    }
+  };
+
+  const handleCreateTodoItem = async () => {
+    const newOrderIndex =
+      todos.length > 0
+        ? Math.max(...todos.map((item) => item.order_index)) + 1
+        : 0;
+
+    const newTodo = await createDailyTodo(
+      group.daily_log_id,
+      group.id,
+      newOrderIndex,
+      "",
+    );
     if (newTodo) {
       setTodos((prev) => [...prev, newTodo]);
       setEditingItemId(newTodo.id);
@@ -103,46 +132,58 @@ const DailyTodoGroup = ({
     }
   };
 
-  const handleToggleTodo = async (id: string) => {
-    const todo = todos.find((t) => t.id === id);
-    if (!todo) return;
+  const handleCreateNextTodoItem = async (currentId: string) => {
+    const newOrderIndex =
+      todos.length > 0
+        ? Math.max(...todos.map((item) => item.order_index)) + 1
+        : 0;
 
-    const newChecked = !todo.is_checked;
-    setTodos((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, is_checked: newChecked } : t)),
+    const newTodo = await createDailyTodo(
+      group.daily_log_id,
+      group.id,
+      newOrderIndex,
+      "",
     );
 
-    const success = await toggleDailyTodo(id, newChecked);
-    if (success) {
-      onUpdate();
-    } else {
-      // 실패시 롤백
-      setTodos((prev) =>
-        prev.map((t) => (t.id === id ? { ...t, is_checked: !newChecked } : t)),
-      );
+    if (!newTodo) return;
+
+    const index = todos.findIndex((t) => t.id === currentId);
+
+    setTodos((prev) => {
+      const copy = [...prev];
+      copy.splice(index + 1, 0, newTodo);
+      return copy;
+    });
+
+    setEditingItemId(newTodo.id);
+  };
+
+  const handleTodoItemUpdate = async (id: string, content: string) => {
+    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, content } : t)));
+
+    const success = await updateDailyTodoContent(id, content);
+
+    if (!success) {
+      setTodos(group.todos || []);
     }
   };
 
-  const handleUpdateTodoContent = async (id: string, newContent: string) => {
-    if (newContent.trim() === "") {
-      const success = await deleteDailyTodo(id);
-      if (success) {
-        setTodos((prev) => prev.filter((todo) => todo.id !== id));
-        onUpdate();
-      }
+  const handleDeleteTodoItem = async (id: string) => {
+    const index = todos.findIndex((t) => t.id === id);
+    const prev = todos;
+
+    setTodos((prev) => prev.filter((t) => t.id !== id));
+
+    const success = await deleteDailyTodo(id);
+
+    if (!success) {
+      setTodos(prev);
       return;
     }
 
-    setTodos((prev) =>
-      prev.map((todo) =>
-        todo.id === id ? { ...todo, content: newContent } : todo,
-      ),
-    );
-
-    const success = await updateDailyTodoContent(id, newContent);
-    if (!success) {
-      // 실패시 롤백
-      setTodos(group.todos || []);
+    const prevTodo = prev[index - 1];
+    if (prevTodo) {
+      setEditingItemId(prevTodo.id);
     }
   };
 
@@ -176,10 +217,10 @@ const DailyTodoGroup = ({
                   ref={inputRef}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  onBlur={handleTitleSave}
+                  onBlur={handleUpdateTodoGroupTitle}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleTitleSave();
+                      handleUpdateTodoGroupTitle();
                     }
                     if (e.key === "Escape") {
                       setTitle(group.title);
@@ -206,7 +247,7 @@ const DailyTodoGroup = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={handleAddTodo}>
+                  <DropdownMenuItem onClick={handleCreateTodoItem}>
                     <Plus /> 투두 추가
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setIsEditingTitle(true)}>
@@ -215,7 +256,7 @@ const DailyTodoGroup = ({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="text-red-600"
-                    onClick={handleDelete}
+                    onClick={handleDeleteTodoGroup}
                   >
                     그룹 삭제
                   </DropdownMenuItem>
@@ -228,16 +269,18 @@ const DailyTodoGroup = ({
         {!isCollapsed && (
           <CardContent className="p-4 pt-0">
             <div className="space-y-2">
-              {todos.map((todo) => (
+              {todos.map((todo, index) => (
                 <DailyTodoItem
                   key={todo.id}
                   item={todo}
                   group={group}
-                  onToggle={handleToggleTodo}
-                  onUpdateContent={handleUpdateTodoContent}
                   isEditing={editingItemId === todo.id}
+                  onToggle={handleTodoItemToggle}
+                  onUpdate={handleTodoItemUpdate}
+                  onDelete={handleDeleteTodoItem}
+                  onCreateNext={handleCreateNextTodoItem}
                   setEditingItemId={setEditingItemId}
-                  onAddEmptyItem={handleAddTodo}
+                  isLast={index === todos.length - 1}
                 />
               ))}
 
@@ -247,7 +290,7 @@ const DailyTodoGroup = ({
                     variant="outline"
                     size="icon"
                     className="w-8 h-8"
-                    onClick={handleAddTodo}
+                    onClick={handleCreateTodoItem}
                   >
                     <SquarePlus className="w-4 h-4" />
                   </Button>
@@ -261,7 +304,7 @@ const DailyTodoGroup = ({
       <AlertConfirmModal
         open={isAlertOpen}
         message="이 그룹을 삭제하시겠습니까?"
-        onConfirm={handleDeleteGroup}
+        onConfirm={deleteTodoGroup}
         onCancel={() => setIsAlertOpen(false)}
       />
     </>
