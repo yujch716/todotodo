@@ -15,7 +15,7 @@ import type { DailyTimetableType } from "@/types/daily-log.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDailyTimetableStore } from "@/store/dailyTimetableStore.ts";
 import { Button } from "@/components/ui/button.tsx";
-import { withAlpha, increaseSaturation } from "@/lib/color.ts";
+import { withAlpha, darken } from "@/lib/color.ts";
 
 interface Props {
   dailyLogId: string;
@@ -243,12 +243,12 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
                 totalLanes,
               }) => {
                 const tt = timetables.find((t) => t.id === ttId)!;
-                const bgColor = tt.category?.color ?? "#f1f5f9";
+                const bgColor = tt.category?.color ?? "#ededed";
                 const isHovered = hoveredTimetableId === ttId;
 
                 const hoveredBgColor = isHovered
-                  ? withAlpha(increaseSaturation(bgColor, 0.4), 0.9)
-                  : withAlpha(bgColor, 0.7);
+                  ? withAlpha(darken(bgColor, 0.02), 0.8)
+                  : withAlpha(bgColor, 0.8);
 
                 const leftPercent = (startCell / CELLS_PER_HOUR) * 100;
                 const widthPercent =
@@ -304,7 +304,6 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
         open={editModalOpen}
         onOpenChange={setEditModalOpen}
         timetable={selectedTimetable}
-        allTimetables={timetables}
       />
     </Card>
   );

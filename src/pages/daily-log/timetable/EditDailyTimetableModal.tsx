@@ -9,7 +9,7 @@ import {
 import { Tag } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input.tsx";
 import { toast } from "sonner";
 import { updateDailyTimetable } from "@/api/daily-timetable.ts";
@@ -30,15 +30,9 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   timetable: DailyTimetableType | null;
-  allTimetables: DailyTimetableType[];
 }
 
-const EditDailyTimetableModal = ({
-  open,
-  onOpenChange,
-  timetable,
-  allTimetables,
-}: Props) => {
+const EditDailyTimetableModal = ({ open, onOpenChange, timetable }: Props) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [startTime, setStartTime] = useState<string>("09:00");
   const [endTime, setEndTime] = useState<string>("10:00");
@@ -54,41 +48,14 @@ const EditDailyTimetableModal = ({
     setCategories(data);
   }, []);
 
-  const otherTimetables = useMemo(() => {
-    return allTimetables.filter((tt) => tt.id !== timetable?.id);
-  }, [allTimetables, timetable?.id]);
-
   const timeToMinutesFromStart = (time: string): number => {
     const [hour, minute] = time.split(":").map(Number);
     const adjustedHour = hour >= 0 && hour < 4 ? hour + 24 : hour;
     return adjustedHour * 60 + minute;
   };
 
-  const occupiedSlots = useMemo(() => {
-    const slots = new Set<string>();
-    otherTimetables.forEach((tt) => {
-      const startMinutes = timeToMinutesFromStart(tt.start_time);
-      const endMinutes = timeToMinutesFromStart(tt.end_time);
-      for (let minutes = startMinutes; minutes < endMinutes; minutes += 10) {
-        const hour = Math.floor(minutes / 60) % 24;
-        const minute = minutes % 60;
-        slots.add(
-          `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
-        );
-      }
-    });
-    return Array.from(slots);
-  }, [otherTimetables]);
-
-  const disabledStartTimes = occupiedSlots; // 이미 useMemo라 그대로 사용
-
-  const disabledEndTimes = useMemo(() => {
+  const disabledEndTimes = (() => {
     const startTotalMinutes = timeToMinutesFromStart(startTime);
-    const nextOccupiedMinutes = occupiedSlots
-      .map((slot) => timeToMinutesFromStart(slot))
-      .filter((m) => m > startTotalMinutes)
-      .sort((a, b) => a - b)[0];
-
     const disabledTimes: string[] = [];
 
     for (let minutes = 0; minutes < 24 * 60; minutes += 10) {
@@ -97,17 +64,13 @@ const EditDailyTimetableModal = ({
       const minute = minutes % 60;
       const timeStr = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 
-      if (
-        adjustedMinutes <= startTotalMinutes ||
-        (nextOccupiedMinutes !== undefined &&
-          adjustedMinutes >= nextOccupiedMinutes)
-      ) {
+      if (adjustedMinutes <= startTotalMinutes) {
         disabledTimes.push(timeStr);
       }
     }
 
     return disabledTimes;
-  }, [startTime, occupiedSlots]);
+  })();
 
   const normalizeTimeForApi = (time: string): string => {
     const [hour, minute] = time.split(":").map(Number);
@@ -131,29 +94,6 @@ const EditDailyTimetableModal = ({
       return;
     }
 
-    // 시간 겹침 검증 (현재 편집 중인 타임테이블 제외)
-    const newStartMinutes = timeToMinutesFromStart(startTime);
-    const newEndMinutes = timeToMinutesFromStart(endTime);
-
-    const hasConflict = otherTimetables.some((tt) => {
-      const existingStartMinutes = timeToMinutesFromStart(tt.start_time);
-      const existingEndMinutes = timeToMinutesFromStart(tt.end_time);
-
-      return (
-        (newStartMinutes >= existingStartMinutes &&
-          newStartMinutes < existingEndMinutes) ||
-        (newEndMinutes > existingStartMinutes &&
-          newEndMinutes <= existingEndMinutes) ||
-        (newStartMinutes <= existingStartMinutes &&
-          newEndMinutes >= existingEndMinutes)
-      );
-    });
-
-    if (hasConflict) {
-      toast.error("선택한 시간이 기존 일정과 겹칩니다");
-      return;
-    }
-
     await updateDailyTimetable(
       timetable.id,
       content,
@@ -166,7 +106,6 @@ const EditDailyTimetableModal = ({
     triggerTimeTableRefresh();
   };
 
-  // 모달이 열릴 때 기존 데이터로 초기화
   useEffect(() => {
     if (open && timetable) {
       setContent(timetable.content);
@@ -210,7 +149,7 @@ const EditDailyTimetableModal = ({
             <TimeSelect
               value={startTime}
               onValueChange={setStartTime}
-              disabledTimes={disabledStartTimes}
+              disabledTimes={[]}
               placeholder="시작 시간 선택"
               isEnd={false}
             />

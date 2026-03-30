@@ -7,15 +7,20 @@ import { Button } from "@/components/ui/button.tsx";
 
 const presetColors = [
   "#fee2e2", // red-100
+  "#fadcde", // rose-100
   "#ffedd5", // orange-100
   "#fef9c3", // yellow-100
+  "#ecfccb", // lime-100
   "#dcfce7", // green-100
+  "#d1fae5", // emerald-100
+  "#cffafe", // cyan-100
   "#e0f2fe", // sky-100
   "#dbeafe", // blue-100
-  "#ede9fe", // violet-100
   "#fce7f3", // pink-100
   "#f3e8ff", // purple-100
+  "#e9e5fa", // violet-100
   "#f1f5f9", // slate-100
+  "#f5e6d3", // amber-100
 ];
 
 const ColorPicker = ({
@@ -37,7 +42,7 @@ const ColorPicker = ({
       </PopoverTrigger>
       <PopoverContent className="w-auto p-2">
         <div className="flex flex-col gap-2">
-          {[0, 1].map((row) => (
+          {[0, 1, 2].map((row) => (
             <div key={row} className="flex items-center gap-2">
               {presetColors.slice(row * 5, row * 5 + 5).map((c) => (
                 <Button
