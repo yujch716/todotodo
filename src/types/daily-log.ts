@@ -24,8 +24,7 @@ export interface DailyTodoType {
   group_id?: string;
   content: string;
   is_checked: boolean;
-  totalCount: number;
-  checkedCount: number;
+  order_index: number;
 }
 
 export interface DailyTimetableType {

@@ -47,7 +47,9 @@ const ChecklistGoalSheet = ({ goal }: GoalProps) => {
 
     setIsCreating(true);
     try {
-      const newOrderIndex = goalChecklistItems.length;
+      const newOrderIndex = goalChecklistItems.length > 0
+        ? Math.max(...goalChecklistItems.map((item) => item.order_index)) + 1
+        : 0;
       const newItem = await createGoalChecklistItem(goal.id, newOrderIndex, "");
       setGoalChecklistItems((prev) => [...prev, newItem]);
 
