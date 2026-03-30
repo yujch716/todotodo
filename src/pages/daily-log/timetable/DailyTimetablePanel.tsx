@@ -200,9 +200,8 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
             }}
           >
             {timeSlots.map(({ hour }, index) => (
-              <>
+              <div key={`label-${index}`}>
                 <div
-                  key={`label-${index}`}
                   className="border-r border-b text-xs flex items-center justify-center text-gray-600 font-medium relative"
                   style={{
                     height: ROW_HEIGHT,
@@ -225,7 +224,7 @@ const DailyTimetablePanel = ({ dailyLogId }: Props) => {
                     }}
                   />
                 ))}
-              </>
+              </div>
             ))}
           </div>
 
