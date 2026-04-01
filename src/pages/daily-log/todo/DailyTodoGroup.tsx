@@ -147,9 +147,9 @@ const DailyTodoGroup = ({
 
     if (!newTodo) return;
 
-    const index = todos.findIndex((t) => t.id === currentId);
-
     setTodos((prev) => {
+      const index = prev.findIndex((t) => t.id === currentId);
+
       const copy = [...prev];
       copy.splice(index + 1, 0, newTodo);
       return copy;
