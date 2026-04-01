@@ -43,14 +43,14 @@ const ProgressGoalSheet = ({ goal }: GoalProps) => {
       return;
     }
 
-    if (completedValue + value > targetValue || value < completedValue) {
+    if (value > targetValue || value < completedValue) {
       toast.error("입력할 수 없는 수치입니다.");
       return;
     }
 
     const completeValue = value - completedValue;
     await createGoalLog({ goal_id: goal.id, date, value: completeValue });
-    if (completedValue + value === targetValue) {
+    if (value === targetValue) {
       await updateGoalStatus(goal.id, GoalStatus.completed);
 
       showCelebration();

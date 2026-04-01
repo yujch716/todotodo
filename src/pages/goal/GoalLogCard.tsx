@@ -64,7 +64,9 @@ const GoalLogCard = ({ type, logs }: GoalLogCardProps) => {
                   ) : (
                     <>
                       <TableCell>{log.value}</TableCell>
-                      <TableCell>{format(log.created_at, "yyyy.MM.dd")}</TableCell>
+                      <TableCell>
+                        {format(log.created_at, "yyyy.MM.dd")}
+                      </TableCell>
                     </>
                   )}
                   <TableCell className="text-right w-0">
