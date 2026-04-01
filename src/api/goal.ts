@@ -7,6 +7,7 @@ import {
   type UpdateGoalDto,
   type GoalStatusType,
   GoalStatus,
+  GoalType,
 } from "@/types/goal.ts";
 import { getAuthenticatedUser } from "@/api/auth.ts";
 
@@ -117,7 +118,7 @@ export const getDailyGoalByRangeDate = async (
     .from("goal")
     .select(`*, goal_log(*)`)
     .eq("user_id", user.id)
-    .eq("type", "daily")
+    .eq("type", GoalType.routine)
     .lte("start_date", format(end, "yyyy-MM-dd"))
     .gte("end_date", format(start, "yyyy-MM-dd"));
 

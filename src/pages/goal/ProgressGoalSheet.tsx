@@ -50,7 +50,7 @@ const ProgressGoalSheet = ({ goal }: GoalProps) => {
 
     const completeValue = value - completedValue;
     await createGoalLog({ goal_id: goal.id, date, value: completeValue });
-    if (value === targetValue) {
+    if (value <= completedValue || value === targetValue) {
       await updateGoalStatus(goal.id, GoalStatus.completed);
 
       showCelebration();
