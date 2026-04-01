@@ -38,9 +38,8 @@ const GoalLogCard = ({ type, logs }: GoalLogCardProps) => {
           <Table className="rounded-lg overflow-hidden border">
             <TableHeader className="bg-slate-50">
               <TableRow>
-                {type === "daily" ? (
+                {type === GoalType.routine ? (
                   <>
-                    <TableHead className="w-20">날짜</TableHead>
                     <TableHead>기록</TableHead>
                   </>
                 ) : (
@@ -55,19 +54,21 @@ const GoalLogCard = ({ type, logs }: GoalLogCardProps) => {
             <TableBody>
               {logs.map((log) => (
                 <TableRow key={log.id} className="group hover:bg-transparent">
-                  {type === "daily" ? (
+                  {type === GoalType.routine ? (
                     <>
+                      <TableCell>{log.memo ? log.memo : "-"}</TableCell>
                       <TableCell className="font-medium">
                         {format(log.date, "yyyy.MM.dd")}
                       </TableCell>
-                      <TableCell>{log.memo ? log.memo : "-"}</TableCell>
                     </>
                   ) : (
                     <>
                       <TableCell>{log.value}</TableCell>
+                      <TableCell>
+                        {format(log.created_at, "yyyy.MM.dd")}
+                      </TableCell>
                     </>
                   )}
-                  <TableCell>{format(log.created_at, "yyyy.MM.dd")}</TableCell>
                   <TableCell className="text-right w-0">
                     <Button
                       variant="ghost"
