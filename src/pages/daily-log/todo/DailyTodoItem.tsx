@@ -43,6 +43,7 @@ const DailyTodoItem = ({
   const [content, setContent] = useState(item.content);
   const [openCopyModal, setOpenCopyModal] = useState(false);
   const [openMoveModal, setOpenMoveModal] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -62,30 +63,44 @@ const DailyTodoItem = ({
   };
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isSubmittingRef.current) return;
+
     if (e.key === "Backspace" && content.trim() === "") {
       e.preventDefault();
-      await onDelete(item.id);
+      isSubmittingRef.current = true;
+      try {
+        await onDelete(item.id);
+      } finally {
+        isSubmittingRef.current = false;
+      }
       return;
     }
 
     if (e.key === "Enter") {
       e.preventDefault();
 
-      const newContent = content.trim();
+      isSubmittingRef.current = true;
 
-      if (newContent !== "") {
-        await onUpdate(item.id, newContent);
-      }
+      try {
+        const newContent = content.trim();
+        if (newContent !== "") {
+          await onUpdate(item.id, newContent);
+        }
 
-      if (isLast) {
-        await onCreateNext(item.id);
-      } else {
-        setEditingItemId(null);
+        if (isLast) {
+          await onCreateNext(item.id);
+        } else {
+          setEditingItemId(null);
+        }
+      } finally {
+        isSubmittingRef.current = false;
       }
     }
   };
 
   const handleBlur = async () => {
+    if (isSubmittingRef.current) return;
+
     const newContent = content.trim();
     if (newContent === "") return;
 
