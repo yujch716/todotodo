@@ -14,7 +14,7 @@ export const getGoalGroups = async (): Promise<GoalGroup[]> => {
 
   if (error) toast.error("조회에 실패했습니다.");
 
-  return data ?? [];
+  return (data ?? []) as unknown as GoalGroup[];
 };
 
 export const getGoalGroupById = async (id: string): Promise<GoalGroup> => {
@@ -24,9 +24,9 @@ export const getGoalGroupById = async (id: string): Promise<GoalGroup> => {
     .eq("id", id)
     .single();
 
-  if (error) toast.error("조회에 실패했습니다.");
+  if (error || !data) throw new Error("조회에 실패했습니다.");
 
-  return data;
+  return data as unknown as GoalGroup;
 };
 
 export const createGoalGroup = async (name: string): Promise<GoalGroup> => {
@@ -43,9 +43,9 @@ export const createGoalGroup = async (name: string): Promise<GoalGroup> => {
     .select()
     .single();
 
-  if (error) toast.error("생성에 실패했습니다.");
+  if (error || !data) throw new Error("생성에 실패했습니다.");
 
-  return data;
+  return data as unknown as GoalGroup;
 };
 
 export const updateGoalGroup = async (

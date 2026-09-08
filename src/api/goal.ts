@@ -21,7 +21,7 @@ export const getGoals = async (): Promise<Goal[]> => {
 
   if (error) toast.error("조회에 실패했습니다.");
 
-  return data ?? [];
+  return (data ?? []) as unknown as Goal[];
 };
 
 export const getGoalsByStatus = async (
@@ -40,7 +40,7 @@ export const getGoalsByStatus = async (
 
   if (error) toast.error("조회에 실패했습니다.");
 
-  return data ?? [];
+  return (data ?? []) as unknown as Goal[];
 };
 
 export const getGoalById = async (goalId: string): Promise<Goal> => {
@@ -57,9 +57,9 @@ export const getGoalById = async (goalId: string): Promise<Goal> => {
     .order("created_at", { ascending: false, referencedTable: "goal_log" })
     .single();
 
-  if (error || !data) toast.error("조회에 실패했습니다.");
+  if (error || !data) throw new Error("조회에 실패했습니다.");
 
-  return data;
+  return data as unknown as Goal;
 };
 
 export const getOngoingRoutineGoalsByDate = async (
@@ -90,7 +90,7 @@ export const getOngoingRoutineGoalsByDate = async (
 
   if (error) toast.error("조회에 실패했습니다.");
 
-  return data ?? [];
+  return (data ?? []) as unknown as Goal[];
 };
 
 export const getOngoingProgressGoalsByDate = async (): Promise<Goal[]> => {
@@ -105,7 +105,7 @@ export const getOngoingProgressGoalsByDate = async (): Promise<Goal[]> => {
 
   if (error) toast.error("조회에 실패했습니다.");
 
-  return data ?? [];
+  return (data ?? []) as unknown as Goal[];
 };
 
 export const getDailyGoalByRangeDate = async (
@@ -124,7 +124,7 @@ export const getDailyGoalByRangeDate = async (
 
   if (error) toast.error("조회에 실패했습니다.");
 
-  return data ?? [];
+  return (data ?? []) as unknown as Goal[];
 };
 
 export const createGoal = async (input: CreateGoalDto): Promise<Goal> => {
@@ -141,9 +141,9 @@ export const createGoal = async (input: CreateGoalDto): Promise<Goal> => {
     .select()
     .single();
 
-  if (error) toast.error("생성에 실패했습니다.");
+  if (error || !data) throw new Error("생성에 실패했습니다.");
 
-  return data;
+  return data as unknown as Goal;
 };
 
 export const updateGoal = async (

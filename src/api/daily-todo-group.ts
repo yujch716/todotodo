@@ -16,7 +16,9 @@ export const getDailyTodoGroups = async (dailyLogId: string) => {
   return data || [];
 };
 
-export const getDailyTodoGroupsWithTodos = async (dailyLogId: string) => {
+export const getDailyTodoGroupsWithTodos = async (
+  dailyLogId: string,
+): Promise<DailyTodoGroupType[]> => {
   const { data, error } = await supabase
     .from("daily_todo_group")
     .select(
@@ -37,11 +39,13 @@ export const getDailyTodoGroupsWithTodos = async (dailyLogId: string) => {
     ...group,
     todos: (group.todos || []).sort(
       (
-        a: { created_at: string | number | Date },
-        b: { created_at: string | number | Date },
-      ) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+        a: { created_at: string | number | Date | null },
+        b: { created_at: string | number | Date | null },
+      ) =>
+        new Date(a.created_at ?? 0).getTime() -
+        new Date(b.created_at ?? 0).getTime(),
     ),
-  }));
+  })) as unknown as DailyTodoGroupType[];
 };
 
 export const createDailyTodoGroup = async (
@@ -66,7 +70,7 @@ export const createDailyTodoGroup = async (
     return null;
   }
 
-  return data;
+  return data as unknown as DailyTodoGroupType;
 };
 
 export const updateDailyTodoGroup = async (

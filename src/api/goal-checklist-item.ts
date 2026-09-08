@@ -23,12 +23,12 @@ export const createGoalChecklistItem = async (
     .select()
     .single();
 
-  if (error) {
+  if (error || !data) {
     toast.error("체크 항목 생성에 실패했습니다.");
-    throw error;
+    throw error ?? new Error("체크 항목 생성에 실패했습니다.");
   }
 
-  return data;
+  return data as unknown as GoalChecklistItem;
 };
 
 export const updateGoalChecklistItem = async (

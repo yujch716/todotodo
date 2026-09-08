@@ -24,7 +24,7 @@ export const getCalendarEvents = async (
 
   if (error) toast.error("조회에 실패했습니다.");
 
-  return data ?? [];
+  return (data ?? []) as unknown as CalendarEventType[];
 };
 
 export const getCalendarEventById = async (
@@ -41,9 +41,9 @@ export const getCalendarEventById = async (
     .eq("id", calendarEventId)
     .single();
 
-  if (error) toast.error("조회에 실패했습니다.");
+  if (error || !data) throw new Error("조회에 실패했습니다.");
 
-  return data;
+  return data as unknown as CalendarEventType;
 };
 
 export const getCalendarEventByDate = async (
@@ -64,7 +64,7 @@ export const getCalendarEventByDate = async (
 
   if (error) toast.error("조회에 실패했습니다.");
 
-  return data ?? [];
+  return (data ?? []) as unknown as CalendarEventType[];
 };
 
 export const createCalendarEvent = async (
@@ -93,9 +93,9 @@ export const createCalendarEvent = async (
     .select()
     .single();
 
-  if (error) toast.error("생성에 실패했습니다.");
+  if (error || !data) throw new Error("생성에 실패했습니다.");
 
-  return data;
+  return data as unknown as CalendarEventType;
 };
 
 export const updateCalendarEvent = async (

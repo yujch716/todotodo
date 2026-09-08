@@ -140,8 +140,10 @@ export type Database = {
           content: string;
           created_at: string | null;
           daily_log_id: string;
+          end_notified_at: string | null;
           end_time: string;
           id: string;
+          start_notified_at: string | null;
           start_time: string;
           updated_at: string | null;
         };
@@ -150,8 +152,10 @@ export type Database = {
           content: string;
           created_at?: string | null;
           daily_log_id: string;
+          end_notified_at?: string | null;
           end_time: string;
           id?: string;
+          start_notified_at?: string | null;
           start_time: string;
           updated_at?: string | null;
         };
@@ -160,8 +164,10 @@ export type Database = {
           content?: string;
           created_at?: string | null;
           daily_log_id?: string;
+          end_notified_at?: string | null;
           end_time?: string;
           id?: string;
+          start_notified_at?: string | null;
           start_time?: string;
           updated_at?: string | null;
         };
@@ -455,12 +461,55 @@ export type Database = {
         };
         Relationships: [];
       };
+      push_subscriptions: {
+        Row: {
+          auth: string;
+          created_at: string;
+          endpoint: string;
+          id: string;
+          p256dh: string;
+          user_agent: string | null;
+          user_id: string;
+        };
+        Insert: {
+          auth: string;
+          created_at?: string;
+          endpoint: string;
+          id?: string;
+          p256dh: string;
+          user_agent?: string | null;
+          user_id: string;
+        };
+        Update: {
+          auth?: string;
+          created_at?: string;
+          endpoint?: string;
+          id?: string;
+          p256dh?: string;
+          user_agent?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      due_timetable_notifications: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          content: string;
+          daily_log_id: string;
+          kind: string;
+          timetable_id: string;
+          user_id: string;
+        }[];
+      };
+      timetable_slot_at: {
+        Args: { p_date: string; p_time: string };
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;

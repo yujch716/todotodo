@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabaseClient.ts";
 import { toast } from "sonner";
+import type { DailyTodoType } from "@/types/daily-log.ts";
 
 export const getTotalTodoStats = async (dailyLogId: string) => {
   const { data, error } = await supabase
@@ -48,7 +49,7 @@ export const createDailyTodo = async (
   groupId: string,
   orderIndex: number,
   content: string,
-) => {
+): Promise<DailyTodoType | null> => {
   const { data, error } = await supabase
     .from("daily_todo")
     .insert({
@@ -63,7 +64,7 @@ export const createDailyTodo = async (
 
   if (error) toast.error("생성에 실패했습니다.");
 
-  return data;
+  return data as DailyTodoType | null;
 };
 
 export const updateDailyTodoContent = async (
