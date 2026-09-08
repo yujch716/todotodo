@@ -65,6 +65,7 @@ const MoveDailyTodoModal = ({
       null,
       dailyTodoGroups.length,
     );
+    if (!dailyTodoGroup) return;
 
     await createDailyTodo(dailyLog.id, dailyTodoGroup.id, 0, content);
 

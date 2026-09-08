@@ -17,7 +17,7 @@ export const getDailyTimeTables = async (
 
   if (error) toast.error("조회에 실패했습니다");
 
-  return data ?? [];
+  return (data ?? []) as DailyTimetableType[];
 };
 
 export const createDailyTimetable = async (

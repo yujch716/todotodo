@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar.tsx";
-import { ArrowLeftIcon, Tag } from "lucide-react";
+import { ArrowLeftIcon, Bell, Tag } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
 
@@ -52,6 +52,19 @@ const SettingSidebar = () => {
                 >
                   <Tag className="w-4 h-4" />
                   <span>Category</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() =>
+                    navigate("/setting/notification", { replace: true })
+                  }
+                  isActive={location.pathname === "/setting/notification"}
+                  className="flex items-center hover:bg-sky-100 p-6 data-[active=true]:bg-sky-100"
+                >
+                  <Bell className="w-4 h-4" />
+                  <span>Notification</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

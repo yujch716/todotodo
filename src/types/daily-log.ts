@@ -32,6 +32,6 @@ export interface DailyTimetableType {
   content: string;
   start_time: string;
   end_time: string;
-  category_id?: number;
-  category?: Category;
+  category_id?: string | null;
+  category?: Category | null;
 }

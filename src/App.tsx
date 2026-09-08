@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/sonner.tsx";
 import GoalGroupPage from "@/pages/goal/GoalGroupPage.tsx";
 import GoalGroupDetailPage from "@/pages/goal/GoalGroupDetailPage.tsx";
 import CategoryPage from "@/pages/setting/category/CategoryPage.tsx";
+import NotificationPage from "@/pages/setting/notification/NotificationPage.tsx";
 import DefaultContentLayout from "@/layouts/DefaultContentLayout.tsx";
 import SettingContentLayout from "@/layouts/SettingContentLayout.tsx";
 import PrivateRoute from "@/pages/auth/PrivateRoute.tsx";
@@ -42,6 +43,7 @@ function App() {
 
           <Route path="/setting" element={<SettingContentLayout />}>
             <Route path="category" element={<CategoryPage />} />
+            <Route path="notification" element={<NotificationPage />} />
           </Route>
         </Route>
       </Routes>

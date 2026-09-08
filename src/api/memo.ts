@@ -17,7 +17,7 @@ export const getMemos = async (): Promise<Memo[]> => {
     return [];
   }
 
-  return data ?? [];
+  return (data ?? []) as Memo[];
 };
 
 export const createMemo = async (
@@ -44,7 +44,7 @@ export const createMemo = async (
   }
 
   toast.success("메모가 생성되었습니다.");
-  return data;
+  return data as Memo;
 };
 
 export const updateMemo = async (

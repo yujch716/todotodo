@@ -6,18 +6,12 @@ import { getAuthenticatedUser } from "@/api/auth.ts";
 export const createGoalLog = async (input: CreateGoalLogDto): Promise<void> => {
   const user = await getAuthenticatedUser();
 
-  const { data, error } = await supabase
-    .from("goal_log")
-    .insert({
-      user_id: user.id,
-      ...input,
-    })
-    .select()
-    .single();
+  const { error } = await supabase.from("goal_log").insert({
+    user_id: user.id,
+    ...input,
+  });
 
   if (error) toast.error("생성에 실패했습니다.");
-
-  return data;
 };
 
 export const deleteGoalLogById = async (id: string): Promise<void> => {

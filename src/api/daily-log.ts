@@ -24,14 +24,14 @@ export const getDailyLogs = async (): Promise<DailyLogType[]> => {
     const items = dailyLog.daily_todo || [];
     const totalCount = items.length;
     const checkedCount = items.filter(
-      (item: { is_checked: boolean }) => item.is_checked,
+      (item: { is_checked: boolean | null }) => item.is_checked,
     ).length;
 
     return {
       ...dailyLog,
       totalCount,
       checkedCount,
-    };
+    } as unknown as DailyLogType;
   });
 };
 
@@ -53,18 +53,18 @@ export const getDailyLogById = async (
     .order("created_at", { foreignTable: "daily_todo", ascending: true })
     .single();
 
-  if (error) toast.error("조회에 실패했습니다.");
+  if (error || !data) throw new Error("조회에 실패했습니다.");
 
   const totalCount = data.daily_todo.length;
   const checkedCount = data.daily_todo.filter(
-    (item: { is_checked: boolean }) => item.is_checked,
+    (item: { is_checked: boolean | null }) => item.is_checked,
   ).length;
 
   return {
     ...data,
     totalCount,
     checkedCount,
-  };
+  } as unknown as DailyLogType;
 };
 
 export const getDailyLogByDate = async (
@@ -79,7 +79,7 @@ export const getDailyLogByDate = async (
     .eq("date", format(date, "yyyy-MM-dd"))
     .maybeSingle();
 
-  return data ?? null;
+  return (data as unknown as DailyLogType | null) ?? null;
 };
 
 export const getDailyLogsByDate = async (
@@ -106,21 +106,21 @@ export const getDailyLogsByDate = async (
     const items = dailyLog.daily_todo || [];
     const totalCount = items.length;
     const checkedCount = items.filter(
-      (item: { is_checked: boolean }) => item.is_checked,
+      (item: { is_checked: boolean | null }) => item.is_checked,
     ).length;
 
     return {
       ...dailyLog,
       totalCount,
       checkedCount,
-    };
+    } as unknown as DailyLogType;
   });
 };
 
 export const createDailyLog = async (date: Date): Promise<DailyLogType> => {
   const user = await getAuthenticatedUser();
 
-  const formattedDate = date ? format(date, "yyyy-MM-dd") : null;
+  const formattedDate = format(date, "yyyy-MM-dd");
 
   const { error, data } = await supabase
     .from("daily_log")
@@ -135,7 +135,7 @@ export const createDailyLog = async (date: Date): Promise<DailyLogType> => {
 
   if (error) toast.error("생성에 실패했습니다.");
 
-  return data;
+  return data as unknown as DailyLogType;
 };
 
 export const updateDailyLogMemo = async (
