@@ -1,4 +1,4 @@
-const CACHE_NAME = "todotodo-cache-v2";
+const CACHE_NAME = "todotodo-cache-v3";
 const urlsToCache = [
   "/",
   "/index.html",
@@ -57,5 +57,52 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(() => caches.match(event.request)),
+  );
+});
+
+// push: 서버에서 보낸 알림 표시
+self.addEventListener("push", (event) => {
+  let payload = {};
+  try {
+    payload = event.data ? event.data.json() : {};
+  } catch {
+    payload = { body: event.data ? event.data.text() : "" };
+  }
+
+  const title = payload.title || "todotodo";
+  const options = {
+    body: payload.body || "",
+    icon: "/app-icon-1200px.png",
+    badge: "/app-icon-1200px.png",
+    tag: payload.tag,
+    data: { url: payload.url || "/calendar" },
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// notificationclick: 열려있는 창이 있으면 포커스, 없으면 새로 연다
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const targetUrl =
+    (event.notification.data && event.notification.data.url) || "/calendar";
+
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if ("focus" in client) {
+            if ("navigate" in client) {
+              return client
+                .navigate(targetUrl)
+                .then((c) => (c ? c.focus() : client.focus()));
+            }
+            return client.focus();
+          }
+        }
+        return self.clients.openWindow(targetUrl);
+      }),
   );
 });
