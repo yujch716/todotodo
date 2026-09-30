@@ -33,8 +33,8 @@ webpush.setVapidDetails(
 );
 
 const buildMessage = (item: DueNotification) => ({
-  title: item.content,
-  body: item.kind === "start" ? "시작할 시간이에요" : "끝났어요",
+  title: `🔔 ${item.content}`,
+  body: item.kind === "start" ? "일정을 시작할 시간이에요" : "일정을 종료할 시간이에요",
   url: `/daily/${item.daily_log_id}`,
   tag: `${item.timetable_id}-${item.kind}`,
 });
